@@ -14,7 +14,7 @@ RUN mkdir Frontend
 ADD Frontend /Frontend
 WORKDIR /Frontend
 RUN npm install -g @angular/cli
-RUN npm ci
+RUN npm ci && ng build
 
 # Add Backend files
 RUN mkdir Backend
