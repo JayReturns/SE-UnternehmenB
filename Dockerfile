@@ -21,9 +21,9 @@ RUN mkdir Backend
 ADD Backend/ssp /Backend
 
 # Coopy Angular Frontend to Spring Backend
-WORKDIR /
-RUN mkdir -p Backend/src/main/resources/public
-RUN cp -r Frontend/dist/ssp/* Backend/src/main/resources/public
+#WORKDIR /
+#RUN mkdir -p Backend/src/main/resources/public
+#RUN cp -r Frontend/dist/ssp/* Backend/src/main/resources/public
 
 # Install Backend
 WORKDIR /Backend
