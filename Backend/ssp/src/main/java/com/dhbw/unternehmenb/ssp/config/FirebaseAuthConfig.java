@@ -4,7 +4,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +17,7 @@ public class FirebaseAuthConfig {
 
     private Logger logger = Logger.getLogger(FirebaseAuthConfig.class.getName());
 
-    @Value("classpath:firebase/serviceAccountKey.json")
+    @Value("classpath:serviceAccountKey.json")
     Resource serviceAccount;
 
     @Bean
