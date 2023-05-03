@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 plugins {
 	java
 	id("org.springframework.boot") version "3.0.6"
@@ -36,8 +38,9 @@ tasks.create("buildFrontend"){
 		exec{
 			workingDir = File("${dir.path}/Frontend")
 
-			executable = "ng.cmd"
-			args = listOf("build")
+            executable = if (org.gradle.internal.os.OperatingSystem.current().isWindows()) "npx.cmd" else "npx"
+
+			args = listOf("-p", "@angular/cli", "ng", "build")
 		}
 		val frontendSource = File("${dir.path}/Frontend/dist/ssp")
 		val backendResources = File("${projectDir.path}/src/main/resources/public")
@@ -50,14 +53,9 @@ tasks.create("buildFrontend"){
 task("installAngular"){
 	doLast{
 		val dir: File = projectDir.parentFile.parentFile
-		exec{
-			workingDir = File("${dir.path}/Frontend")
-			executable = "npm.cmd"
-			args = listOf("install", "-g", "@angular/cli")
-		}
 		exec {
 			workingDir = File("${dir.path}/Frontend")
-			executable = "npm.cmd"
+            executable = if (org.gradle.internal.os.OperatingSystem.current().isWindows()) "npm.cmd" else "npm"
 			args = listOf("ci")
 		}
 	}
