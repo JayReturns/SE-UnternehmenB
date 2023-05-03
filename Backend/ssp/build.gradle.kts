@@ -17,8 +17,13 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("com.google.firebase:firebase-admin:9.1.1")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
+
+	compileOnly("org.projectlombok:lombok:1.18.26")
+	annotationProcessor("org.projectlombok:lombok:1.18.26")
+
 }
 
 tasks.withType<Test> {
