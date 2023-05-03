@@ -12,21 +12,14 @@ RUN curl -L https://services.gradle.org/distributions/gradle-8.1.1-bin.zip -o gr
 # Add & Install frontend
 RUN mkdir Frontend
 ADD Frontend /Frontend
-WORKDIR /Frontend
-RUN npm install -g @angular/cli
-RUN npm ci && ng build
 
 # Add Backend files
-RUN mkdir Backend
-ADD Backend/ssp /Backend
+RUN mkdir -p Backend/ssp
+ADD Backend/ssp /Backend/ssp
 
-# Coopy Angular Frontend to Spring Backend
-WORKDIR /
-RUN mkdir -p Backend/src/main/resources/public
-RUN cp -r Frontend/dist/ssp/* Backend/src/main/resources/public
-
-# Install Backend
-WORKDIR /Backend
+# Install Backend & Copy Angular to frontend
+WORKDIR /Backend/ssp
+RUN gradle installAngular
 RUN gradle build
 
 
