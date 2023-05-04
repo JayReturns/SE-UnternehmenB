@@ -19,6 +19,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 	implementation("com.google.firebase:firebase-admin:9.1.1")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
@@ -38,12 +39,12 @@ tasks.create("buildFrontend"){
 		exec{
 			workingDir = File("${dir.path}/Frontend")
 
-            executable = if (org.gradle.internal.os.OperatingSystem.current().isWindows()) "npx.cmd" else "npx"
+            executable = if (org.gradle.internal.os.OperatingSystem.current().isWindows) "npx.cmd" else "npx"
 
 			args = listOf("-p", "@angular/cli", "ng", "build")
 		}
 		val frontendSource = File("${dir.path}/Frontend/dist/ssp")
-		val backendResources = File("${projectDir.path}/src/main/resources/public")
+		val backendResources = File("${projectDir.path}/src/main/resources/public/angular")
 		copy {
 			from(frontendSource)
 			into(backendResources)
@@ -55,12 +56,22 @@ task("installAngular"){
 		val dir: File = projectDir.parentFile.parentFile
 		exec {
 			workingDir = File("${dir.path}/Frontend")
-            executable = if (org.gradle.internal.os.OperatingSystem.current().isWindows()) "npm.cmd" else "npm"
+            executable = if (org.gradle.internal.os.OperatingSystem.current().isWindows) "npm.cmd" else "npm"
 			args = listOf("ci")
 		}
 	}
 }
 
+tasks.create("cleanFrontend"){
+	doLast{
+		delete(files(projectDir.path + "/src/main/resources/public/angular"))
+	}
+}
+
 tasks.classes{
 	dependsOn("buildFrontend")
+}
+
+tasks.clean{
+	dependsOn("cleanFrontend")
 }

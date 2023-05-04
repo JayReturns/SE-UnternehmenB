@@ -42,7 +42,7 @@ public class WebSecurityConfiguration {
         http.csrf().disable().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint());
         http
                 .authorizeHttpRequests()
-                .requestMatchers("admin/**").authenticated()
+                .requestMatchers("/api/v1/**").authenticated()
                 .and()
                 .addFilterBefore(firebaseAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
