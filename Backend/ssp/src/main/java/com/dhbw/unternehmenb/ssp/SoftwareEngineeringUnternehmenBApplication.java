@@ -8,9 +8,6 @@ public class SoftwareEngineeringUnternehmenBApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SoftwareEngineeringUnternehmenBApplication.class, args);
-
-
-
 	}
 
 }
