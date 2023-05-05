@@ -1,7 +1,6 @@
 package com.dhbw.unternehmenb.ssp.controller;
 
 import com.dhbw.unternehmenb.ssp.models.User;
-import com.dhbw.unternehmenb.ssp.repositories.Authenticater;
 import com.dhbw.unternehmenb.ssp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +14,6 @@ public class testing {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private Authenticater authenticater;
 
     @GetMapping("/test")
     public ResponseEntity<String> test(){
@@ -40,11 +37,7 @@ public class testing {
     public ResponseEntity<String> authtest(
             @RequestHeader("Authorization") String auth
     ){
+            return new ResponseEntity(HttpStatus.OK);
 
-        if(authenticater.authenticate(auth)){
-            return ResponseEntity.ok("Success");
-        } else {
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
-        }
     }
 }
