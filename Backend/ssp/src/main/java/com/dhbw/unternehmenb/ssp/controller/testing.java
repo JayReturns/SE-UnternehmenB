@@ -1,7 +1,7 @@
-package com.dhbw.unternehmenb.ssp.controller;
+/*package com.dhbw.unternehmenb.ssp.controller;
 
-import com.dhbw.unternehmenb.ssp.models.User;
-import com.dhbw.unternehmenb.ssp.repositories.UserRepository;
+import com.dhbw.unternehmenb.ssp.model.User;
+import com.dhbw.unternehmenb.ssp.view.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +20,11 @@ public class testing {
 
         User user = new User();
         user.setEmail("test@gmail.com");
-        user.setBenutzerID("rkPe8ykWFqgYJnGuVfGmMhqbF1r2");
-        user.setNachname("test");
-        user.setVorname("test");
-        user.setUrlaubstage(0);
-        user.setRolle("test");
+        user.setUserId("rkPe8ykWFqgYJnGuVfGmMhqbF1r2");
+        user.setLastName("test");
+        user.setName("test");
+        user.setVacationDays(0);
+        user.setRole("test");
 
         try{
             userRepository.insert(user);
@@ -40,4 +40,4 @@ public class testing {
             return new ResponseEntity(HttpStatus.OK);
 
     }
-}
+}*/

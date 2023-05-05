@@ -1,14 +1,7 @@
 package com.dhbw.unternehmenb.ssp.view;
 
 import com.dhbw.unternehmenb.ssp.model.User;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-@Repository
-public class UserRepository {
-
-    public String getUser(){
-        //TODO: get the data from db
-        User user = new User("Hello", "World");
-        return user.toString();
-    }
+public interface UserRepository extends MongoRepository<User,String> {
 }

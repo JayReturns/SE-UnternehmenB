@@ -1,6 +1,6 @@
 package com.dhbw.unternehmenb.ssp.auth;
 
-import com.dhbw.unternehmenb.ssp.repositories.UserRepository;
+import com.dhbw.unternehmenb.ssp.view.UserRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.servlet.FilterChain;
@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @Component
 public class FirebaseAuthFilter extends OncePerRequestFilter {
@@ -49,7 +48,7 @@ public class FirebaseAuthFilter extends OncePerRequestFilter {
             /*if (Objects.equals(decodedToken.getClaims().get("aud"), "se-unternehmenb")) {
             }*/
             String userId = decodedToken.getUid();
-            userRepository.findById(userId).orElseThrow(() -> new Exception("User not found"));
+            //userRepository.findById(userId).orElseThrow(() -> new Exception("User not found"));
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(decodedToken.getUid(), null, null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
