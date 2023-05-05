@@ -18,6 +18,7 @@ import {AngularFireStorageModule} from "@angular/fire/compat/storage";
 import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {AuthService} from "./shared/services/auth.service";
 import {AngularFireModule} from "@angular/fire/compat";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import {AngularFireModule} from "@angular/fire/compat";
     AngularFirestoreModule,
     AngularFireStorageModule,
     AngularFireDatabaseModule,
+    HttpClientModule
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

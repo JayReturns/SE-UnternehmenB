@@ -11,6 +11,9 @@ import * as auth from "firebase/auth";
 export class AuthService {
 
   userData: any; // Save logged in user data
+  credentialData: any;
+
+
   constructor(
     public afs: AngularFirestore, // Inject Firestore service
     public afAuth: AngularFireAuth, // Inject Firebase auth service
@@ -46,6 +49,9 @@ export class AuthService {
         this.SetUserData(result.user);
         this.afAuth.authState.subscribe((user) => {
           if (user) {
+            user.getIdToken(false).then(token => {
+              this.credentialData = token;
+            });
             this.router.navigate(['dashboard']);
           }
         });
@@ -137,4 +143,13 @@ export class AuthService {
       this.router.navigate(['sign-in']);
     });
   }
+
+  GetCredentialData() {
+    return this.credentialData;
+  }
+
+  idk() {
+    return "Hey";
+  }
+
 }
