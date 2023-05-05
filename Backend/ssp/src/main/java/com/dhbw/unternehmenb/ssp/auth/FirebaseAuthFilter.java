@@ -52,9 +52,7 @@ public class FirebaseAuthFilter extends OncePerRequestFilter {
             userRepository.findById(userId).orElseThrow(() -> new Exception("User not found"));
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(decodedToken.getUid(), null, null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            logger.atError().log("Token verfied");
-        }else
-            logger.atError().log("Token not verfied");
+        }
     }
     public String getToken(HttpServletRequest request) {
         String token = null;
