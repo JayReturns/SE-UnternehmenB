@@ -17,6 +17,9 @@ ADD Frontend /Frontend
 RUN mkdir -p Backend/ssp
 ADD Backend/ssp /Backend/ssp
 
+# Add Evnironment Variables
+ENV MONGO_URI=$MONGO_URI
+
 # Install Backend & Copy Angular to frontend
 WORKDIR /Backend/ssp
 RUN gradle installAngular
