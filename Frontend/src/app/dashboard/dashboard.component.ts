@@ -12,8 +12,8 @@ export class DashboardComponent implements OnInit {
 
   accessToken: any;
   constructor(public authService: AuthService, private http: HttpClient) {
-    console.log(this.authService.idk());
-    this.accessToken = this.authService.GetCredentialData().accessToken;
+    console.log(this.authService.GetCredentialData());
+    this.accessToken = this.authService.GetCredentialData();
 }
 
   ngOnInit(): void {}

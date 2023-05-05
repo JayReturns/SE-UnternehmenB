@@ -32,13 +32,15 @@ export class AuthService {
         JSON.parse(localStorage.getItem('user')!);
       }
     });
+    this.credentialData = "temp";
   }
 
   // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {
     // @ts-ignore
     const user = JSON.parse(localStorage.getItem('user'));
-    return (user !== null && user.emailVerified !== false) ? true : false;
+    this.credentialData = user.stsTokenManager.accessToken;
+    return (user.emailVerified !== false);
   }
 
   // Sign in with email/password
@@ -146,10 +148,6 @@ export class AuthService {
 
   GetCredentialData() {
     return this.credentialData;
-  }
-
-  idk() {
-    return "Hey";
   }
 
 }
