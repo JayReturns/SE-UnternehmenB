@@ -8,7 +8,7 @@ ENV MONGO_URI=$MONGO_URI
 ENV SERVICE_ACCOUNT_KEY=$SERVICE_ACCOUNT_KEY
 
 # Install Java
-RUN apt-get update && apt-get install openjdk-17-jre-headless openjdk-17-jdk -y
+RUN apt-get update && apt-get install openjdk-17-jdk -y
 
 # Install Gradle
 ENV GRADLE_HOME=/gradle-8.1.1
@@ -39,4 +39,3 @@ RUN gradle build
 # Run
 EXPOSE 8080
 CMD java -jar build/libs/ssp-0.0.1-SNAPSHOT.jar
-# CMD ng serve --host 0.0.0.0
