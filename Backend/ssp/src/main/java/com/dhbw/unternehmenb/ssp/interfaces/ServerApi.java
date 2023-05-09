@@ -15,7 +15,7 @@ public interface ServerApi {
 
 
     @PostMapping("user")
-    @Operation(summary = "Get User Data")
+    @Operation(summary = "Register User")
     ResponseEntity<String> createUser(
             @RequestHeader("Authorization") String auth,
             @RequestParam String name,
