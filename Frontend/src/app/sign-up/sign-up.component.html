@@ -2,13 +2,15 @@
   <div class="displayTableCell">
     <div class="authBlock">
       <h3>Sign Up</h3>
+      <form [formGroup]="form" (ngSubmit)="signup()">
       <div class="formGroup">
         <input
           type="email"
           class="formControl"
           placeholder="Email Address"
-          #userEmail
           required
+          formControlName="username"
+          [email]="true"
         />
       </div>
       <div class="formGroup">
@@ -16,32 +18,18 @@
           type="password"
           class="formControl"
           placeholder="Password"
-          #userPwd
+          formControlName="password"
           required
         />
       </div>
       <div class="formGroup">
         <input
           type="button"
-          class="btn btnPrimary"
           value="Sign Up"
-          (click)="authService.SignUp(userEmail.value, userPwd.value)"
         />
       </div>
-      <div class="formGroup">
-        <span class="or"><span class="orInner">Or</span></span>
-      </div>
-      <!-- Continue with Google -->
-      <div class="formGroup">
-        <button
-          type="button"
-          class="btn googleBtn"
-          (click)="authService.GoogleAuth()"
-        >
-          <i class="fab fa-google-plus-g"></i>
-          Continue with Google
-        </button>
-      </div>
+      </form>
+
     </div>
     <div class="redirectToLogin">
       <span

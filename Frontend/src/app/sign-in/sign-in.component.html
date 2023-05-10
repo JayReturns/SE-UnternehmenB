@@ -2,34 +2,24 @@
   <div class="displayTableCell">
     <div class="authBlock">
       <h3>Sign In</h3>
+      <form [formGroup]="form" (ngSubmit)="signIn()">
         <p>
           <mat-form-field appearance="fill">
             <mat-label>Username</mat-label>
-            <input matInput placeholder="Username" #userName required>
+            <input matInput placeholder="Username" formControlName="username" required>
           </mat-form-field>
         </p>
       <p>
         <mat-form-field appearance="fill">
           <mat-label>Password</mat-label>
-          <input matInput placeholder="Password" #userPassword required [type]="hide ? 'password' : 'text'">
+          <input matInput placeholder="Password" formControlName="password" required [type]="hide ? 'password' : 'text'">
           <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
             <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
           </button>
         </mat-form-field>
       </p>
-      <button mat-button color="primary" (click)="authService.SignIn(userName.value, userPassword.value)">Log in</button>
-
-
-      <div class="formGroup">
-        <span class="or"><span class="orInner">Or</span></span>
-      </div>
-      <!-- Calling GoogleAuth Api from AuthService -->
-      <div class="formGroup">
-        <button type="button" class="btn googleBtn" (click)="authService.GoogleAuth()">
-          <i class="fab fa-google-plus-g"></i>
-          Log in with Google
-        </button>
-      </div>
+      <button type="submit" mat-button color="primary">Log in</button>
+      </form>
       <div class="forgotPassword">
         <span routerLink="/forgot-password">Forgot Password?</span>
       </div>

@@ -7,8 +7,7 @@ export interface User {
   role: Role;
 }
 
-// TODO: Change ADMIN, USER to something else
 export enum Role {
-  ADMIN,
-  USER
+  MANAGER,
+  EMPLOYEE
 }

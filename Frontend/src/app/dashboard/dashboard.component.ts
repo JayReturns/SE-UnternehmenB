@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../shared/services/auth.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {UserService} from "../services/user.service";
+import {User} from "../models/user.model";
 
 @Component({
   selector: 'app-dashboard',
@@ -11,26 +13,14 @@ export class DashboardComponent implements OnInit {
 
 
   accessToken: any;
-  constructor(public authService: AuthService, private http: HttpClient) {
-    console.log(this.authService.GetCredentialData());
+  user: User | undefined;
+  constructor(public authService: AuthService, private http: HttpClient, private userService: UserService) {
     this.accessToken = this.authService.GetCredentialData();
 }
 
-  ngOnInit(): void {}
-
-  test(): void {
-    var httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + this.accessToken
-      })
-    }
-
-
-    console.log("Hey");
-    this.http.get<String>("http://localhost:8080", httpOptions)
-      .subscribe(x => {
-      console.log(x);
-    });
+  ngOnInit(): void {
+    this.userService.getUser().subscribe(x => this.user = x);
   }
+
 
 }

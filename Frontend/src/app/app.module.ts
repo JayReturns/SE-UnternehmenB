@@ -20,6 +20,7 @@ import {AuthService} from "./shared/services/auth.service";
 import {AngularFireModule} from "@angular/fire/compat";
 import {HttpClientModule} from "@angular/common/http";
 import {MaterialModule} from "../material.module";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -30,20 +31,21 @@ import {MaterialModule} from "../material.module";
     VerifyEmailComponent,
     DashboardComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    AngularFireModule.initializeApp(environment.firebase),
-    provideAuth(() => getAuth()),
-    AngularFireAuthModule,
-    AngularFirestoreModule,
-    AngularFireStorageModule,
-    AngularFireDatabaseModule,
-    HttpClientModule,
-    MaterialModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        provideFirebaseApp(() => initializeApp(environment.firebase)),
+        AngularFireModule.initializeApp(environment.firebase),
+        provideAuth(() => getAuth()),
+        AngularFireAuthModule,
+        AngularFirestoreModule,
+        AngularFireStorageModule,
+        AngularFireDatabaseModule,
+        HttpClientModule,
+        MaterialModule,
+        ReactiveFormsModule
+    ],
   providers: [AuthService],
   bootstrap: [AppComponent]
 })
