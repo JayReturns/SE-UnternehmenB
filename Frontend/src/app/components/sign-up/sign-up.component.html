@@ -1,0 +1,30 @@
+<div class="displayTable">
+  <div class="displayTableCell">
+    <div class="authBlock">
+      <h3>Sign Up</h3>
+      <form [formGroup]="form" (ngSubmit)="signup()">
+        <p>
+          <mat-form-field appearance="fill">
+            <mat-label>Email Address</mat-label>
+            <input matInput placeholder="test@example.de"
+                   [email]="true" formControlName="email" required>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="fill">
+            <mat-label>Password</mat-label>
+            <input matInput placeholder="Password" formControlName="password" required type="password">
+          </mat-form-field>
+        </p>
+        <button type="submit" mat-raised-button color="primary">Sign Up</button>
+      </form>
+
+    </div>
+    <div class="redirectToLogin">
+      <span
+      >Already have an account?
+        <span class="redirect" routerLink="/sign-in">Log In</span></span
+      >
+    </div>
+  </div>
+</div>

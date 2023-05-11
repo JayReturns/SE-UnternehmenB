@@ -24,16 +24,13 @@ export class UserService {
       )
   }
 
-  createUser(user: User): Observable<User> {
+  createUser(user: User): Observable<any> {
     let params = new HttpParams()
       .set('name', user.name)
       .set('lastname', user.lastName)
       .set('role', user.role);
 
-    return this.http.post<User>(this.url, { params: params })
-      .pipe(
-        catchError(this.messageService.handleError<User>('getUser'))
-      );
+    return this.http.post(this.url,null, { params: params });
   }
 
 }

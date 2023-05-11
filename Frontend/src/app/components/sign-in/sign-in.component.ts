@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
-import {AuthService} from "../shared/services/auth.service";
+import {AuthService} from "../../shared/services/auth.service";
 import {FormControl, FormGroup} from "@angular/forms";
-import {MessageService} from "../services/message.service";
+import {MessageService} from "../../services/message.service";
 
 @Component({
   selector: 'app-sign-in',
@@ -12,7 +12,7 @@ export class SignInComponent {
 
   hide = true;
   form: FormGroup  = new FormGroup({
-    username: new FormControl(''),
+    email: new FormControl(''),
     password: new FormControl('')
   })
   constructor(

@@ -3,7 +3,6 @@ import {User} from "./user";
 import {AngularFirestore, AngularFirestoreDocument} from "@angular/fire/compat/firestore";
 import {AngularFireAuth} from '@angular/fire/compat/auth';
 import {Router} from "@angular/router";
-import * as auth from "firebase/auth";
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +31,6 @@ export class AuthService {
         JSON.parse(localStorage.getItem('user')!);
       }
     });
-    this.credentialData = "temp";
   }
 
   // Returns true when user is looged in and email is verified
@@ -82,9 +80,9 @@ export class AuthService {
   SendVerificationMail() {
     return this.afAuth.currentUser
       .then((u: any) => u.sendEmailVerification())
-      .then(() => {
-        this.router.navigate(['verify-email-address']);
-      });
+      // .then(() => {
+      //   this.router.navigate(['verify-email-address']);
+      // });
   }
 
   // Reset Forggot password
@@ -97,13 +95,6 @@ export class AuthService {
       .catch((error) => {
         window.alert(error);
       });
-  }
-
-  // Sign in with Google
-  GoogleAuth() {
-    return this.AuthLogin(new auth.GoogleAuthProvider()).then((res: any) => {
-      this.router.navigate(['dashboard']);
-    });
   }
 
   // Auth logic to run auth providers

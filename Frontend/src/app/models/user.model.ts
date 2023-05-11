@@ -8,6 +8,6 @@ export interface User {
 }
 
 export enum Role {
-  MANAGER,
-  EMPLOYEE
+  MANAGER = "MANAGER",
+  EMPLOYEE = "EMPLOYEE"
 }
