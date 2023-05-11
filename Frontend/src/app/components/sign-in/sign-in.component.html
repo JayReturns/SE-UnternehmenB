@@ -5,8 +5,8 @@
       <form [formGroup]="form" (ngSubmit)="signIn()">
         <p>
           <mat-form-field appearance="fill">
-            <mat-label>Username</mat-label>
-            <input matInput placeholder="Username" formControlName="username" required>
+            <mat-label>E-Mail</mat-label>
+            <input matInput placeholder="E-Mail" [email]="true" formControlName="email" required>
           </mat-form-field>
         </p>
       <p>

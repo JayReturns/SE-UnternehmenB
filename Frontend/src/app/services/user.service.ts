@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Observable, catchError} from "rxjs";
 import {User} from "../models/user.model";
-import {environment} from "../../environments/environment.development";
+import {environment} from "../../environments/environment";
 import {MessageService} from "./message.service";
 
 @Injectable({
