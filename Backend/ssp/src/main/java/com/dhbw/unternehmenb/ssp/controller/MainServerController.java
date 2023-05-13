@@ -2,25 +2,26 @@ package com.dhbw.unternehmenb.ssp.controller;
 
 import com.dhbw.unternehmenb.ssp.auth.FirebaseAuthFilter;
 import com.dhbw.unternehmenb.ssp.interfaces.ServerApi;
-import com.dhbw.unternehmenb.ssp.model.Role;
-import com.dhbw.unternehmenb.ssp.model.User;
+import com.dhbw.unternehmenb.ssp.model.*;
 import com.dhbw.unternehmenb.ssp.view.UserRepository;
+import com.dhbw.unternehmenb.ssp.view.VacationRequestRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class MainServerController implements ServerApi {
-    private final Logger logger = LoggerFactory.getLogger(MainServerController.class);
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private VacationRequestRepository vacationRequestRepository;
     @Autowired
     private FirebaseAuth firebaseAuth;
     @Autowired
@@ -55,9 +56,38 @@ public class MainServerController implements ServerApi {
         try {
             userRepository.save(user);
             return new ResponseEntity<>("Success!", HttpStatus.CREATED);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser(OrderParameter sortParameter, OrderDirection sortDirection) throws Exception {
+        String token = firebaseAuthFilter.getToken(httpServletRequest);
+        FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
+        User user = userRepository.findById(decodedToken.getUid()).orElse(null);
+        if (user == null)
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        else {
+            if (sortParameter!=null && sortParameter.equals(OrderParameter.STATUS)) {
+                List<VacationRequest> vacationRequests;
+                if (sortDirection != null && sortDirection.equals(OrderDirection.ASC)) {
+                    vacationRequests = vacationRequestRepository.findByUserOrderByStatusAsc(user);
+                } else {
+                    vacationRequests = vacationRequestRepository.findByUserOrderByStatusDesc(user);
+                }
+                return new ResponseEntity<>(vacationRequests, HttpStatus.OK);
+            } else {
+                List<VacationRequest> vacationRequests;
+                if (sortDirection != null && sortDirection.equals(OrderDirection.ASC)) {
+                    vacationRequests = vacationRequestRepository.findByUserOrderByVacationStartAsc(user);
+                } else {
+                    vacationRequests = vacationRequestRepository.findByUserOrderByVacationStartDesc(user);
+                }
+                return new ResponseEntity<>(vacationRequests, HttpStatus.OK);
+            }
+        }
+    }
+
+
 }

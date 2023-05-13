@@ -39,3 +39,6 @@ out/
 
 ### Firebase ###
 **/serviceAccountKey.json
+
+### Local Controller ###
+GoogleJwtController.java
