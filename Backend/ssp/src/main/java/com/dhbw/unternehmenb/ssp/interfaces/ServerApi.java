@@ -53,8 +53,8 @@ public interface ServerApi {
             @ApiResponse(responseCode = "200", description = "Daten gesendet", content = @Content(mediaType = "application/json",schema = @Schema(implementation = VacationRequest.class)))
     })
     ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser(
-            @RequestParam(required = false) OrderParameter sortParameter,
-            @RequestParam(required = false) OrderDirection sortDirection
+            @RequestParam(required = false) OrderParameter orderParameter,
+            @RequestParam(required = false) OrderDirection orderDirection
     ) throws Exception;
 
 

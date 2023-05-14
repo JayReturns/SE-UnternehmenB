@@ -62,16 +62,16 @@ public class MainServerController implements ServerApi {
     }
 
     @Override
-    public ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser(OrderParameter sortParameter, OrderDirection sortDirection) throws Exception {
+    public ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser(OrderParameter orderParameter, OrderDirection orderDirection) throws Exception {
         String token = firebaseAuthFilter.getToken(httpServletRequest);
         FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
         User user = userRepository.findById(decodedToken.getUid()).orElse(null);
         if (user == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         else {
-            if (sortParameter!=null && sortParameter.equals(OrderParameter.STATUS)) {
+            if (orderParameter !=null && orderParameter.equals(OrderParameter.STATUS)) {
                 List<VacationRequest> vacationRequests;
-                if (sortDirection != null && sortDirection.equals(OrderDirection.ASC)) {
+                if (orderDirection != null && orderDirection.equals(OrderDirection.ASC)) {
                     vacationRequests = vacationRequestRepository.findByUserOrderByStatusAsc(user);
                 } else {
                     vacationRequests = vacationRequestRepository.findByUserOrderByStatusDesc(user);
@@ -79,7 +79,7 @@ public class MainServerController implements ServerApi {
                 return new ResponseEntity<>(vacationRequests, HttpStatus.OK);
             } else {
                 List<VacationRequest> vacationRequests;
-                if (sortDirection != null && sortDirection.equals(OrderDirection.ASC)) {
+                if (orderDirection != null && orderDirection.equals(OrderDirection.ASC)) {
                     vacationRequests = vacationRequestRepository.findByUserOrderByVacationStartAsc(user);
                 } else {
                     vacationRequests = vacationRequestRepository.findByUserOrderByVacationStartDesc(user);
