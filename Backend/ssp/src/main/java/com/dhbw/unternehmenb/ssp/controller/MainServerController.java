@@ -85,10 +85,16 @@ public class MainServerController implements ServerApi {
         if (endDate.isBefore(startDate))
             return new ResponseEntity<>("End date is before start date!", HttpStatus.BAD_REQUEST);
 
+        //calculate vacation days
         int vacationDays = (int) Duration
                 .between(startDate.atStartOfDay(), endDate.atStartOfDay())
                 .toDays()
                 + 1;
+        //do not count weekends towards vacation days
+        for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1)) {
+            if (date.getDayOfWeek().getValue() > 5)
+                vacationDays--;
+        }
         if (vacationDays > user.getVacationDays())
             return new ResponseEntity<>("Not enough vacation days!", HttpStatus.BAD_REQUEST);
 
