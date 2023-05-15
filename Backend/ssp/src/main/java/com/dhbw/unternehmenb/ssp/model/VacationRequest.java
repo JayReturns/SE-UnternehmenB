@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -16,8 +16,8 @@ public class VacationRequest {
     private String vacationRequestId;
     @DBRef
     private User user;
-    private Date vacationStart;
-    private Date VacationEnd;
+    private LocalDateTime vacationStart;
+    private LocalDateTime vacationEnd;
     private int vacationDays;
     private String comment;
     private Status status;

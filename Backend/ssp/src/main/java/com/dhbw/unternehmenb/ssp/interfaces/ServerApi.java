@@ -14,7 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @RequestMapping("api/v1")
 @SecurityScheme(
@@ -54,8 +54,8 @@ public interface ServerApi {
             @ApiResponse(responseCode = "400", description = "Bad Request (e.g. not enough Days available, Vacation request overlaps with another vacation, ...)", content = @Content)
     })
     ResponseEntity<String> createVacationRequest(
-            @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-            @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
             @RequestParam(required = false) String comment
     ) throws Exception;
 

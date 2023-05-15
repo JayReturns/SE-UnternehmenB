@@ -21,9 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.Temporal;
-import java.util.Date;
 import java.util.UUID;
 
 @RestController
@@ -75,16 +72,16 @@ public class MainServerController implements ServerApi {
 
     @Override
     public ResponseEntity<String> createVacationRequest(
-            Date startDate,
-            Date endDate,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
             String comment
     ) {
         User user = getCurrentUser();
         if (user == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         int vacationDays = (int) Duration
-                .between(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate))
-                .toDays();
+                .between(startDate, endDate)
+                .toDays() + 1;
         if (vacationDays > user.getVacationDays())
             return new ResponseEntity<>("Not enough vacation days!", HttpStatus.BAD_REQUEST);
         if (vacationRequestRepository.existsByUserAndVacationStartBetweenOrVacationEndBetween(
@@ -110,11 +107,5 @@ public class MainServerController implements ServerApi {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private LocalDateTime convertToLocalDateTime(Date dateToConvert) {
-        return dateToConvert.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
     }
 }
