@@ -10,8 +10,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RequestMapping("api/v1")
 @SecurityScheme(
@@ -28,7 +31,6 @@ public interface ServerApi {
             @ApiResponse(responseCode = "200", description = "Daten gesendet", content = @Content(mediaType = "application/json",schema = @Schema(implementation = User.class)))
     })
     ResponseEntity<User> getUserData() throws Exception;
-    //we may want to use Response/Request-bodies for more data
 
 
     @PostMapping("user")
@@ -43,6 +45,18 @@ public interface ServerApi {
             @RequestParam(defaultValue = "30") int vacationDays
     ) throws Exception;
 
-
+    @PostMapping("vacation_request")
+    @Operation(summary = "Create Vacation Request")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Vacation Request created", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Vacation Request not created", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Bad Request (e.g. not enough Days available, Vacation request overlaps with another vacation, ...)", content = @Content)
+    })
+    ResponseEntity<String> createVacationRequest(
+            @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+            @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate,
+            @RequestParam(required = false) String comment
+    ) throws Exception;
 
 }
