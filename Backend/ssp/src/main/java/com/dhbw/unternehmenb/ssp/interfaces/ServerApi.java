@@ -73,6 +73,4 @@ public interface ServerApi {
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser() throws Exception;
-
-
 }
