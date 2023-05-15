@@ -2,6 +2,7 @@ package com.dhbw.unternehmenb.ssp.interfaces;
 
 import com.dhbw.unternehmenb.ssp.model.Role;
 import com.dhbw.unternehmenb.ssp.model.User;
+import com.dhbw.unternehmenb.ssp.model.VacationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.media.Content;

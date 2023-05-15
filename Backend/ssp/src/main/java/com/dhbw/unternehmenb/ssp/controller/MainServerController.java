@@ -2,7 +2,6 @@ package com.dhbw.unternehmenb.ssp.controller;
 
 import com.dhbw.unternehmenb.ssp.auth.FirebaseAuthFilter;
 import com.dhbw.unternehmenb.ssp.interfaces.ServerApi;
-import com.dhbw.unternehmenb.ssp.model.*;
 import com.dhbw.unternehmenb.ssp.model.Role;
 import com.dhbw.unternehmenb.ssp.model.Status;
 import com.dhbw.unternehmenb.ssp.model.User;
@@ -105,9 +104,6 @@ public class MainServerController implements ServerApi {
         try {
             vacationRequestRepository.insert(vacationRequest);
             return new ResponseEntity<>("Success!", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
