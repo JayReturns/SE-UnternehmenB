@@ -12,7 +12,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +33,8 @@ public interface ServerApi {
     @GetMapping("user")
     @Operation(summary = "Get User Data")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Daten gesendet", content = @Content(mediaType = "application/json",schema = @Schema(implementation = User.class)))
+            @ApiResponse(responseCode = "200", description = "User sent", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     ResponseEntity<User> getUserData() throws Exception;
 
@@ -36,7 +42,8 @@ public interface ServerApi {
     @PostMapping("user")
     @Operation(summary = "Register User")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Daten gesendet", content = @Content)
+            @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content),
+            @ApiResponse(responseCode = "409", description = "User already exists", content = @Content)
     })
     ResponseEntity<String> createUser(
             @RequestParam String name,
@@ -58,5 +65,13 @@ public interface ServerApi {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
             @RequestParam(required = false) String comment
     ) throws Exception;
+    @Operation(summary = "Get all vacation requests from the logged in user")
+    @GetMapping("vacation_request")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Vacation request sent", content = @Content(mediaType = "application/json", schema = @Schema(implementation = VacationRequest.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
+    ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser() throws Exception;
+
 
 }

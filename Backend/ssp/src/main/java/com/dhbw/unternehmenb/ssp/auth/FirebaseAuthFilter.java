@@ -1,6 +1,5 @@
 package com.dhbw.unternehmenb.ssp.auth;
 
-import com.dhbw.unternehmenb.ssp.view.UserRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.servlet.FilterChain;
@@ -9,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -23,9 +21,6 @@ import java.util.Objects;
 public class FirebaseAuthFilter extends OncePerRequestFilter {
 
     private final Logger logger = LoggerFactory.getLogger(FirebaseAuthFilter.class);
-
-    @Autowired
-    UserRepository userRepository;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
