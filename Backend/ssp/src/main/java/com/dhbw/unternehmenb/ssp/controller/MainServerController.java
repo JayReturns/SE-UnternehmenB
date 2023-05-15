@@ -39,8 +39,7 @@ public class MainServerController implements ServerApi {
         User user = getCurrentUser();
         if (user == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        else
-            return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @Override
@@ -53,41 +52,26 @@ public class MainServerController implements ServerApi {
         String token = firebaseAuthFilter.getToken(httpServletRequest);
         FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
         User user = new User(decodedToken, name, lastname, vacationDays, role);
+        if (userRepository.existsById(user.getUserId()))
+            return new ResponseEntity<>("User already exists!", HttpStatus.CONFLICT);
         try {
-            userRepository.save(user);
+            userRepository.insert(user);
             return new ResponseEntity<>("Success!", HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    public ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser(OrderParameter orderParameter, OrderDirection orderDirection) throws Exception {
-        String token = firebaseAuthFilter.getToken(httpServletRequest);
-        FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
-        User user = userRepository.findById(decodedToken.getUid()).orElse(null);
+    public ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser() {
+        User user = getCurrentUser();
         if (user == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        else {
-            if (orderParameter !=null && orderParameter.equals(OrderParameter.STATUS)) {
-                List<VacationRequest> vacationRequests;
-                if (orderDirection != null && orderDirection.equals(OrderDirection.ASC)) {
-                    vacationRequests = vacationRequestRepository.findByUserOrderByStatusAsc(user);
-                } else {
-                    vacationRequests = vacationRequestRepository.findByUserOrderByStatusDesc(user);
-                }
-                return new ResponseEntity<>(vacationRequests, HttpStatus.OK);
-            } else {
-                List<VacationRequest> vacationRequests;
-                if (orderDirection != null && orderDirection.equals(OrderDirection.ASC)) {
-                    vacationRequests = vacationRequestRepository.findByUserOrderByVacationStartAsc(user);
-                } else {
-                    vacationRequests = vacationRequestRepository.findByUserOrderByVacationStartDesc(user);
-                }
-                return new ResponseEntity<>(vacationRequests, HttpStatus.OK);
-            }
-        }
+        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserOrderByVacationStartDesc(user);
+        return new ResponseEntity<>(vacationRequests, HttpStatus.OK);
+
     }
-
-
 }
+
+
+

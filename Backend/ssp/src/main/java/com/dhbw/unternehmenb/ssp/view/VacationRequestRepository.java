@@ -8,9 +8,6 @@ import java.util.List;
 
 public interface VacationRequestRepository extends MongoRepository<VacationRequest,String> {
 
-    List<VacationRequest> findByUserOrderByVacationStartAsc(User user);
     List<VacationRequest> findByUserOrderByVacationStartDesc(User user);
-    List<VacationRequest> findByUserOrderByStatusAsc(User user);
-    List<VacationRequest> findByUserOrderByStatusDesc(User user);
 
 }
