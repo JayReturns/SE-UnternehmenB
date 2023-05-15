@@ -25,9 +25,9 @@ public class MainServerController implements ServerApi {
     @Autowired
     private FirebaseAuth firebaseAuth;
     @Autowired
-    FirebaseAuthFilter firebaseAuthFilter;
+    private FirebaseAuthFilter firebaseAuthFilter;
     @Autowired
-    HttpServletRequest httpServletRequest;
+    private HttpServletRequest httpServletRequest;
 
     private User getCurrentUser() {
         String token = SecurityContextHolder.getContext().getAuthentication().getName();
