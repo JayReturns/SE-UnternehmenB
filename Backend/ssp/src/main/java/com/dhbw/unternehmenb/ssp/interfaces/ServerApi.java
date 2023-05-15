@@ -18,9 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 import java.util.List;
-
-import java.time.LocalDateTime;
 
 @RequestMapping("api/v1")
 @SecurityScheme(
@@ -62,10 +61,11 @@ public interface ServerApi {
             @ApiResponse(responseCode = "400", description = "Bad Request (e.g. not enough Days available, Vacation request overlaps with another vacation, ...)", content = @Content)
     })
     ResponseEntity<String> createVacationRequest(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) String comment
     ) throws Exception;
+
     @Operation(summary = "Get all vacation requests from the logged in user")
     @GetMapping("vacation_request")
     @ApiResponses({

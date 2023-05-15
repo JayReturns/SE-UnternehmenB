@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -18,8 +18,8 @@ public class VacationRequest {
     @JsonIgnore
     @DBRef
     private User user;
-    private LocalDateTime vacationStart;
-    private LocalDateTime vacationEnd;
+    private LocalDate vacationStart;
+    private LocalDate vacationEnd;
     private int vacationDays;
     private String comment;
     private Status status;

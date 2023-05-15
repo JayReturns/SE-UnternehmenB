@@ -17,10 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
@@ -72,26 +72,33 @@ public class MainServerController implements ServerApi {
 
     @Override
     public ResponseEntity<String> createVacationRequest(
-            LocalDateTime startDate,
-            LocalDateTime endDate,
+            LocalDate startDate,
+            LocalDate endDate,
             String comment
     ) {
         User user = getCurrentUser();
         if (user == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+        if (startDate.isBefore(LocalDate.now()))
+            return new ResponseEntity<>("Start date is in the past!", HttpStatus.BAD_REQUEST);
+
+        if (endDate.isBefore(startDate))
+            return new ResponseEntity<>("End date is before start date!", HttpStatus.BAD_REQUEST);
+
         int vacationDays = (int) Duration
-                .between(startDate, endDate)
-                .toDays() + 1;
+                .between(startDate.atStartOfDay(), endDate.atStartOfDay())
+                .toDays()
+                + 1;
         if (vacationDays > user.getVacationDays())
             return new ResponseEntity<>("Not enough vacation days!", HttpStatus.BAD_REQUEST);
-        if (vacationRequestRepository.existsByUserAndVacationStartBetweenOrVacationEndBetween(
-                user,
-                startDate,
-                endDate,
-                startDate,
-                endDate
-        ))
+
+        if (vacationRequestRepository.existsByUserAndVacationStartBetweenOrVacationEndBetween(user, startDate, endDate, startDate, endDate))
             return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
+        if (vacationRequestRepository.existsByUserAndVacationStartIsOrVacationEndIs(user, startDate, endDate))
+            return new ResponseEntity<>("Vacation request for those dates already exists!", HttpStatus.BAD_REQUEST);
+
+
         VacationRequest vacationRequest = new VacationRequest(
                 UUID.randomUUID().toString(),
                 user,
@@ -100,7 +107,7 @@ public class MainServerController implements ServerApi {
                 vacationDays,
                 comment,
                 Status.REQUESTED,
-                "");
+                null);
         try {
             vacationRequestRepository.insert(vacationRequest);
             return new ResponseEntity<>("Success!", HttpStatus.CREATED);
