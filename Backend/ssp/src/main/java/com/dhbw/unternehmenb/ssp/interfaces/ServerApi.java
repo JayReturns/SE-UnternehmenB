@@ -63,6 +63,7 @@ public interface ServerApi {
     ResponseEntity<String> createVacationRequest(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam int duration,
             @RequestParam(required = false) String comment
     ) throws Exception;
 

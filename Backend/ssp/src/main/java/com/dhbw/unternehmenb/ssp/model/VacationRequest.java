@@ -20,7 +20,7 @@ public class VacationRequest {
     private User user;
     private LocalDate vacationStart;
     private LocalDate vacationEnd;
-    private int vacationDays;
+    private int duration;
     private String comment;
     private Status status;
     private String rejectReason;

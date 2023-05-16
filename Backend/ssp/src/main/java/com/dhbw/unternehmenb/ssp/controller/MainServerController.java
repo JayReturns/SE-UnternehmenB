@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.time.Duration;
 import java.util.UUID;
 
 @RestController
@@ -73,20 +72,19 @@ public class MainServerController implements ServerApi {
     public ResponseEntity<String> createVacationRequest(
             LocalDate startDate,
             LocalDate endDate,
+            int duration,
             String comment
     ) {
         User user = getCurrentUser();
         if (user == null)
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User could not be found!", HttpStatus.NOT_FOUND);
 
         if (endDate.isBefore(startDate))
             return new ResponseEntity<>("End date is before start date!", HttpStatus.BAD_REQUEST);
 
-        //calculate vacation days
-        int vacationDays = (int) Duration
-                .between(startDate.atStartOfDay(), endDate.atStartOfDay())
-                .toDays()
-                + 1;
+        if (duration < 1)
+            return new ResponseEntity<>("Duration must be at least 1 day!", HttpStatus.BAD_REQUEST);
+
         //TODO: use User Story #31 to check if requested vacation exceeds the limit
 
         if (vacationRequestRepository.existsByUserAndVacationStartBetweenOrVacationEndBetween(user, startDate, endDate, startDate, endDate))
@@ -100,7 +98,7 @@ public class MainServerController implements ServerApi {
                 user,
                 startDate,
                 endDate,
-                vacationDays,
+                duration,
                 comment,
                 Status.REQUESTED,
                 null);
