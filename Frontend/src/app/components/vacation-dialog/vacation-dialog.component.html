@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Urlaub beantragen</h2>
+<mat-dialog-content class="dialog-content">
+  <mat-form-field appearance="fill">
+    <mat-label>Zeitraum</mat-label>
+    <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+      <input matStartDate formControlName="start" placeholder="Startdatum">
+      <input matEndDate formControlName="end" placeholder="Enddatum">
+    </mat-date-range-input>
+    <mat-hint>DD.MM.YYYY - DD.MM.YYYY</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+    <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Falsches Startdatum</mat-error>
+    <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Falsches Enddatum</mat-error>
+  </mat-form-field>
+
+  <p>Selected range: {{range.value | json}}</p>
+</mat-dialog-content>

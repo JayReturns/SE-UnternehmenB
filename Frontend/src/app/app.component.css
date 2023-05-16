@@ -1,0 +1,10 @@
+.dialog-content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 0.25fr);
+  gap: 10px;
+  align-items: center;
+  grid-template-areas:
+    "title date value"
+    "notice notice notice";
+}

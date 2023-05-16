@@ -22,6 +22,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {MaterialModule} from "../material.module";
 import {ReactiveFormsModule} from "@angular/forms";
 import {AuthInterceptor} from "./interceptor/auth.interceptor";
+import { VacationDialogComponent } from './components/vacation-dialog/vacation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {AuthInterceptor} from "./interceptor/auth.interceptor";
     SignUpComponent,
     ForgotPasswordComponent,
     VerifyEmailComponent,
-    DashboardComponent
+    DashboardComponent,
+    VacationDialogComponent
   ],
     imports: [
         BrowserModule,
