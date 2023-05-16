@@ -55,10 +55,10 @@ public interface ServerApi {
     @PostMapping("vacation_request")
     @Operation(summary = "Create Vacation Request")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Vacation Request created", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Vacation Request not created", content = @Content),
+            @ApiResponse(responseCode = "201", description = "Vacation Request created successfully", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Bad Request (e.g. not enough Days available, Vacation request overlaps with another vacation, ...)", content = @Content),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Bad Request (e.g. not enough Days available, Vacation request overlaps with another vacation, ...)", content = @Content)
+            @ApiResponse(responseCode = "500", description = "Vacation Request not created", content = @Content),
     })
     ResponseEntity<String> createVacationRequest(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -69,7 +69,7 @@ public interface ServerApi {
     @Operation(summary = "Get all vacation requests from the logged in user")
     @GetMapping("vacation_request")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Vacation request sent", content = @Content(mediaType = "application/json", schema = @Schema(implementation = VacationRequest.class))),
+            @ApiResponse(responseCode = "200", description = "Vacation requests sent", content = @Content(mediaType = "application/json", schema = @Schema(implementation = VacationRequest.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser() throws Exception;

@@ -95,8 +95,7 @@ public class MainServerController implements ServerApi {
             if (date.getDayOfWeek().getValue() > 5)
                 vacationDays--;
         }
-        if (vacationDays > user.getVacationDays())
-            return new ResponseEntity<>("Not enough vacation days!", HttpStatus.BAD_REQUEST);
+        //TODO: use User Story #31 to check if requested vacation exceeds the limit
 
         if (vacationRequestRepository.existsByUserAndVacationStartBetweenOrVacationEndBetween(user, startDate, endDate, startDate, endDate))
             return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
@@ -128,6 +127,5 @@ public class MainServerController implements ServerApi {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserOrderByVacationStartDesc(user);
         return new ResponseEntity<>(vacationRequests, HttpStatus.OK);
-
     }
 }
