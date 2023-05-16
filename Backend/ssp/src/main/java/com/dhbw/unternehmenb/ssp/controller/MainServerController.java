@@ -79,9 +79,6 @@ public class MainServerController implements ServerApi {
         if (user == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
-        if (startDate.isBefore(LocalDate.now()))
-            return new ResponseEntity<>("Start date is in the past!", HttpStatus.BAD_REQUEST);
-
         if (endDate.isBefore(startDate))
             return new ResponseEntity<>("End date is before start date!", HttpStatus.BAD_REQUEST);
 
@@ -90,11 +87,6 @@ public class MainServerController implements ServerApi {
                 .between(startDate.atStartOfDay(), endDate.atStartOfDay())
                 .toDays()
                 + 1;
-        //do not count weekends towards vacation days
-        for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1)) {
-            if (date.getDayOfWeek().getValue() > 5)
-                vacationDays--;
-        }
         //TODO: use User Story #31 to check if requested vacation exceeds the limit
 
         if (vacationRequestRepository.existsByUserAndVacationStartBetweenOrVacationEndBetween(user, startDate, endDate, startDate, endDate))
