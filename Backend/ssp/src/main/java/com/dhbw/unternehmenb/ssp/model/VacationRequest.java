@@ -1,5 +1,6 @@
 package com.dhbw.unternehmenb.ssp.model;
 
+import com.dhbw.unternehmenb.ssp.model.dto.VacationRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -17,9 +18,21 @@ public class VacationRequest {
     @DBRef
     private User user;
     private Date vacationStart;
-    private Date VacationEnd;
+    private Date vacationEnd;
     private int vacationDays;
     private String comment;
     private Status status;
     private String rejectReason;
+
+    public VacationRequestDTO toDTO(){
+        return new VacationRequestDTO(
+                vacationRequestId,
+                vacationStart,
+                vacationEnd,
+                vacationDays,
+                comment,
+                status,
+                rejectReason
+        );
+    }
 }
