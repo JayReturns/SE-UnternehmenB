@@ -12,7 +12,7 @@ export interface Vacation {
 }
 
 export enum Status {
-  REQUSTED = "REQUSTED",
+  REQUESTED = "REQUESTED",
   APPROVED = "APPROVED",
   REJECTED = "REJECTED"
 }
