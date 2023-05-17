@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Urlaubsantrag bestätigen</h2>
+<mat-dialog-content>
+  <p>
+    <strong>Zeitraum:</strong>> {{vacation.vacationStart | date}} bis {{vacation.vacationEnd | date}}+
+  </p>
+  <p>
+    <strong>Kommentar:</strong> {{vacation.comment}}
+  </p>
+
+  <mat-dialog-actions align="end">
+    <button (click)="close()" color="warn" mat-raised-button>Abbrechen</button>
+    <button (click)="save()" color="primary" mat-raised-button >Bestätigen</button>
+  </mat-dialog-actions>
+</mat-dialog-content>

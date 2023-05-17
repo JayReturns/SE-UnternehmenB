@@ -6,8 +6,8 @@ export interface Vacation {
   vacationStart: Date;
   vacationEnd: Date;
   comment: string;
-  status: Status;
-  rejectReason: string;
+  status?: Status;
+  rejectReason?: string;
   vacationDays: number;
 }
 
