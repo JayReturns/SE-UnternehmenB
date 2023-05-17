@@ -19,5 +19,4 @@ public interface VacationRequestRepository extends MongoRepository<VacationReque
 
     List<VacationRequest> findByUserOrderByVacationStartDesc(User user);
 
-    List<VacationRequest> findByUser(User user);
 }
