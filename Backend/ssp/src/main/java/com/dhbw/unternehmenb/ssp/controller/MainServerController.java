@@ -94,7 +94,7 @@ public class MainServerController implements ServerApi {
 
 
         VacationRequest vacationRequest = new VacationRequest(
-                UUID.randomUUID().toString(),
+                UUID.randomUUID(),
                 user,
                 startDate,
                 endDate,

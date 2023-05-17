@@ -8,13 +8,14 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @Document(collection="VacationRequest")
 public class VacationRequest {
     @Id
-    private String vacationRequestId;
+    private UUID vacationRequestId;
     @JsonIgnore
     @DBRef
     private User user;
