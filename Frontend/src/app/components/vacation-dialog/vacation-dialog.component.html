@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Urlaub beantragen</h2>
+<mat-dialog-content [formGroup]="vacationForm">
+  <mat-form-field appearance="fill">
+    <mat-label>Zeitraum</mat-label>
+    <mat-date-range-input [rangePicker]="picker">
+      <input formControlName="start" matStartDate placeholder="Startdatum" (dateChange)="handleDateChanges()" required>
+      <input formControlName="end" matEndDate placeholder="Enddatum" (dateChange)="handleDateChanges()" required>
+    </mat-date-range-input>
+    <mat-hint>DD.MM.YYYY - DD.MM.YYYY</mat-hint>
+    <mat-datepicker-toggle [for]="picker" matIconSuffix></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Dauer</mat-label>
+    <input matInput type="number" min="1" formControlName="duration" placeholder="5" required>
+  </mat-form-field>
+
+  <mat-form-field>
+    <textarea formControlName="comment" matInput placeholder="Kommentar" [maxLength]="maxCommentLength" #comment></textarea>
+    <mat-hint align="end">{{comment.value.length}}/{{maxCommentLength}}</mat-hint>
+  </mat-form-field>
+
+  <mat-dialog-actions align="end">
+    <button (click)="close()" mat-raised-button>Abbrechen</button>
+    <button (click)="onSubmit()" color="primary" mat-raised-button [disabled]="!vacationForm.valid">Beantragen</button>
+  </mat-dialog-actions>
+
+</mat-dialog-content>
