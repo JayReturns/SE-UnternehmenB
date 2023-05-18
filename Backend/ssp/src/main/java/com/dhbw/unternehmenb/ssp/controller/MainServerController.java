@@ -143,4 +143,59 @@ public class MainServerController implements ServerApi {
 
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<String> putVacationRequest(
+            String vacationId,
+            LocalDate begin,
+            LocalDate end,
+            Integer days,
+            String note,
+            Status status,
+            String rejection_cause
+    ) throws Exception {
+        User currentUser = getCurrentUser();
+        if (currentUser == null){
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        UUID id = UUID.fromString(vacationId);
+        Optional<VacationRequest> vacationRequest = vacationRequestRepository.findById(id);
+        if(vacationRequest.isEmpty()){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        VacationRequest vRequest = vacationRequest.get();
+        if(begin != null || end != null){
+            if(begin == null) begin = vRequest.getVacationStart();
+            if(end == null) end = vRequest.getVacationEnd();
+            if (end.isBefore(begin))
+                return new ResponseEntity<>("End date is before start date!", HttpStatus.BAD_REQUEST);
+
+            if (vacationRequestRepository.existsByUserAndVacationRequestIdNotAndVacationStartBetweenOrVacationEndBetween(currentUser, id, begin, end, begin, end))
+                return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
+            if (vacationRequestRepository.existsByUserAndVacationRequestIdNotAndVacationStartIsOrVacationEndIs(currentUser, id, begin, end))
+                return new ResponseEntity<>("Vacation request for those dates already exists!", HttpStatus.BAD_REQUEST);
+
+            vRequest.setVacationStart(begin);
+            vRequest.setVacationEnd(end);
+        }
+        if(days != null){
+            vRequest.setDuration(days);
+        }
+        if(note != null){
+            vRequest.setComment(note);
+        }
+        if(currentUser.getRole() == Role.MANAGER){
+            if(status != null){
+                vRequest.setStatus(status);
+            }
+            if(rejection_cause != null){
+                vRequest.setRejectReason(rejection_cause);
+            }
+        }
+        if(status != null || rejection_cause != null){
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        vacationRequestRepository.save(vRequest);
+        return new ResponseEntity<>("Erfolgreich geändert", HttpStatus.OK);
+    }
 }
