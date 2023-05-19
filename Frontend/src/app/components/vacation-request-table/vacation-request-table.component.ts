@@ -8,7 +8,7 @@ import {Vacation} from "../../models/vacation.model";
 @Component({
   selector: 'app-vacation-request-table',
   templateUrl: './vacation-request-table.component.html',
-  styleUrls: ['./vacation-request-table.component.css']
+  styleUrls: ['./vacation-request-table.component.scss']
 })
 export class VacationRequestTableComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
