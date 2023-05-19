@@ -1,35 +1,51 @@
-import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { map } from 'rxjs/operators';
-import { Observable, of as observableOf, merge } from 'rxjs';
+import {DataSource} from '@angular/cdk/collections';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {map} from 'rxjs/operators';
+import {merge, Observable, of as observableOf} from 'rxjs';
 
-export interface VacationRequestTableItem {
+interface VacationRequestTableItem {
   vac_id: number;
   start_date: Date;
   end_date: Date;
-  duration: number;
-  comment: string;
   status: string;
+  last_name?: string;
+  first_name?: string;
+  duration?: number;
+  comment?: string;
+  reject_reason?: string;
 }
 
-export interface VacationRequestTableItem_GL {
-  vac_id: number;
-  first_name: string;
-  last_name: string;
-  start_date: Date;
-  end_date: Date;
-  duration: number;
-  comment: string;
-  status: string;
-}
+export type VRTableItem_Employee = Omit<VacationRequestTableItem, "last_name" | "first_name">
 
+export type VRTableItem_Manager = VacationRequestTableItem
 
 // TODO: replace with db data (GET vacation request)
-const EXAMPLE_DATA: VacationRequestTableItem[] = [
-  {vac_id: 1, start_date: new Date('2023-05-01'), end_date: new Date('2023-05-31'), duration: 20, comment: 'Ich bin ein Kommentar', status: 'In Bearbeitung'},
-  {vac_id: 2, start_date: new Date('2023-05-01'), end_date: new Date('2023-05-31'), duration: 20, comment: 'Ich bin ein Kommentar', status: 'Abgelehnt'},
-  {vac_id: 3, start_date: new Date('2023-05-01'), end_date: new Date('2023-05-31'), duration: 20, comment: 'Ich bin ein Kommentar', status: 'Genehmigt'},
+const EXAMPLE_DATA: (VRTableItem_Employee)[] = [
+  {
+    vac_id: 1,
+    start_date: new Date('2023-05-01'),
+    end_date: new Date('2023-05-31'),
+    duration: 20,
+    comment: 'Ich bin ein Kommentar',
+    status: 'In Bearbeitung'
+  },
+  {
+    vac_id: 2,
+    start_date: new Date('2023-05-01'),
+    end_date: new Date('2023-05-31'),
+    duration: 20,
+    comment: 'Ich bin ein Kommentar',
+    status: 'Abgelehnt'
+  },
+  {
+    vac_id: 3,
+    start_date: new Date('2023-05-01'),
+    end_date: new Date('2023-05-31'),
+    duration: 20,
+    comment: 'Ich bin ein Kommentar',
+    status: 'Genehmigt'
+  },
 
 ];
 
@@ -58,7 +74,7 @@ export class VacationRequestTableDataSource extends DataSource<VacationRequestTa
       // stream for the data-table to consume.
       return merge(observableOf(this.data), this.paginator.page, this.sort.sortChange)
         .pipe(map(() => {
-          return this.getPagedData(this.getSortedData([...this.data ]));
+          return this.getPagedData(this.getSortedData([...this.data]));
         }));
     } else {
       throw Error('Please set the paginator and sort on the data source before connecting.');
@@ -69,7 +85,8 @@ export class VacationRequestTableDataSource extends DataSource<VacationRequestTa
    *  Called when the table is being destroyed. Use this function, to clean up
    * any open connections or free any held resources that were set up during connect.
    */
-  disconnect(): void {}
+  disconnect(): void {
+  }
 
   /**
    * Paginate the data (client-side). If you're using server-side pagination,
@@ -95,15 +112,11 @@ export class VacationRequestTableDataSource extends DataSource<VacationRequestTa
 
     return data.sort((a, b) => {
       const isAsc = this.sort?.direction === 'asc';
-      switch (this.sort?.active) {
-        case 'id': return compare(+a.vac_id, +b.vac_id, isAsc);
-        case 'start_date': return compare(+a.start_date, +b.start_date, isAsc);
-        case 'end_date': return compare(+a.end_date, +b.end_date, isAsc);
-        case 'duration': return compare(+a.duration, +b.duration, isAsc);
-        case 'comment': return compare(+a.comment, +b.comment, isAsc);
-        case 'status': return compare(+a.status, +b.status, isAsc);
-        default: return 0;
-      }
+      const field_name = this.sort?.active;
+
+      // @ts-ignore
+      return field_name == undefined? 0 : compare(+a[field_name], +b[field_name], isAsc);
+
     });
   }
 }
