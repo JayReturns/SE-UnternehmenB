@@ -159,7 +159,7 @@ public class MainServerController implements ServerApi {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         UUID id = UUID.fromString(vacationId);
-        Optional<VacationRequest> vacationRequest = vacationRequestRepository.findById(id);
+        Optional<VacationRequest> vacationRequest = vacationRequestRepository.findById(id); // findall
         if(vacationRequest.isEmpty()){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
@@ -170,11 +170,24 @@ public class MainServerController implements ServerApi {
             if (end.isBefore(begin))
                 return new ResponseEntity<>("End date is before start date!", HttpStatus.BAD_REQUEST);
 
-            if (vacationRequestRepository.existsByUserAndVacationRequestIdNotAndVacationStartBetweenOrVacationEndBetween(currentUser, id, begin, end, begin, end))
+            //if (vacationRequestRepository.checkExistingRequestsForDate(currentUser, id, begin, end))
+            //return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
+            List<VacationRequest> allVacations = vacationRequestRepository.findAllByUser(currentUser);
+            LocalDate finalBegin = begin;
+            LocalDate finalEnd = end;
+            logger.atInfo().log(vRequest.getVacationStart().toString() + " hier jetzt das enddatum: " + vRequest.getVacationEnd().toString());
+            Optional<VacationRequest> filteredVacations = allVacations.stream()
+                    .filter(vacationRequest1 ->
+                            !vacationRequest1.getVacationRequestId().equals(id) &&
+                                    ((!vacationRequest1.getVacationStart().isBefore(finalBegin) &&
+                                            !vacationRequest1.getVacationStart().isAfter(finalEnd)) ||
+                                    (!vacationRequest1.getVacationEnd().isBefore(finalBegin) &&
+                                            !vacationRequest1.getVacationEnd().isAfter(finalEnd)))
+                    )
+                    .findFirst();
+            if(filteredVacations.isPresent()){
                 return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
-            if (vacationRequestRepository.existsByUserAndVacationRequestIdNotAndVacationStartIsOrVacationEndIs(currentUser, id, begin, end))
-                return new ResponseEntity<>("Vacation request for those dates already exists!", HttpStatus.BAD_REQUEST);
-
+            }
             vRequest.setVacationStart(begin);
             vRequest.setVacationEnd(end);
         }
