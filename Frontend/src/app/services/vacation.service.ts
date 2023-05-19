@@ -16,11 +16,15 @@ export class VacationService {
 
   constructor(private http: HttpClient, private messageService: MessageService) { }
 
+  getUserVacationRequest(){
+
+  }
+
   makeVacationRequest(vacation: Vacation) {
     let params = new HttpParams()
-      .set('startDate', this.formatDateToIsoDate(vacation.vacationStart))
-      .set('endDate', this.formatDateToIsoDate(vacation.vacationEnd))
-      .set('duration', vacation.vacationDays)
+      .set('startDate', this.formatDateToIsoDate(vacation.start))
+      .set('endDate', this.formatDateToIsoDate(vacation.end))
+      .set('duration', vacation.duration)
       .set('comment', vacation.comment)
 
     return this.http.post(this.url, null, {params: params})
