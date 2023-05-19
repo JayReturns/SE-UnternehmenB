@@ -1,6 +1,5 @@
 import {Injectable, NgZone} from '@angular/core';
-import {User} from "./user";
-import {AngularFirestore, AngularFirestoreDocument} from "@angular/fire/compat/firestore";
+import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {AngularFireAuth} from '@angular/fire/compat/auth';
 import {Router} from "@angular/router";
 
@@ -45,8 +44,7 @@ export class AuthService {
   SignIn(email: string, password: string) {
     return this.afAuth
       .signInWithEmailAndPassword(email, password)
-      .then((result) => {
-        this.SetUserData(result.user);
+      .then(() => {
         this.afAuth.authState.subscribe((user) => {
           if (user) {
             user.getIdToken(false).then(token => {
@@ -65,11 +63,10 @@ export class AuthService {
   SignUp(email: string, password: string) {
     return this.afAuth
       .createUserWithEmailAndPassword(email, password)
-      .then((result) => {
+      .then(() => {
         /* Call the SendVerificaitonMail() function when new user sign
         up and returns promise */
         this.SendVerificationMail();
-        this.SetUserData(result.user);
       })
       .catch((error) => {
         window.alert(error.message);
@@ -95,38 +92,6 @@ export class AuthService {
       .catch((error) => {
         window.alert(error);
       });
-  }
-
-  // Auth logic to run auth providers
-  AuthLogin(provider: any) {
-    return this.afAuth
-      .signInWithPopup(provider)
-      .then((result) => {
-        this.router.navigate(['dashboard']);
-        this.SetUserData(result.user);
-      })
-      .catch((error) => {
-        window.alert(error);
-      });
-  }
-
-  /* Setting up user data when sign in with username/password,
-  sign up with username/password and sign in with social auth
-  provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
-  SetUserData(user: any) {
-    const userRef: AngularFirestoreDocument<any> = this.afs.doc(
-      `users/${user.uid}`
-    );
-    const userData: User = {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      emailVerified: user.emailVerified,
-    };
-    return userRef.set(userData, {
-      merge: true,
-    });
   }
 
   // Sign out
