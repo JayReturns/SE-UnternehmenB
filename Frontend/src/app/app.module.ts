@@ -22,6 +22,10 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {MaterialModule} from "../material.module";
 import {ReactiveFormsModule} from "@angular/forms";
 import {AuthInterceptor} from "./interceptor/auth.interceptor";
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { VacationRequestTableComponent } from './components/vacation-request-table/vacation-request-table.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +34,8 @@ import {AuthInterceptor} from "./interceptor/auth.interceptor";
     SignUpComponent,
     ForgotPasswordComponent,
     VerifyEmailComponent,
-    DashboardComponent
+    DashboardComponent,
+    VacationRequestTableComponent,
   ],
     imports: [
         BrowserModule,
@@ -45,7 +50,10 @@ import {AuthInterceptor} from "./interceptor/auth.interceptor";
         AngularFireDatabaseModule,
         HttpClientModule,
         MaterialModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatSortModule
     ],
   providers: [AuthService],
   bootstrap: [AppComponent]
