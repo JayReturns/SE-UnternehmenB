@@ -11,6 +11,7 @@ import {catchError} from "rxjs";
 export class VacationService {
 
   private url = `${environment.baseApiUrl}/api/v1/vacation_request`;
+  private readonly manager_suffix = "/all"
 
 
   constructor(private http: HttpClient, private messageService: MessageService) { }

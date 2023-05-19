@@ -3,48 +3,33 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {map} from 'rxjs/operators';
 import {merge, Observable, of as observableOf} from 'rxjs';
-
-interface VacationRequestTableItem {
-  vac_id: number;
-  start_date: Date;
-  end_date: Date;
-  status: string;
-  last_name?: string;
-  first_name?: string;
-  duration?: number;
-  comment?: string;
-  reject_reason?: string;
-}
-
-export type VRTableItem_Employee = Omit<VacationRequestTableItem, "last_name" | "first_name">
-
-export type VRTableItem_Manager = VacationRequestTableItem
+import {Status, Vacation} from "../../models/vacation.model";
 
 // TODO: replace with db data (GET vacation request)
-const EXAMPLE_DATA: (VRTableItem_Employee)[] = [
+const EXAMPLE_DATA: (Vacation)[] = [
   {
-    vac_id: 1,
-    start_date: new Date('2023-05-01'),
-    end_date: new Date('2023-05-31'),
+    vacationRequestId: "1",
+    start: new Date('2023-05-01'),
+    end: new Date('2023-05-31'),
     duration: 20,
     comment: 'Ich bin ein Kommentar',
-    status: 'In Bearbeitung'
+    status: Status.APPROVED
   },
   {
-    vac_id: 2,
-    start_date: new Date('2023-05-01'),
-    end_date: new Date('2023-05-31'),
+    vacationRequestId: "2",
+    start: new Date('2023-05-01'),
+    end: new Date('2023-05-31'),
     duration: 20,
     comment: 'Ich bin ein Kommentar',
-    status: 'Abgelehnt'
+    status: Status.REQUESTED
   },
   {
-    vac_id: 3,
-    start_date: new Date('2023-05-01'),
-    end_date: new Date('2023-05-31'),
+    vacationRequestId: "3",
+    start: new Date('2023-05-01'),
+    end: new Date('2023-05-31'),
     duration: 20,
     comment: 'Ich bin ein Kommentar',
-    status: 'Genehmigt'
+    status: Status.REJECTED
   },
 
 ];
@@ -54,8 +39,8 @@ const EXAMPLE_DATA: (VRTableItem_Employee)[] = [
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class VacationRequestTableDataSource extends DataSource<VacationRequestTableItem> {
-  data: VacationRequestTableItem[] = EXAMPLE_DATA;
+export class VacationRequestTableDataSource extends DataSource<Vacation> {
+  data: Vacation[] = EXAMPLE_DATA;
   paginator: MatPaginator | undefined;
   sort: MatSort | undefined;
 
@@ -68,7 +53,7 @@ export class VacationRequestTableDataSource extends DataSource<VacationRequestTa
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<VacationRequestTableItem[]> {
+  connect(): Observable<Vacation[]> {
     if (this.paginator && this.sort) {
       // Combine everything that affects the rendered data into one update
       // stream for the data-table to consume.
@@ -92,7 +77,7 @@ export class VacationRequestTableDataSource extends DataSource<VacationRequestTa
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: VacationRequestTableItem[]): VacationRequestTableItem[] {
+  private getPagedData(data: Vacation[]): Vacation[] {
     if (this.paginator) {
       const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
       return data.splice(startIndex, this.paginator.pageSize);
@@ -105,7 +90,7 @@ export class VacationRequestTableDataSource extends DataSource<VacationRequestTa
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: VacationRequestTableItem[]): VacationRequestTableItem[] {
+  private getSortedData(data: Vacation[]): Vacation[] {
     if (!this.sort || !this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -116,7 +101,15 @@ export class VacationRequestTableDataSource extends DataSource<VacationRequestTa
 
       // @ts-ignore
       return field_name == undefined? 0 : compare(+a[field_name], +b[field_name], isAsc);
-
+      //switch (this.sort?.active) {
+      //  case 'nr': return compare(+a.vacationRequestId!, +b.vacationRequestId!, isAsc);
+      //  case 'start': return compare(+a.start, +b.start, isAsc);
+      //  case 'end': return compare(+a.end, +b.end, isAsc);
+      //  case 'duration': return compare(+a.duration, +b.duration, isAsc);
+      //  case 'comment': return compare(+a.comment, +b.comment, isAsc);
+      //  case 'status': return compare(+a.status!, +b.status!, isAsc);
+      //  default: return 0;
+      //}
     });
   }
 }
