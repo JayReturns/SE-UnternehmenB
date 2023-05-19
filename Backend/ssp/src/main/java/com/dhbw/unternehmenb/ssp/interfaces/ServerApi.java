@@ -2,15 +2,18 @@ package com.dhbw.unternehmenb.ssp.interfaces;
 
 import com.dhbw.unternehmenb.ssp.model.Role;
 import com.dhbw.unternehmenb.ssp.model.User;
+import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
 import com.dhbw.unternehmenb.ssp.model.VacationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +39,7 @@ public interface ServerApi {
             @ApiResponse(responseCode = "200", description = "User sent", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
+    @Tag(name = "User")
     ResponseEntity<User> getUserData() throws Exception;
 
 
@@ -45,6 +49,7 @@ public interface ServerApi {
             @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content),
             @ApiResponse(responseCode = "409", description = "User already exists", content = @Content)
     })
+    @Tag(name = "User")
     ResponseEntity<String> createUser(
             @RequestParam String name,
             @RequestParam String lastname,
@@ -60,6 +65,7 @@ public interface ServerApi {
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
             @ApiResponse(responseCode = "500", description = "Vacation Request not created", content = @Content),
     })
+    @Tag(name = "VacationRequests")
     ResponseEntity<String> createVacationRequest(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
@@ -73,5 +79,16 @@ public interface ServerApi {
             @ApiResponse(responseCode = "200", description = "Vacation requests sent", content = @Content(mediaType = "application/json", schema = @Schema(implementation = VacationRequest.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
+    @Tag(name = "VacationRequests")
     ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser() throws Exception;
+
+    @GetMapping("/vacation_request/all")
+    @Operation(summary = "Alle Urlaubsanträge für den Geschäftsleiter anfragen")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Daten erhalten", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AllUsersVRResponseBody.class)))),
+            @ApiResponse(responseCode = "401", description = "User nicht angemeldet oder kein Geschäftsleiter", content = @Content)
+    })
+    @Tag(name = "VacationRequests")
+    ResponseEntity<List<AllUsersVRResponseBody>> getAllVRs() throws Exception;
+
 }

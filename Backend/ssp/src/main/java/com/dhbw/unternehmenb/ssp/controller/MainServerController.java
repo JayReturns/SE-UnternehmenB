@@ -6,23 +6,30 @@ import com.dhbw.unternehmenb.ssp.model.Role;
 import com.dhbw.unternehmenb.ssp.model.Status;
 import com.dhbw.unternehmenb.ssp.model.User;
 import com.dhbw.unternehmenb.ssp.model.VacationRequest;
+import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
 import com.dhbw.unternehmenb.ssp.view.UserRepository;
 import com.dhbw.unternehmenb.ssp.view.VacationRequestRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.*;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 public class MainServerController implements ServerApi {
+    //please don't delete the unused Logger, just for quick debugging
+    private final Logger logger = LoggerFactory.getLogger(MainServerController.class);
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -117,5 +124,23 @@ public class MainServerController implements ServerApi {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserOrderByVacationStartDesc(user);
         return new ResponseEntity<>(vacationRequests, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<AllUsersVRResponseBody>> getAllVRs() throws Exception {
+        User currentUser = getCurrentUser();
+
+        if (currentUser == null || currentUser.getRole() != Role.MANAGER){
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        List<AllUsersVRResponseBody> responseBody = new ArrayList<>();
+        Sort sort = Sort.by(Sort.Direction.DESC, "user").and(Sort.by(Sort.Direction.DESC,"vacationStart"));
+        List<VacationRequest> allRequests = vacationRequestRepository.findAll(sort);
+        allRequests.stream()
+                .collect(Collectors.groupingBy(VacationRequest::getUser) )
+                .forEach( (user, requests) -> responseBody.add(new AllUsersVRResponseBody(user, requests)));
+
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 }
