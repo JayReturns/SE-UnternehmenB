@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -117,5 +118,27 @@ public class MainServerController implements ServerApi {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserOrderByVacationStartDesc(user);
         return new ResponseEntity<>(vacationRequests, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<String> deleteVacationRequest(String vacationRequestId) {
+        UUID requestId = UUID.fromString(vacationRequestId);
+        Optional<VacationRequest> optionalVacationRequest = vacationRequestRepository.findById(requestId);
+        if (optionalVacationRequest.isEmpty()) {
+            return new ResponseEntity<>("Vacation Request not found!", HttpStatus.NOT_FOUND);
+        }
+
+        VacationRequest vacationRequest = optionalVacationRequest.get();
+
+        if (vacationRequest.getStatus() == Status.APPROVED) {
+            return new ResponseEntity<>("Cannot delete an approved Vacation Request!", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            vacationRequestRepository.deleteByVacationRequestId(requestId);
+            return new ResponseEntity<>("Vacation Request deleted successfully!", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

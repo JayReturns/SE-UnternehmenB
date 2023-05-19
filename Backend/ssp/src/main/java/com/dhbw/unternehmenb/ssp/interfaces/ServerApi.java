@@ -13,13 +13,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @RequestMapping("api/v1")
 @SecurityScheme(
@@ -74,4 +72,13 @@ public interface ServerApi {
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser() throws Exception;
+
+    @DeleteMapping("vacation_request")
+    @Operation(summary = "Delete Vacation Request by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Vacation Request deleted successfully", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Vacation Request not found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Failed to delete Vacation Request", content = @Content),
+    })
+    ResponseEntity<String> deleteVacationRequest(@RequestParam String vacationRequestId) throws Exception;
 }
