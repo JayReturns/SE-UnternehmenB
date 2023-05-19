@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {LOCALE_ID, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -26,6 +26,13 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { VacationRequestTableComponent } from './components/vacation-request-table/vacation-request-table.component';
+import { VacationDialogComponent } from './components/vacation-dialog/vacation-dialog.component';
+import {MAT_DATE_LOCALE, DateAdapter} from "@angular/material/core";
+import { VacationConfirmationPopupComponent } from './components/vacation-confirmation-popup/vacation-confirmation-popup.component';
+import {StartOfWeekAdapter} from "./adapter/start-of-week.adapter";
+import {registerLocaleData} from "@angular/common";
+import localeDe from '@angular/common/locales/de'
+registerLocaleData(localeDe)
 
 @NgModule({
   declarations: [
@@ -36,6 +43,9 @@ import { VacationRequestTableComponent } from './components/vacation-request-tab
     VerifyEmailComponent,
     DashboardComponent,
     VacationRequestTableComponent,
+    DashboardComponent,
+    VacationDialogComponent,
+    VacationConfirmationPopupComponent
   ],
     imports: [
         BrowserModule,
@@ -55,7 +65,12 @@ import { VacationRequestTableComponent } from './components/vacation-request-tab
         MatPaginatorModule,
         MatSortModule
     ],
-  providers: [AuthService],
+  providers: [AuthService,
+    {provide: MAT_DATE_LOCALE, useValue: 'de-DE'},
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+    {provide: DateAdapter, useClass: StartOfWeekAdapter},
+    {provide: LOCALE_ID, useValue: 'de-DE'}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -24,7 +24,6 @@ export class SignInComponent {
     if (!this.form.valid) {
       this.messageService.notifyUser("Malformatted Credentials!")
     }
-    console.log(this.form);
     this.authService.SignIn(this.form.get('email')!.value, this.form.get('password')!.value);
   }
 
