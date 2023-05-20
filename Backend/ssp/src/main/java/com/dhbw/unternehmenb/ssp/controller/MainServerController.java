@@ -159,7 +159,7 @@ public class MainServerController implements ServerApi {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         UUID id = UUID.fromString(vacationId);
-        Optional<VacationRequest> vacationRequest = vacationRequestRepository.findById(id); // findall
+        Optional<VacationRequest> vacationRequest = vacationRequestRepository.findById(id);
         if(vacationRequest.isEmpty()){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
@@ -170,12 +170,9 @@ public class MainServerController implements ServerApi {
             if (end.isBefore(begin))
                 return new ResponseEntity<>("End date is before start date!", HttpStatus.BAD_REQUEST);
 
-            //if (vacationRequestRepository.checkExistingRequestsForDate(currentUser, id, begin, end))
-            //return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
-            List<VacationRequest> allVacations = vacationRequestRepository.findAllByUser(currentUser);
+            List<VacationRequest> allVacations = vacationRequestRepository.findAllByUser(vRequest.getUser());
             LocalDate finalBegin = begin;
             LocalDate finalEnd = end;
-            logger.atInfo().log(vRequest.getVacationStart().toString() + " hier jetzt das enddatum: " + vRequest.getVacationEnd().toString());
             Optional<VacationRequest> filteredVacations = allVacations.stream()
                     .filter(vacationRequest1 ->
                             !vacationRequest1.getVacationRequestId().equals(id) &&
@@ -205,7 +202,7 @@ public class MainServerController implements ServerApi {
                 vRequest.setRejectReason(rejection_cause);
             }
         }
-        if(status != null || rejection_cause != null){
+        else if(status != null || rejection_cause != null){
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         vacationRequestRepository.save(vRequest);
