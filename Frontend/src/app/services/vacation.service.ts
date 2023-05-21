@@ -22,8 +22,8 @@ export class VacationService {
 
   makeVacationRequest(vacation: Vacation) {
     let params = new HttpParams()
-      .set('startDate', this.formatDateToIsoDate(vacation.start))
-      .set('endDate', this.formatDateToIsoDate(vacation.end))
+      .set('startDate', this.formatDateToIsoDate(vacation.vacationStart))
+      .set('endDate', this.formatDateToIsoDate(vacation.vacationEnd))
       .set('duration', vacation.duration)
       .set('comment', vacation.comment)
 

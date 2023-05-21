@@ -33,8 +33,8 @@ export class VacationDialogComponent {
       return;
     }
     const vacation: Vacation = {
-      start: this.vacationForm.controls['start'].value!,
-      end: this.vacationForm.controls['end'].value!,
+      vacationStart: this.vacationForm.controls['start'].value!,
+      vacationEnd: this.vacationForm.controls['end'].value!,
       duration: this.vacationForm.controls['duration'].value!,
       comment: this.vacationForm.controls['comment'].value || ""
     }

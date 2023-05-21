@@ -9,13 +9,13 @@
     <!-- Start Column -->
     <ng-container matColumnDef="start">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Start</th>
-      <td mat-cell *matCellDef="let row">{{row.start.toLocaleDateString()}}</td>
+      <td mat-cell *matCellDef="let row">{{row.vacationStart.toLocaleDateString()}}</td>
     </ng-container>
 
     <!-- End Column -->
     <ng-container matColumnDef="end">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Ende</th>
-      <td mat-cell *matCellDef="let row">{{row.end.toLocaleDateString()}}</td>
+      <td mat-cell *matCellDef="let row">{{row.vacationEnd.toLocaleDateString()}}</td>
     </ng-container>
 
     <!-- Duration Column -->
