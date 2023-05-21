@@ -41,6 +41,7 @@ const EXAMPLE_DATA: (Vacation)[] = [
   styleUrls: ['./vacation-request-table.component.scss']
 })
 export class VacationRequestTableComponent implements AfterViewInit {
+  @Input() forManager = true;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Vacation>;
@@ -49,13 +50,34 @@ export class VacationRequestTableComponent implements AfterViewInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['nr', 'start', 'end', 'duration', 'comment', 'status'];
 
-  constructor() {
-    this.dataSource = new VacationRequestTableDataSource();
+  constructor(private vacationService: VacationService) {
+    this.refresh()
   }
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
     this.dataSource.data = EXAMPLE_DATA
+  }
+
+  refresh() {
+    console.log("Get vacation data")
+    this.getData().subscribe(vacations => {
+      console.log("New data is there", vacations)
+      this.dataSource.data = vacations
+      console.log("Data rendered")
+    })
+  }
+
+  getData() {
+    if (this.forManager) {
+      return this.vacationService.getAllVacationRequests().pipe(map(v => this.castToVacation(v)))
+    } else {
+      return this.vacationService.getVacationRequests();
+    }
+  }
+
+  castToVacation(data: GroupedVacation[]): Vacation[] {
+    return data.map(d => d.requests).flat()
   }
 }
