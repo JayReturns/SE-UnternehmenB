@@ -6,8 +6,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
-public interface VacationRequestRepository extends MongoRepository<VacationRequest,String> {
+public interface VacationRequestRepository extends MongoRepository<VacationRequest, UUID> {
     boolean existsByUserAndVacationStartBetweenOrVacationEndBetween(
             User user,
             LocalDate vacationStart,
@@ -18,5 +19,7 @@ public interface VacationRequestRepository extends MongoRepository<VacationReque
     boolean existsByUserAndVacationStartIsOrVacationEndIs(User user, LocalDate vacationStart, LocalDate vacationEnd);
 
     List<VacationRequest> findByUserOrderByVacationStartDesc(User user);
+
+    List<VacationRequest> findAllByUser(User user);
 
 }

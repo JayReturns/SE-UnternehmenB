@@ -1,6 +1,7 @@
 package com.dhbw.unternehmenb.ssp.interfaces;
 
 import com.dhbw.unternehmenb.ssp.model.Role;
+import com.dhbw.unternehmenb.ssp.model.Status;
 import com.dhbw.unternehmenb.ssp.model.User;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
 import com.dhbw.unternehmenb.ssp.model.VacationRequest;
@@ -16,10 +17,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -91,4 +89,19 @@ public interface ServerApi {
     @Tag(name = "VacationRequests")
     ResponseEntity<List<AllUsersVRResponseBody>> getAllVRs() throws Exception;
 
+    @PutMapping("/vacation_request")
+    @Operation(summary = "Urlaubsanträge bearbeiten")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "vacation request updated", content = @Content)
+    })
+    @Tag(name = "VacationRequests")
+    ResponseEntity<String> putVacationRequest(
+            @RequestParam String vacationId,
+            @RequestParam(required = false) LocalDate begin,
+            @RequestParam(required = false) LocalDate end,
+            @RequestParam(required = false) Integer days,
+            @RequestParam(required = false) String note,
+            @RequestParam(required = false) Status status,
+            @RequestParam(required = false) String rejection_cause
+    ) throws Exception;
 }
