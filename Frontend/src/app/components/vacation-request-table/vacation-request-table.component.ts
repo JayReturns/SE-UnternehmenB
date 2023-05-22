@@ -41,14 +41,14 @@ const EXAMPLE_DATA: (Vacation)[] = [
   styleUrls: ['./vacation-request-table.component.scss']
 })
 export class VacationRequestTableComponent implements AfterViewInit {
-  @Input() forManager = true;
+  @Input() forManager = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Vacation>;
   dataSource = new MatTableDataSource();
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['nr', 'start', 'end', 'duration', 'comment', 'status'];
+  displayedColumns = ['nr', 'vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
 
   constructor(private vacationService: VacationService) {
     if (this.forManager) {
@@ -61,6 +61,7 @@ export class VacationRequestTableComponent implements AfterViewInit {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
     this.dataSource.data = EXAMPLE_DATA
+    this.dataSource.sortingDataAccessor = (item, property) => this.sortData(item as Vacation, property)
   }
 
   refresh() {
@@ -80,7 +81,25 @@ export class VacationRequestTableComponent implements AfterViewInit {
     }
   }
 
+
+  sortData(item: Vacation, property: string): string | number {
+    switch (property) {
+      case 'name': {
+        return (item.user?.lastName || "") + ", " + (item.user?.name || "");
+      }
+      default: {
+        // @ts-ignore
+        return item[property];
+      }
+    }
+  }
+
   castToVacation(data: GroupedVacation[]): Vacation[] {
-    return data.map(d => d.requests).flat()
+    return data.map(d =>
+      d.requests.map(r => {
+        r.user = d.user
+        return r
+      })
+    ).flat()
   }
 }
