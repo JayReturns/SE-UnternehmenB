@@ -51,6 +51,9 @@ export class VacationRequestTableComponent implements AfterViewInit {
   displayedColumns = ['nr', 'start', 'end', 'duration', 'comment', 'status'];
 
   constructor(private vacationService: VacationService) {
+    if (this.forManager) {
+      this.displayedColumns = [this.displayedColumns[0], 'name', ...this.displayedColumns.slice(1)]
+    }
     this.refresh()
   }
 
