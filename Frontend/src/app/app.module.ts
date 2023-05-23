@@ -22,6 +22,10 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {MaterialModule} from "../material.module";
 import {ReactiveFormsModule} from "@angular/forms";
 import {AuthInterceptor} from "./interceptor/auth.interceptor";
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { VacationRequestTableComponent } from './components/vacation-request-table/vacation-request-table.component';
 import { VacationDialogComponent } from './components/vacation-dialog/vacation-dialog.component';
 import {MAT_DATE_LOCALE, DateAdapter} from "@angular/material/core";
 import { VacationConfirmationPopupComponent } from './components/vacation-confirmation-popup/vacation-confirmation-popup.component';
@@ -37,6 +41,8 @@ registerLocaleData(localeDe)
     SignUpComponent,
     ForgotPasswordComponent,
     VerifyEmailComponent,
+    DashboardComponent,
+    VacationRequestTableComponent,
     DashboardComponent,
     VacationDialogComponent,
     VacationConfirmationPopupComponent
@@ -54,7 +60,10 @@ registerLocaleData(localeDe)
         AngularFireDatabaseModule,
         HttpClientModule,
         MaterialModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatSortModule
     ],
   providers: [AuthService,
     {provide: MAT_DATE_LOCALE, useValue: 'de-DE'},
