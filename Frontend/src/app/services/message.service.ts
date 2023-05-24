@@ -16,7 +16,7 @@ export class MessageService {
 
   notifyUser(message: string) {
     this.snackbar.open(message,  "", {
-      duration: 2000,
+      duration: 10000,
       horizontalPosition: "center",
       verticalPosition: "bottom"
     });

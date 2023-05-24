@@ -32,10 +32,7 @@ export class VacationService {
       .set('duration', vacation.duration)
       .set('comment', vacation.comment)
 
-    return this.http.post(this.url, null, {params: params})
-      .pipe(
-        catchError(this.messageService.handleError('makeVacationRequest'))
-      );
+    return this.http.post(this.url, null, {params: params, responseType: "text"});
   }
 
   private insertDatesForVacation(data: Vacation[]): Vacation[] {
