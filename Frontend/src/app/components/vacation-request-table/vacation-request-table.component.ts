@@ -23,10 +23,16 @@ export class VacationRequestTableComponent implements AfterViewInit {
   dataSource = new MatTableDataSource();
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status', 'action'];
+  displayedColumns;
   snackbar: any;
 
   constructor(private vacationService: VacationService, public dialog: MatDialog, private messageService: MessageService) {
+    if (this.forManager) {
+      this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status', 'action'];
+    } else {
+      this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
+    }
+
   }
 
   ngAfterViewInit(): void {
