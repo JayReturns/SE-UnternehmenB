@@ -25,6 +25,7 @@ export class VacationService {
     return this.http.get<GroupedVacation[]>(this.url + this.getAllSuffix).pipe(map(data => this.insertDatesForGroupedVacation(data)))
   }
 
+
   makeVacationRequest(vacation: Vacation) {
     let params = new HttpParams()
       .set('startDate', this.formatDateToIsoDate(vacation.vacationStart))
@@ -36,6 +37,22 @@ export class VacationService {
       .pipe(
         catchError(this.messageService.handleError('makeVacationRequest'))
       );
+  }
+
+  acceptVacationRequest(vacationRequestId: string) {
+    let params = new HttpParams()
+      .set('vacationId', vacationRequestId)
+      .set('status', 'APPROVED')
+
+    return this.http.put(this.url, null, {params: params,responseType: "text"});
+  }
+
+  rejectVacationRequest(vacationRequestId: string) {
+    let params = new HttpParams()
+      .set('vacationId', vacationRequestId)
+      .set('status', 'REJECTED')
+
+    return this.http.put(this.url, null, {params: params,responseType: "text"});
   }
 
   private insertDatesForVacation(data: Vacation[]): Vacation[] {

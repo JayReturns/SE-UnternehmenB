@@ -12,14 +12,15 @@ import {map} from "rxjs/operators";
   styleUrls: ['./vacation-request-table.component.scss']
 })
 export class VacationRequestTableComponent implements AfterViewInit {
-  @Input() forManager = false;
+  @Input() forManager = true; //TODO change to false
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Vacation>;
   dataSource = new MatTableDataSource();
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
+  displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status', 'action'];
+  snackbar: any;
 
   constructor(private vacationService: VacationService) {
     if (this.forManager) {
@@ -62,6 +63,7 @@ export class VacationRequestTableComponent implements AfterViewInit {
     }
   }
 
+
   castToVacation(data: GroupedVacation[]): Vacation[] {
     return data.map(d =>
       d.requests.map(r => {
@@ -70,4 +72,15 @@ export class VacationRequestTableComponent implements AfterViewInit {
       })
     ).flat()
   }
+
+  accept(id: string) {
+    this.vacationService.acceptVacationRequest(id).subscribe(()=>this.refresh());
+  }
+
+  reject(id: string) {
+    this.vacationService.rejectVacationRequest(id).subscribe(()=>this.refresh());
+  }
+
 }
+
+

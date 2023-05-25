@@ -24,6 +24,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {AuthInterceptor} from "./interceptor/auth.interceptor";
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import { MatSortModule } from '@angular/material/sort';
 import { VacationRequestTableComponent } from './components/vacation-request-table/vacation-request-table.component';
 import { VacationDialogComponent } from './components/vacation-dialog/vacation-dialog.component';
@@ -63,6 +64,7 @@ registerLocaleData(localeDe)
         ReactiveFormsModule,
         MatTableModule,
         MatPaginatorModule,
+        MatTooltipModule,
         MatSortModule
     ],
   providers: [AuthService,
