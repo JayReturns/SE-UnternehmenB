@@ -1,50 +1,49 @@
+<div class="center-content">
+  <h3>Registrieren</h3>
 
-    <div class="center-content">
-      <h3>Registrieren</h3>
+  <mat-card class="card">
+    <form class="center" [formGroup]="form" (ngSubmit)="signup()">
 
-      <mat-card class="card">
-      <form class="center" [formGroup]="form" (ngSubmit)="signup()">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Email Addresse</mat-label>
+        <input matInput placeholder="Email" [email]="true" formControlName="email" required>
+        <mat-error *ngIf="form.hasError('required','email')">Bitte geben Sie eine Email-Adresse ein</mat-error>
+      </mat-form-field>
 
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Email Addresse</mat-label>
-            <input matInput placeholder="Email" [email]="true" formControlName="email" required>
-            <mat-error *ngIf="form.hasError('required','email')">Bitte geben Sie eine Email-Adresse ein</mat-error>
-          </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Vorname</mat-label>
+        <input matInput placeholder="Vorname" formControlName="name" required>
+        <mat-error *ngIf="form.hasError('required','name')">Bitte geben Sie Ihren Vornamen ein</mat-error>
+      </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Vorname</mat-label>
-          <input matInput placeholder="Vorname" formControlName="name" required>
-          <mat-error *ngIf="form.hasError('required','name')">Bitte geben Sie Ihren Vornamen ein</mat-error>
-        </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Nachname</mat-label>
+        <input matInput placeholder="Nachname" formControlName="lastname" required>
+        <mat-error *ngIf="form.hasError('required','lastname')">Bitte geben Sie Ihren Nachnamen ein</mat-error>
+      </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Nachname</mat-label>
-          <input matInput placeholder="Nachname" formControlName="lastname" required>
-          <mat-error *ngIf="form.hasError('required','lastname')">Bitte geben Sie Ihren Nachnamen ein</mat-error>
-        </mat-form-field>
-
-        <mat-form-field class="full-width">
-          <mat-label>Rolle</mat-label>
-          <mat-select formControlName="role" required value="EMPLOYEE">
-            <mat-option value="EMPLOYEE">Mitarbeiter</mat-option>
-            <mat-option value="MANAGER">Geschäftsführer</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Rolle</mat-label>
+        <mat-select formControlName="role" required value="EMPLOYEE">
+          <mat-option value="EMPLOYEE">Mitarbeiter</mat-option>
+          <mat-option value="MANAGER">Geschäftsführer</mat-option>
+        </mat-select>
+      </mat-form-field>
 
 
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Passwort</mat-label>
-            <input matInput placeholder="Passwort" formControlName="password" required type="password">
-            <mat-error *ngIf="form.hasError('required','email')">Bitte geben Sie ein Passwort ein</mat-error>
-          </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Passwort</mat-label>
+        <input matInput placeholder="Passwort" formControlName="password" required type="password">
+        <mat-error *ngIf="form.hasError('required','email')">Bitte geben Sie ein Passwort ein</mat-error>
+      </mat-form-field>
 
-        <button id="register_button" type="submit" mat-raised-button color="primary">Registrieren</button>
-      </form>
+      <button id="register_button" type="submit" mat-raised-button color="primary">Registrieren</button>
+    </form>
 
-        <div class="center padding">
+    <div class="center padding">
       <span>Bereits registriert? <span class="redirect" routerLink="/sign-in">Zur Anmeldung</span></span>
-        </div>
-      </mat-card>
     </div>
+  </mat-card>
+</div>
 
 

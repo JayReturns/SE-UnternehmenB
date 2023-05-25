@@ -1,19 +1,22 @@
-
 <div class="center-content">
   <h3 class="center">Vielen Dank für Ihre Registrierung</h3>
   <mat-card class="card">
-  <div class="formGroup" *ngIf="authService.userData as user">
-    <p class="text-center">Wir haben eine Bestätigungsmail an folgende Adresse gesendet:  <br /><strong>{{user.email}}</strong></p>
-    <p class="text-center">Bitte überprüfen Sie Ihr Email Postfach und klicken Sie auf den angegebenen Link um die Registrierung abzuschließen.</p>
-  </div>
-
-    <div class="center">
-   <button id="sendagain_button" mat-raised-button color="primary" (click)="authService.SendVerificationMail()">Email erneut senden</button>
+    <div class="formGroup" *ngIf="authService.userData as user">
+      <p class="text-center">Wir haben eine Bestätigungsmail an folgende Adresse gesendet:
+        <br/><strong>{{user.email}}</strong></p>
+      <p class="text-center">Bitte überprüfen Sie Ihr Email Postfach und klicken Sie auf den angegebenen Link um die
+        Registrierung abzuschließen.</p>
     </div>
 
-  <div class="center padding">
-    <span>Zurück? <span class="redirect" routerLink="/sign-in">Zur Anmeldung</span></span>
-  </div>
+    <div class="center">
+      <button id="sendagain_button" mat-raised-button color="primary" (click)="authService.SendVerificationMail()">Email
+        erneut senden
+      </button>
+    </div>
+
+    <div class="center padding">
+      <span>Zurück? <span class="redirect" routerLink="/sign-in">Zur Anmeldung</span></span>
+    </div>
   </mat-card>
 </div>
 

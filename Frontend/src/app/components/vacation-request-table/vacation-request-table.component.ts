@@ -23,7 +23,8 @@ export class VacationRequestTableComponent implements AfterViewInit {
   dataSource = new MatTableDataSource();
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
+  displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status', 'action'];
+  snackbar: any;
 
   constructor(private vacationService: VacationService, public dialog: MatDialog, private messageService: MessageService) {
   }
@@ -71,6 +72,7 @@ export class VacationRequestTableComponent implements AfterViewInit {
     }
   }
 
+
   castToVacation(data: GroupedVacation[]): Vacation[] {
     return data.map(d =>
       d.requests.map(r => {
@@ -78,6 +80,14 @@ export class VacationRequestTableComponent implements AfterViewInit {
         return r
       })
     ).flat()
+  }
+
+  accept(id: string) {
+    this.vacationService.acceptVacationRequest(id).subscribe(()=>this.refresh());
+  }
+
+  reject(id: string) {
+    this.vacationService.rejectVacationRequest(id).subscribe(()=>this.refresh());
   }
 
   openDialog() {
@@ -99,3 +109,5 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
 }
+
+
