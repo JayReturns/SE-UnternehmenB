@@ -12,7 +12,7 @@ import {map} from "rxjs/operators";
   styleUrls: ['./vacation-request-table.component.scss']
 })
 export class VacationRequestTableComponent implements AfterViewInit {
-  @Input() forManager = true; //TODO change to false
+  @Input() forManager = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Vacation>;
