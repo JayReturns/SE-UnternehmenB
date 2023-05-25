@@ -51,7 +51,9 @@
   </mat-paginator>
 </div>
 
-<button mat-raised-button color="accent" (click)="openDialog()" class="sticky">
-  Urlaub beantragen
-</button>
+<ng-template [ngIf]="!forManager">
+  <button mat-raised-button color="accent" (click)="openDialog()" class="sticky">
+    Urlaub beantragen
+  </button>
+</ng-template>
 
