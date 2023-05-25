@@ -9,6 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @AllArgsConstructor
 public class LeftAndMaxVacationDays {
     private int maxDays;
-    private AtomicInteger leftDays;
+    private int leftDays;
 
 }
