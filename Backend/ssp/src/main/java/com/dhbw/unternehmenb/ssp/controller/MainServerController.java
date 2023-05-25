@@ -132,10 +132,10 @@ public class MainServerController implements ServerApi {
         if (user == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         try {
-            LeftAndMaxVacationDays leftAndMaxVacationDays = getDaysLeftAndMaxDays(user,year);
+            LeftAndMaxVacationDays leftAndMaxVacationDays = getDaysLeftAndMaxDays(user, year);
             return new ResponseEntity<>(leftAndMaxVacationDays, HttpStatus.OK);
-        }catch (Exception e){
-            return  new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -143,16 +143,16 @@ public class MainServerController implements ServerApi {
     public ResponseEntity<List<AllUsersVRResponseBody>> getAllVRs() {
         User currentUser = getCurrentUser();
 
-        if (currentUser == null || currentUser.getRole() != Role.MANAGER){
+        if (currentUser == null || currentUser.getRole() != Role.MANAGER) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
 
         List<AllUsersVRResponseBody> responseBody = new ArrayList<>();
-        Sort sort = Sort.by(Sort.Direction.DESC, "user").and(Sort.by(Sort.Direction.DESC,"vacationStart"));
+        Sort sort = Sort.by(Sort.Direction.DESC, "user").and(Sort.by(Sort.Direction.DESC, "vacationStart"));
         List<VacationRequest> allRequests = vacationRequestRepository.findAll(sort);
         allRequests.stream()
-                .collect(Collectors.groupingBy(VacationRequest::getUser) )
-                .forEach( (user, requests) -> responseBody.add(new AllUsersVRResponseBody(user, requests)));
+                .collect(Collectors.groupingBy(VacationRequest::getUser))
+                .forEach((user, requests) -> responseBody.add(new AllUsersVRResponseBody(user, requests)));
 
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
@@ -168,18 +168,18 @@ public class MainServerController implements ServerApi {
             String rejection_cause
     ) {
         User currentUser = getCurrentUser();
-        if (currentUser == null){
+        if (currentUser == null) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         UUID id = UUID.fromString(vacationId);
         Optional<VacationRequest> vacationRequest = vacationRequestRepository.findById(id);
-        if(vacationRequest.isEmpty()){
+        if (vacationRequest.isEmpty()) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         VacationRequest vRequest = vacationRequest.get();
-        if(begin != null || end != null){
-            if(begin == null) begin = vRequest.getVacationStart();
-            if(end == null) end = vRequest.getVacationEnd();
+        if (begin != null || end != null) {
+            if (begin == null) begin = vRequest.getVacationStart();
+            if (end == null) end = vRequest.getVacationEnd();
             if (end.isBefore(begin))
                 return new ResponseEntity<>("End date is before start date!", HttpStatus.BAD_REQUEST);
 
@@ -191,48 +191,47 @@ public class MainServerController implements ServerApi {
                             !vacationRequest1.getVacationRequestId().equals(id) &&
                                     ((!vacationRequest1.getVacationStart().isBefore(finalBegin) &&
                                             !vacationRequest1.getVacationStart().isAfter(finalEnd)) ||
-                                    (!vacationRequest1.getVacationEnd().isBefore(finalBegin) &&
-                                            !vacationRequest1.getVacationEnd().isAfter(finalEnd)))
+                                            (!vacationRequest1.getVacationEnd().isBefore(finalBegin) &&
+                                                    !vacationRequest1.getVacationEnd().isAfter(finalEnd)))
                     )
                     .findFirst();
-            if(filteredVacations.isPresent()){
+            if (filteredVacations.isPresent()) {
                 return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
             }
             vRequest.setVacationStart(begin);
             vRequest.setVacationEnd(end);
         }
-        if(days != null){
+        if (days != null) {
             vRequest.setDuration(days);
         }
-        if(note != null){
+        if (note != null) {
             vRequest.setComment(note);
         }
-        if(currentUser.getRole() == Role.MANAGER){
-            if(status != null){
+        if (currentUser.getRole() == Role.MANAGER) {
+            if (status != null) {
                 vRequest.setStatus(status);
             }
-            if(rejection_cause != null){
+            if (rejection_cause != null) {
                 vRequest.setRejectReason(rejection_cause);
             }
-        }
-        else if(status != null || rejection_cause != null){
+        } else if (status != null || rejection_cause != null) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         vacationRequestRepository.save(vRequest);
         return new ResponseEntity<>("Erfolgreich geändert", HttpStatus.OK);
     }
 
-    private LeftAndMaxVacationDays getDaysLeftAndMaxDays(User user,int year){
+    private LeftAndMaxVacationDays getDaysLeftAndMaxDays(User user, int year) {
         int maxDays = user.getVacationDays();
-        LocalDate lastDayOfYearBefore =LocalDate.of(year-1, Month.DECEMBER,31);
-        LocalDate firstDayOfNextYear =LocalDate.of(year+1, Month.JANUARY,1);
-        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserAndVacationStartAfterAndVacationEndBefore(user,lastDayOfYearBefore,firstDayOfNextYear);
+        LocalDate lastDayOfYearBefore = LocalDate.of(year - 1, Month.DECEMBER, 31);
+        LocalDate firstDayOfNextYear = LocalDate.of(year + 1, Month.JANUARY, 1);
+        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserAndVacationStartAfterAndVacationEndBefore(user, lastDayOfYearBefore, firstDayOfNextYear);
         int leftDays = maxDays;
         int vacationDays = vacationRequests.stream()
-                        .mapToInt(VacationRequest::getDuration)
-                                .sum();
-        leftDays-= vacationDays;
-        return new LeftAndMaxVacationDays(maxDays,leftDays);
+                .mapToInt(VacationRequest::getDuration)
+                .sum();
+        leftDays -= vacationDays;
+        return new LeftAndMaxVacationDays(maxDays, leftDays);
     }
 
 }
