@@ -16,9 +16,12 @@ public interface VacationRequestRepository extends MongoRepository<VacationReque
             LocalDate vacationEnd,
             LocalDate vacationEnd2
     );
+
     boolean existsByUserAndVacationStartIsOrVacationEndIs(User user, LocalDate vacationStart, LocalDate vacationEnd);
 
     List<VacationRequest> findByUserOrderByVacationStartDesc(User user);
+
+    List<VacationRequest> findByUserAndVacationStartAfterAndVacationEndBefore(User user, LocalDate lastDayOfYearBefore, LocalDate firstOfNextYear);
 
     List<VacationRequest> findAllByUser(User user);
   

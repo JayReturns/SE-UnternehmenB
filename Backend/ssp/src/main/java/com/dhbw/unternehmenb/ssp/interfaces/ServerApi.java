@@ -1,10 +1,7 @@
 package com.dhbw.unternehmenb.ssp.interfaces;
 
-import com.dhbw.unternehmenb.ssp.model.Role;
-import com.dhbw.unternehmenb.ssp.model.Status;
-import com.dhbw.unternehmenb.ssp.model.User;
+import com.dhbw.unternehmenb.ssp.model.*;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
-import com.dhbw.unternehmenb.ssp.model.VacationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -81,7 +78,6 @@ public interface ServerApi {
     @Tag(name = "VacationRequests")
     ResponseEntity<List<VacationRequest>> getVacationRequestsFromUser() throws Exception;
 
-
     @GetMapping("/vacation_request/all")
     @Operation(summary = "Alle Urlaubsanträge für den Geschäftsleiter anfragen")
     @ApiResponses({
@@ -107,6 +103,17 @@ public interface ServerApi {
             @RequestParam(required = false) String rejection_cause
     ) throws Exception;
 
+    @Operation(summary = "Übrige und maximale Urlaubstage zurückgeben")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "calculated left days", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not Found")
+    })
+    @Tag(name = "DaysLeft")
+    @GetMapping("/vacation/days")
+    ResponseEntity<LeftAndMaxVacationDays> getLeftVacationDays(
+            @RequestParam int year
+    );
+  
     @DeleteMapping("vacation_request")
     @Operation(summary = "Delete Vacation Request by ID")
     @ApiResponses({

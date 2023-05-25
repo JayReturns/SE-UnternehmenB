@@ -1,18 +1,22 @@
-import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Input, SimpleChanges, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {GroupedVacation, Vacation} from "../../models/vacation.model";
 import {VacationService} from "../../services/vacation.service";
 import {map} from "rxjs/operators";
+import {MatDialog} from "@angular/material/dialog";
+import {MessageService} from "../../services/message.service";
+import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
-  selector: 'app-vacation-request-table',
+  selector: 'vacation-request-table',
   templateUrl: './vacation-request-table.component.html',
   styleUrls: ['./vacation-request-table.component.scss']
 })
 export class VacationRequestTableComponent implements AfterViewInit {
-  @Input() forManager = false;
+  @Input() forManager!: boolean;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Vacation>;
@@ -21,18 +25,23 @@ export class VacationRequestTableComponent implements AfterViewInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
 
-  constructor(private vacationService: VacationService) {
-    if (this.forManager) {
-      this.displayedColumns = ['name', ...this.displayedColumns]
-    }
+  constructor(private vacationService: VacationService, public dialog: MatDialog, private messageService: MessageService) {
   }
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
     this.dataSource.data = []
-    this.refresh()
     this.dataSource.sortingDataAccessor = (item, property) => this.sortData(item as Vacation, property)
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes["forManager"].firstChange) {
+      if (this.forManager) {
+        this.displayedColumns = ['name', ...this.displayedColumns]
+      }
+      this.refresh()
+    }
   }
 
   refresh() {
@@ -70,4 +79,23 @@ export class VacationRequestTableComponent implements AfterViewInit {
       })
     ).flat()
   }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(VacationDialogComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result)
+        return;
+
+      this.vacationService.makeVacationRequest(result).subscribe(() => { }, err => {
+        if (err) {
+          if (err instanceof HttpErrorResponse) {
+            this.messageService.notifyUser(err.error);
+            console.log(err);
+          }
+        }
+      });
+    })
+  }
+
 }
