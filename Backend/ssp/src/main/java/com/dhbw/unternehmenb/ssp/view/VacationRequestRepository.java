@@ -12,9 +12,9 @@ import java.util.UUID;
 public interface VacationRequestRepository extends MongoRepository<VacationRequest, UUID> {
     @ExistsQuery(value = "{ 'user.$id' : ?0, 'vacationStart' : { $gte: ?1, $lte: ?2 } }")
     boolean isOverlappingWithAnotherVacationRequest(
-            String user,
+            String userId,
             LocalDate vacationStart,
-            LocalDate vacationStart2
+            LocalDate vacationEnd
     );
 
     List<VacationRequest> findByUserOrderByVacationStartDesc(User user);
