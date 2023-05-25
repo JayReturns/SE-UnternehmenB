@@ -109,5 +109,7 @@ public interface ServerApi {
     })
     @Tag(name = "DaysLeft")
     @GetMapping("/vacation/days")
-    ResponseEntity<LeftAndMaxVacationDays> getLeftVacationDays();
+    ResponseEntity<LeftAndMaxVacationDays> getLeftVacationDays(
+            @RequestParam int year
+    );
 }

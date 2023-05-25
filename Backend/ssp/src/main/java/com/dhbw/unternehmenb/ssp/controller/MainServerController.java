@@ -17,13 +17,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 
-import java.time.Duration;
-import java.util.*;
 import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -127,12 +127,12 @@ public class MainServerController implements ServerApi {
     }
 
     @Override
-    public ResponseEntity<LeftAndMaxVacationDays> getLeftVacationDays() {
+    public ResponseEntity<LeftAndMaxVacationDays> getLeftVacationDays(int year) {
         User user = getCurrentUser();
         if (user == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         try {
-            LeftAndMaxVacationDays leftAndMaxVacationDays = getDaysLeftAndMaxDays(user);
+            LeftAndMaxVacationDays leftAndMaxVacationDays = getDaysLeftAndMaxDays(user,year);
             return new ResponseEntity<>(leftAndMaxVacationDays, HttpStatus.OK);
         }catch (Exception e){
             return  new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
@@ -222,19 +222,16 @@ public class MainServerController implements ServerApi {
         return new ResponseEntity<>("Erfolgreich geändert", HttpStatus.OK);
     }
 
-    private LeftAndMaxVacationDays getDaysLeftAndMaxDays(User user){
+    private LeftAndMaxVacationDays getDaysLeftAndMaxDays(User user,int year){
         int maxDays = user.getVacationDays();
-        LocalDate now = LocalDate.now();
-        LocalDate firstDayOfYear = now.with(firstDayOfYear());
-        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserAndVacationEndAfter(user,firstDayOfYear);
-        List<VacationRequest> vacationRequestsOverlappingYears = vacationRequests.stream()
-                .filter(v ->v.getVacationStart().isBefore(firstDayOfYear))
-                .toList();
-        vacationRequestsOverlappingYears.forEach(vacationRequests::remove);
-        AtomicInteger leftDays = new AtomicInteger(maxDays);
-        vacationRequests.forEach(v-> leftDays.addAndGet(-v.getDuration()));
-        vacationRequestsOverlappingYears.forEach(v->leftDays.addAndGet((int) -Duration.between(firstDayOfYear.atStartOfDay(),v.getVacationEnd().atStartOfDay()).toDays()));
-
+        LocalDate lastDayOfYearBefore =LocalDate.of(year-1, Month.DECEMBER,31);
+        LocalDate firstDayOfNextYear =LocalDate.of(year+1, Month.JANUARY,1);
+        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserAndVacationStartAfterAndVacationEndBefore(user,lastDayOfYearBefore,firstDayOfNextYear);
+        int leftDays = maxDays;
+        int vacationDays = vacationRequests.stream()
+                        .mapToInt(VacationRequest::getDuration)
+                                .sum();
+        leftDays-= vacationDays;
         return new LeftAndMaxVacationDays(maxDays,leftDays);
     }
 
