@@ -99,6 +99,6 @@
   <!-- Main Content Space -->
 
   <mat-drawer-content class="MainContent">
-    <vacation-request-table></vacation-request-table>
+    <vacation-request-table [forManager]="user?.role == Role.MANAGER"></vacation-request-table>
   </mat-drawer-content>
 </mat-drawer-container>
