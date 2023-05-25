@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Input, SimpleChanges, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
@@ -16,7 +16,7 @@ import {HttpErrorResponse} from "@angular/common/http";
   styleUrls: ['./vacation-request-table.component.scss']
 })
 export class VacationRequestTableComponent implements AfterViewInit {
-  @Input() forManager = false;
+  @Input() forManager!: boolean;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Vacation>;
@@ -26,17 +26,22 @@ export class VacationRequestTableComponent implements AfterViewInit {
   displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
 
   constructor(private vacationService: VacationService, public dialog: MatDialog, private messageService: MessageService) {
-    if (this.forManager) {
-      this.displayedColumns = ['name', ...this.displayedColumns]
-    }
   }
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
     this.dataSource.data = []
-    this.refresh()
     this.dataSource.sortingDataAccessor = (item, property) => this.sortData(item as Vacation, property)
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes["forManager"].firstChange) {
+      if (this.forManager) {
+        this.displayedColumns = ['name', ...this.displayedColumns]
+      }
+      this.refresh()
+    }
   }
 
   refresh() {
