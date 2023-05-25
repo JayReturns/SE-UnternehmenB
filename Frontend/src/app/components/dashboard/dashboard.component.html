@@ -24,7 +24,7 @@
             </a>
           </li>
 -->
-          <!-- Calling SignOut() Api from AuthService -->
+<!-- Calling SignOut() Api from AuthService -->
 <!--
           <li class="nav-item">
             <a class="nav-link" (click)="authService.SignOut()">
@@ -35,7 +35,7 @@
       </div>
     </nav>
 -->
-    <!-- Main content -->
+<!-- Main content -->
 <!--
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
       <div class="inner-adjust">
@@ -43,7 +43,7 @@
           <h1 class="h2">User Profile</h1>
         </div>
 -->
-        <!-- Show user data when logged in -->
+<!-- Show user data when logged in -->
 <!--
         <div class="row" *ngIf="authService.userData as user">
           <div class="col-md-12">
@@ -71,8 +71,12 @@
 
 <!-- new code -->
 <!-- Top Bar -->
-<mat-toolbar class="TopBar">
-  TopBarContentPlaceholder
+<mat-toolbar color="accent">
+  <span>UnternehmenB</span>
+  <span class="spacer"></span>
+  <button (click)="authService.SignOut()" mat-icon-button matTooltip="Abmelden">
+    <mat-icon>logout</mat-icon>
+  </button>
 </mat-toolbar>
 
 <!-- Body -->
@@ -81,26 +85,20 @@
 
   <!-- Side Bar -->
 
-  <mat-drawer mode="side" opened class="SideBar">
+  <mat-drawer class="SideBar" mode="side" opened>
     <!-- Show user data when logged in -->
 
-            <div class="row" *ngIf="authService.userData as user">
-              <div class="col-md-12">
-                <div class="media">
-                  <div class="media-body">
-                    <h1>Hello: <strong>{{(user.displayName) ? user.displayName : 'User'}}</strong></h1>
-                    <p>User ID: <strong>{{user.uid}}</strong></p>
-                    <p>Email: <strong>{{user.email}}</strong></p>
-                    <p>Email Verified: <strong>{{user.emailVerified}}</strong></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-      </mat-drawer>
+    <div *ngIf="authService.userData as user">
+      <p>Hello: <strong>{{(user.displayName) ? user.displayName : 'User'}}</strong></p>
+      <p>User ID: <strong>{{user.uid}}</strong></p>
+      <p>Email: <strong>{{user.email}}</strong></p>
+      <p>Email Verified: <strong>{{user.emailVerified}}</strong></p>
+    </div>
+  </mat-drawer>
 
-      <!-- Main Content Space -->
+  <!-- Main Content Space -->
 
   <mat-drawer-content class="MainContent">
-    MainContentPlaceholder
+    <vacation-request-table></vacation-request-table>
   </mat-drawer-content>
 </mat-drawer-container>
