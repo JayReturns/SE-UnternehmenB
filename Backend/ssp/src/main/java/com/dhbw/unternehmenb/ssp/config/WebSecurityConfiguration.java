@@ -36,6 +36,7 @@ public class WebSecurityConfiguration {
             httpServletResponse.getWriter().write(new ObjectMapper().writeValueAsString(errorObject));
         };
     }
+
     @Bean
     @Order(1)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -44,12 +45,14 @@ public class WebSecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/**").authenticated()
                 .and()
+                .cors()
+                .and()
                 .addFilterBefore(firebaseAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
         http
                 .authorizeHttpRequests()
                 .anyRequest().permitAll();
-
         //TODO: add login-Site as route to
         return http.build();
     }
