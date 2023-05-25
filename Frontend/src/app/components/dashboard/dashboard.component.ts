@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../shared/services/auth.service";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {UserService} from "../../services/user.service";
-import {User} from "../../models/user.model";
+import {Role, User} from "../../models/user.model";
 
 @Component({
   selector: 'app-dashboard',
@@ -23,4 +23,5 @@ export class DashboardComponent implements OnInit {
   }
 
 
+  protected readonly Role = Role;
 }

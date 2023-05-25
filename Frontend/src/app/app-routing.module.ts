@@ -6,7 +6,6 @@ import {ForgotPasswordComponent} from "./components/forgot-password/forgot-passw
 import {VerifyEmailComponent} from "./components/verify-email/verify-email.component";
 import {SignUpComponent} from "./components/sign-up/sign-up.component";
 import {AuthGuard} from "./shared/guard/auth.guard";
-import {VacationRequestTableComponent} from "./components/vacation-request-table/vacation-request-table.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/sign-in', pathMatch: 'full' },
@@ -14,9 +13,7 @@ const routes: Routes = [
   { path: 'register-user', component: SignUpComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
   { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'verify-email-address', component: VerifyEmailComponent },
-  { path: 'vacation-requests', component: VacationRequestTableComponent },
-
+  { path: 'verify-email-address', component: VerifyEmailComponent }
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes, { useHash: true })],

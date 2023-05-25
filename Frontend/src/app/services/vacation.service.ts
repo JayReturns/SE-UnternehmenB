@@ -33,10 +33,7 @@ export class VacationService {
       .set('duration', vacation.duration)
       .set('comment', vacation.comment)
 
-    return this.http.post(this.url, null, {params: params})
-      .pipe(
-        catchError(this.messageService.handleError('makeVacationRequest'))
-      );
+    return this.http.post(this.url, null, {params: params, responseType: "text"});
   }
 
   acceptVacationRequest(vacationRequestId: string) {
@@ -57,7 +54,6 @@ export class VacationService {
 
   private insertDatesForVacation(data: Vacation[]): Vacation[] {
     return data.map(v => {
-      console.log("Inserting dates: ", v, v.vacationStart, v.vacationEnd)
       v.vacationStart = new Date(v.vacationStart)
       v.vacationEnd = new Date(v.vacationEnd)
 
@@ -68,7 +64,6 @@ export class VacationService {
   private insertDatesForGroupedVacation(data: GroupedVacation[]): GroupedVacation[] {
     return data.map(v => {
       v.requests = v.requests.map(r => {
-        console.log("Inserting dates: ", v, r.vacationStart, r.vacationEnd)
         r.vacationStart = new Date(r.vacationStart)
         r.vacationEnd = new Date(r.vacationEnd)
 
