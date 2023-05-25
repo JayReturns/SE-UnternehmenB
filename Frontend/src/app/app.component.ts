@@ -2,6 +2,8 @@ import {Component} from '@angular/core';
 import {MatDialog} from "@angular/material/dialog";
 import {VacationDialogComponent} from "./components/vacation-dialog/vacation-dialog.component";
 import {VacationService} from "./services/vacation.service";
+import {MessageService} from "./services/message.service";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-root',
@@ -16,20 +18,24 @@ export class AppComponent {
 
 
 
-  constructor(public dialog: MatDialog, private vacationService: VacationService) {
+  constructor(public dialog: MatDialog, private vacationService: VacationService, private messageService: MessageService) {
   }
 
   openDialog() {
     const dialogRef = this.dialog.open(VacationDialogComponent);
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log("Jo! Result:")
-        console.dir(result);
-        this.vacationService.makeVacationRequest(result).subscribe();
-      } else {
-        console.log("No");
-      }
+      if (!result)
+        return;
+
+      this.vacationService.makeVacationRequest(result).subscribe(() => { }, err => {
+        if (err) {
+          if (err instanceof HttpErrorResponse) {
+            this.messageService.notifyUser(err.error);
+            console.log(err);
+          }
+        }
+      });
     })
   }
 
