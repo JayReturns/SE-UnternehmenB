@@ -121,5 +121,6 @@ public interface ServerApi {
             @ApiResponse(responseCode = "404", description = "Vacation Request not found", content = @Content),
             @ApiResponse(responseCode = "500", description = "Failed to delete Vacation Request", content = @Content),
     })
+    @Tag(name = "VacationRequests")
     ResponseEntity<String> deleteVacationRequest(@RequestParam String vacationRequestId) throws Exception;  
 }
