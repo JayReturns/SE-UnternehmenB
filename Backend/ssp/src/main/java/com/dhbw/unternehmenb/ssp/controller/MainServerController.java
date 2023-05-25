@@ -213,6 +213,10 @@ public class MainServerController implements ServerApi {
   
     @Override
     public ResponseEntity<String> deleteVacationRequest(String vacationRequestId) {
+        User currentUser = getCurrentUser();
+        if (currentUser == null){
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
         UUID requestId = UUID.fromString(vacationRequestId);
         Optional<VacationRequest> optionalVacationRequest = vacationRequestRepository.findById(requestId);
         if (optionalVacationRequest.isEmpty()) {
@@ -220,6 +224,10 @@ public class MainServerController implements ServerApi {
         }
 
         VacationRequest vacationRequest = optionalVacationRequest.get();
+
+        if (!vacationRequest.getUser().getUserId().equals(currentUser.getUserId())) {
+            return new ResponseEntity<>("Unauthorized: You can only delete your own Vacation Requests!", HttpStatus.UNAUTHORIZED);
+        }
 
         if (vacationRequest.getStatus() == Status.APPROVED) {
             return new ResponseEntity<>("Cannot delete an approved Vacation Request!", HttpStatus.BAD_REQUEST);
