@@ -1,0 +1,17 @@
+.ContentContainer {
+  width: auto;
+  height: 100vh;
+}
+
+.TopBar {
+  background-color: #c768c7;
+}
+
+.SideBar {
+  background-color: whitesmoke;
+  width: 25%;
+}
+
+.MainContent {
+  background-color: darkgrey;
+}
