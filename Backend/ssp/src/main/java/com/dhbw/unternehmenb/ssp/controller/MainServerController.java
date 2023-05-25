@@ -2,10 +2,7 @@ package com.dhbw.unternehmenb.ssp.controller;
 
 import com.dhbw.unternehmenb.ssp.auth.FirebaseAuthFilter;
 import com.dhbw.unternehmenb.ssp.interfaces.ServerApi;
-import com.dhbw.unternehmenb.ssp.model.Role;
-import com.dhbw.unternehmenb.ssp.model.Status;
-import com.dhbw.unternehmenb.ssp.model.User;
-import com.dhbw.unternehmenb.ssp.model.VacationRequest;
+import com.dhbw.unternehmenb.ssp.model.*;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
 import com.dhbw.unternehmenb.ssp.view.UserRepository;
 import com.dhbw.unternehmenb.ssp.view.VacationRequestRepository;
@@ -20,10 +17,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 
+import java.time.Duration;
 import java.util.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @RestController
@@ -127,7 +127,20 @@ public class MainServerController implements ServerApi {
     }
 
     @Override
-    public ResponseEntity<List<AllUsersVRResponseBody>> getAllVRs() throws Exception {
+    public ResponseEntity<LeftAndMaxVacationDays> getLeftVacationDays() {
+        User user = getCurrentUser();
+        if (user == null)
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        try {
+            LeftAndMaxVacationDays leftAndMaxVacationDays = getDaysLeftAndMaxDays(user);
+            return new ResponseEntity<>(leftAndMaxVacationDays, HttpStatus.OK);
+        }catch (Exception e){
+            return  new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<AllUsersVRResponseBody>> getAllVRs() {
         User currentUser = getCurrentUser();
 
         if (currentUser == null || currentUser.getRole() != Role.MANAGER){
@@ -153,7 +166,7 @@ public class MainServerController implements ServerApi {
             String note,
             Status status,
             String rejection_cause
-    ) throws Exception {
+    ) {
         User currentUser = getCurrentUser();
         if (currentUser == null){
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -208,4 +221,21 @@ public class MainServerController implements ServerApi {
         vacationRequestRepository.save(vRequest);
         return new ResponseEntity<>("Erfolgreich geändert", HttpStatus.OK);
     }
+
+    private LeftAndMaxVacationDays getDaysLeftAndMaxDays(User user){
+        int maxDays = user.getVacationDays();
+        LocalDate now = LocalDate.now();
+        LocalDate firstDayOfYear = now.with(firstDayOfYear());
+        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserAndVacationEndAfter(user,firstDayOfYear);
+        List<VacationRequest> vacationRequestsOverlappingYears = vacationRequests.stream()
+                .filter(v ->v.getVacationStart().isBefore(firstDayOfYear))
+                .toList();
+        vacationRequestsOverlappingYears.forEach(vacationRequests::remove);
+        AtomicInteger leftDays = new AtomicInteger(maxDays);
+        vacationRequests.forEach(v-> leftDays.addAndGet(-v.getDuration()));
+        vacationRequestsOverlappingYears.forEach(v->leftDays.addAndGet((int) -Duration.between(firstDayOfYear.atStartOfDay(),v.getVacationEnd().atStartOfDay()).toDays()));
+
+        return new LeftAndMaxVacationDays(maxDays,leftDays);
+    }
+
 }
