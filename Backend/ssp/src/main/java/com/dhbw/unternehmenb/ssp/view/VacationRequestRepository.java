@@ -20,5 +20,8 @@ public interface VacationRequestRepository extends MongoRepository<VacationReque
 
     List<VacationRequest> findByUserOrderByVacationStartDesc(User user);
 
-    void deleteByVacationRequestId(UUID vacationRequestId);
+    List<VacationRequest> findAllByUser(User user);
+  
+    void deleteByVacationRequestId(UUID vacationRequestId);  
+
 }
