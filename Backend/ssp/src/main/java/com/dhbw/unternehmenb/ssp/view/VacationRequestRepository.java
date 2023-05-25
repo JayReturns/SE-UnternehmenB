@@ -24,5 +24,7 @@ public interface VacationRequestRepository extends MongoRepository<VacationReque
     List<VacationRequest> findByUserAndVacationStartAfterAndVacationEndBefore(User user, LocalDate lastDayOfYearBefore, LocalDate firstOfNextYear);
 
     List<VacationRequest> findAllByUser(User user);
+  
+    void deleteByVacationRequestId(UUID vacationRequestId);  
 
 }

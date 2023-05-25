@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @RequestMapping("api/v1")
 @SecurityScheme(
@@ -112,4 +113,14 @@ public interface ServerApi {
     ResponseEntity<LeftAndMaxVacationDays> getLeftVacationDays(
             @RequestParam int year
     );
+  
+    @DeleteMapping("vacation_request")
+    @Operation(summary = "Delete Vacation Request by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Vacation Request deleted successfully", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Vacation Request not found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Failed to delete Vacation Request", content = @Content),
+    })
+    @Tag(name = "VacationRequests")
+    ResponseEntity<String> deleteVacationRequest(@RequestParam String vacationRequestId) throws Exception;  
 }

@@ -233,5 +233,35 @@ public class MainServerController implements ServerApi {
         leftDays -= vacationDays;
         return new LeftAndMaxVacationDays(maxDays, leftDays);
     }
+  
+    @Override
+    public ResponseEntity<String> deleteVacationRequest(String vacationRequestId) {
+        User currentUser = getCurrentUser();
+        if (currentUser == null){
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        UUID requestId = UUID.fromString(vacationRequestId);
+        Optional<VacationRequest> optionalVacationRequest = vacationRequestRepository.findById(requestId);
+        if (optionalVacationRequest.isEmpty()) {
+            return new ResponseEntity<>("Vacation Request not found!", HttpStatus.NOT_FOUND);
+        }
+
+        VacationRequest vacationRequest = optionalVacationRequest.get();
+
+        if (!vacationRequest.getUser().getUserId().equals(currentUser.getUserId())) {
+            return new ResponseEntity<>("Unauthorized: You can only delete your own Vacation Requests!", HttpStatus.UNAUTHORIZED);
+        }
+
+        if (vacationRequest.getStatus() == Status.APPROVED) {
+            return new ResponseEntity<>("Cannot delete an approved Vacation Request!", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            vacationRequestRepository.deleteByVacationRequestId(requestId);
+            return new ResponseEntity<>("Vacation Request deleted successfully!", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }  
 
 }
