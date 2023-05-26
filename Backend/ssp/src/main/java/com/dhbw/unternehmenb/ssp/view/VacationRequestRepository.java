@@ -1,5 +1,6 @@
 package com.dhbw.unternehmenb.ssp.view;
 
+import com.dhbw.unternehmenb.ssp.model.Status;
 import com.dhbw.unternehmenb.ssp.model.User;
 import com.dhbw.unternehmenb.ssp.model.VacationRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -21,7 +22,7 @@ public interface VacationRequestRepository extends MongoRepository<VacationReque
 
     List<VacationRequest> findByUserOrderByVacationStartDesc(User user);
 
-    List<VacationRequest> findByUserAndVacationStartAfterAndVacationEndBefore(User user, LocalDate lastDayOfYearBefore, LocalDate firstOfNextYear);
+    List<VacationRequest> findByUserAndVacationStartAfterAndVacationEndBeforeAndAndStatusNot(User user, LocalDate lastDayOfYearBefore, LocalDate firstOfNextYear, Status status);
 
     List<VacationRequest> findAllByUser(User user);
   
