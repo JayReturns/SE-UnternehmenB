@@ -10,7 +10,11 @@ import java.util.List;
 import java.util.UUID;
 
 public interface VacationRequestRepository extends MongoRepository<VacationRequest, UUID> {
-    @ExistsQuery(value = "{ 'user.$id' : ?0, 'vacationStart' : { $gte: ?1, $lte: ?2 } }")
+    @ExistsQuery(value = "{ " +
+            "'user.$id' : ?0, " +
+            "$or:[ {'vacationStart' : { $gte: ?1, $lte: ?2 }}, {'vacationEnd' : { $gte: ?1, $lte: ?2 }} ], " +
+            "'status' : { $ne: 'REJECTED' }" +
+        "}")
     boolean isOverlappingWithAnotherVacationRequest(
             String userId,
             LocalDate vacationStart,
