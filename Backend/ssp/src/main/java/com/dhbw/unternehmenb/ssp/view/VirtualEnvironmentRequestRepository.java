@@ -9,5 +9,5 @@ import java.util.UUID;
 
 public interface VirtualEnvironmentRequestRepository extends MongoRepository<VirtualEnvironmentRequest, UUID> {
 
-    List<VirtualEnvironmentRequest> findByUser(User user);
+    List<VirtualEnvironmentRequest> findAllByUser(User user);
 }
