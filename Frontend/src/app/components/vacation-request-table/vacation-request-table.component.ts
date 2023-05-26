@@ -27,12 +27,7 @@ export class VacationRequestTableComponent implements AfterViewInit {
   snackbar: any;
 
   constructor(private vacationService: VacationService, public dialog: MatDialog, private messageService: MessageService) {
-    if (this.forManager) {
-      this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status', 'action'];
-    } else {
-      this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
-    }
-
+    this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
   }
 
   ngAfterViewInit(): void {
@@ -43,12 +38,12 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (!changes["forManager"].firstChange) {
+    //if (!changes["forManager"].firstChange) {
       if (this.forManager) {
-        this.displayedColumns = ['name', ...this.displayedColumns]
+        this.displayedColumns = ['name', ...this.displayedColumns, 'action']
       }
       this.refresh()
-    }
+    //}
   }
 
   refresh() {
