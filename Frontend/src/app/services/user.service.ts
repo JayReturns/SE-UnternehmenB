@@ -30,7 +30,7 @@ export class UserService {
       .set('lastname', user.lastName)
       .set('role', user.role);
 
-    return this.http.post(this.url,null, { params: params });
+    return this.http.post(this.url,null, { params: params, responseType: "text" });
   }
 
 }
