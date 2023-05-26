@@ -94,10 +94,9 @@ public class MainServerController implements ServerApi {
 
         //TODO: use User Story #31 to check if requested vacation exceeds the limit
 
-        if (vacationRequestRepository.existsByUserAndVacationStartBetweenOrVacationEndBetween(user, startDate, endDate, startDate, endDate))
+        if (vacationRequestRepository.isOverlappingWithAnotherVacationRequest(user.getUserId(), startDate, endDate)){
             return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
-        if (vacationRequestRepository.existsByUserAndVacationStartIsOrVacationEndIs(user, startDate, endDate))
-            return new ResponseEntity<>("Vacation request for those dates already exists!", HttpStatus.BAD_REQUEST);
+        }
 
 
         VacationRequest vacationRequest = new VacationRequest(
