@@ -225,7 +225,7 @@ public class MainServerController implements ServerApi {
         int maxDays = user.getVacationDays();
         LocalDate lastDayOfYearBefore = LocalDate.of(year - 1, Month.DECEMBER, 31);
         LocalDate firstDayOfNextYear = LocalDate.of(year + 1, Month.JANUARY, 1);
-        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserAndVacationStartAfterAndVacationEndBefore(user, lastDayOfYearBefore, firstDayOfNextYear);
+        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserAndVacationStartAfterAndVacationEndBeforeAndAndStatusNot(user, lastDayOfYearBefore, firstDayOfNextYear,Status.REJECTED);
         int leftDays = maxDays;
         int vacationDays = vacationRequests.stream()
                 .mapToInt(VacationRequest::getDuration)
