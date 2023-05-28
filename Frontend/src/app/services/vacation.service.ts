@@ -3,7 +3,7 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {MessageService} from "./message.service";
 import {environment} from "../../environments/environment";
 import {GroupedVacation, Vacation} from "../models/vacation.model";
-import {catchError} from "rxjs";
+import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
 
 @Injectable({
@@ -78,4 +78,14 @@ export class VacationService {
     return date.toISOString().split("T")[0];
   }
 
+  updateVacationRequest(vacation: Vacation): Observable<string> {
+    let params = new HttpParams()
+      .set('begin', this.formatDateToIsoDate(vacation.vacationStart))
+      .set('end', this.formatDateToIsoDate(vacation.vacationEnd))
+      .set('days', vacation.duration)
+      .set('note', vacation.comment)
+      .set('vacationId', vacation.vacationRequestId!)
+
+    return this.http.put(this.url, null, {params: params, responseType: "text"})
+  }
 }

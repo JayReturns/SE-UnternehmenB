@@ -1,8 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Vacation} from "../../models/vacation.model";
 import {MessageService} from "../../services/message.service";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {VacationConfirmationPopupComponent} from "../vacation-confirmation-popup/vacation-confirmation-popup.component";
 
 @Component({
@@ -14,18 +14,29 @@ export class VacationDialogComponent {
 
   maxCommentLength = 100;
 
-  vacationForm = new FormGroup({
-    start: new FormControl<Date | null>(null),
-    end: new FormControl<Date | null>(null),
-    comment: new FormControl<string | null>('', [Validators.maxLength(this.maxCommentLength)]),
-    duration: new FormControl<number | null>(null, [Validators.required, Validators.min(1)])
-  });
+  vacationForm: FormGroup = new FormGroup<any>({});
+  vacation: Vacation | null;
+  title: string;
 
   constructor(private formBuilder: FormBuilder,
               private messageService: MessageService,
               private dialogRef: MatDialogRef<VacationDialogComponent>,
-              private dialog: MatDialog) { }
+              private dialog: MatDialog,
+              @Inject(MAT_DIALOG_DATA) public data: any) {
+    this.vacation = data?.vacation;
+    this.title = `${data ? "bearbeiten" : "beantragen"}`;
+    this.initializeForm();
+  }
 
+  initializeForm() {
+    this.vacationForm = new FormGroup({
+      vacationRequestId: new FormControl<string | null>(this.vacation?.vacationRequestId || null),
+      start: new FormControl<Date | null>(this.vacation?.vacationStart || null),
+      end: new FormControl<Date | null>(this.vacation?.vacationEnd || null),
+      comment: new FormControl<string | null>(this.vacation?.comment || '', [Validators.maxLength(this.maxCommentLength)]),
+      duration: new FormControl<number | null>(this.vacation?.duration || null, [Validators.required, Validators.min(1)])
+    });
+  }
 
   onSubmit(): void {
     if (this.vacationForm == null || !this.vacationForm.valid || this.vacationForm.errors) {
@@ -36,7 +47,8 @@ export class VacationDialogComponent {
       vacationStart: this.vacationForm.controls['start'].value!,
       vacationEnd: this.vacationForm.controls['end'].value!,
       duration: this.vacationForm.controls['duration'].value!,
-      comment: this.vacationForm.controls['comment'].value || ""
+      comment: this.vacationForm.controls['comment'].value || "",
+      vacationRequestId: this.vacationForm.controls['vacationRequestId'].value || undefined
     }
 
     this.dialog.open(VacationConfirmationPopupComponent, { data: vacation }).afterClosed().subscribe(confirmed => {

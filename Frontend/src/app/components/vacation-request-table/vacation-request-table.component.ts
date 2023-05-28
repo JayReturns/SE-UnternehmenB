@@ -109,6 +109,21 @@ export class VacationRequestTableComponent implements AfterViewInit {
     })
   }
 
+
+  editVacationRequest(row: Vacation) {
+    this.dialog.open(VacationDialogComponent, {
+      data: {
+        vacation: row
+      }
+    }).afterClosed().subscribe(result => {
+      if (result)
+        this.vacationService.updateVacationRequest(result).subscribe(res => {
+          console.log(res);
+          this.refresh();
+        });
+    })
+  }
+
 }
 
 
