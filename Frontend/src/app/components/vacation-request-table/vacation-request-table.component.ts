@@ -111,6 +111,9 @@ export class VacationRequestTableComponent implements AfterViewInit {
 
 
   editVacationRequest(row: Vacation) {
+    if (this.forManager)
+      return;
+
     this.dialog.open(VacationDialogComponent, {
       data: {
         vacation: row
