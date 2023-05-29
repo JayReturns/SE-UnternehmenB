@@ -6,6 +6,7 @@ import com.dhbw.unternehmenb.ssp.model.*;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
 import com.dhbw.unternehmenb.ssp.view.UserRepository;
 import com.dhbw.unternehmenb.ssp.view.VacationRequestRepository;
+import com.dhbw.unternehmenb.ssp.view.VirtualEnvironmentRequestRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +36,8 @@ public class MainServerController implements ServerApi {
     private UserRepository userRepository;
     @Autowired
     private VacationRequestRepository vacationRequestRepository;
+    @Autowired
+    private VirtualEnvironmentRequestRepository virtualEnvironmentRequestRepository;
     @Autowired
     private FirebaseAuth firebaseAuth;
     @Autowired
@@ -263,4 +267,34 @@ public class MainServerController implements ServerApi {
         }
     }  
 
+    @Override
+    public ResponseEntity<String> createVirtualEnvironmentRequest(
+            EnvironmentType environmentType,
+            String comment
+    ){
+        User currentUser = getCurrentUser();
+        if (currentUser == null){
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        boolean pendingRequest = virtualEnvironmentRequestRepository.existsByUserAndEnvironmentTypeAndStatus(currentUser, environmentType, Status.REQUESTED);
+        if (pendingRequest) {
+            return new ResponseEntity<>("User already has a pending request for the specified environment!", HttpStatus.BAD_REQUEST);
+        }
+
+        VirtualEnvironmentRequest virtualEnvironmentRequest = new VirtualEnvironmentRequest(
+                UUID.randomUUID(),
+                currentUser,
+                environmentType,
+                comment,
+                Status.REQUESTED,
+                null
+        );
+        try {
+            virtualEnvironmentRequestRepository.insert(virtualEnvironmentRequest);
+            return new ResponseEntity<>("Virtual Environment Request created successfully!", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

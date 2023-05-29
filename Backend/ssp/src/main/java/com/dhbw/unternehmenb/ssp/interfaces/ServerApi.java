@@ -122,5 +122,18 @@ public interface ServerApi {
             @ApiResponse(responseCode = "500", description = "Failed to delete Vacation Request", content = @Content),
     })
     @Tag(name = "VacationRequests")
-    ResponseEntity<String> deleteVacationRequest(@RequestParam String vacationRequestId) throws Exception;  
+    ResponseEntity<String> deleteVacationRequest(@RequestParam String vacationRequestId) throws Exception;
+
+    @PostMapping("/v_environment_request")
+    @Operation(summary = "Create Virtual Environment Request")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Virtual Environment Request created successfully", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Virtual Environment Request not created", content = @Content)
+    })
+    @Tag(name = "VirtualEnvironmentRequests")
+    ResponseEntity<String> createVirtualEnvironmentRequest(
+            @RequestParam EnvironmentType environmentType,
+            @RequestParam(required = false) String comment
+    ) throws Exception;
 }
