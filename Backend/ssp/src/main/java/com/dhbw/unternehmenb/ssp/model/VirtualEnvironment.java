@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-@Document(collation = "VirtualEnvironment")
+@Document(collection = "VirtualEnvironment")
 public class VirtualEnvironment {
     @Id
     private UUID VirtualEnvironmentId;
