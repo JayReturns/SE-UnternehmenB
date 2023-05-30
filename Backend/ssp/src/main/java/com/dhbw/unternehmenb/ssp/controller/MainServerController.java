@@ -6,6 +6,7 @@ import com.dhbw.unternehmenb.ssp.model.*;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
 import com.dhbw.unternehmenb.ssp.view.UserRepository;
 import com.dhbw.unternehmenb.ssp.view.VacationRequestRepository;
+import com.dhbw.unternehmenb.ssp.view.VirtualEnvironmentRepository;
 import com.dhbw.unternehmenb.ssp.view.VirtualEnvironmentRequestRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
@@ -37,6 +38,8 @@ public class MainServerController implements ServerApi {
     private VacationRequestRepository vacationRequestRepository;
     @Autowired
     private VirtualEnvironmentRequestRepository virtualEnvironmentRequestRepository;
+    @Autowired
+    private VirtualEnvironmentRepository virtualEnvironmentRepository;
     @Autowired
     private FirebaseAuth firebaseAuth;
     @Autowired
@@ -274,6 +277,17 @@ public class MainServerController implements ServerApi {
         }
         List<VirtualEnvironmentRequest> virtualEnvironmentRequests = virtualEnvironmentRequestRepository.findAllByUser(currentUser);
         return new ResponseEntity<>(virtualEnvironmentRequests, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<VirtualEnvironment>> getVirtualEnvironmentsFromUser()  {
+        User currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        List<VirtualEnvironment> virtualEnvironments = virtualEnvironmentRepository.findAllByUser(currentUser);
+        return new ResponseEntity<>(virtualEnvironments, HttpStatus.OK);
+
     }
 
 }

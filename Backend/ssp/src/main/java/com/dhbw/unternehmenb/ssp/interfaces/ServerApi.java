@@ -130,4 +130,13 @@ public interface ServerApi {
     })
     @Tag(name = "VirtualEnvironmentRequests")
     ResponseEntity<List<VirtualEnvironmentRequest>> getVirtualEnvironmentRequestsFromUser() throws Exception;
+
+    @GetMapping("/v_environment")
+    @Operation(summary = "Get all virtual environments from the logged in user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Virtual environments sent", content = @Content(mediaType = "application/json", schema = @Schema(implementation = VirtualEnvironment.class))),
+    })
+    @Tag(name = "VirtualEnvironments")
+    ResponseEntity<List<VirtualEnvironment>> getVirtualEnvironmentsFromUser() throws Exception;
+
 }

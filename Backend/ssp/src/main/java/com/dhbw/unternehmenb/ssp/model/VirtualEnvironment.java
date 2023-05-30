@@ -1,5 +1,6 @@
 package com.dhbw.unternehmenb.ssp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -14,6 +15,7 @@ import java.util.UUID;
 public class VirtualEnvironment {
     @Id
     private UUID VirtualEnvironmentId;
+    @JsonIgnore
     @DBRef
     private User user;
     private EnvironmentType environmentType;
