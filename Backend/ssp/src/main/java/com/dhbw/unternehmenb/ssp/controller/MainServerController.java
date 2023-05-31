@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -292,4 +293,29 @@ public class MainServerController implements ServerApi {
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<String> createVirtualEnvironmentRequest(
+            String environmentType,
+            String comment
+    ){
+        User currentUser = getCurrentUser();
+        if (currentUser == null){
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        VirtualEnvironmentRequest virtualEnvironmentRequest = new VirtualEnvironmentRequest(
+                UUID.randomUUID(),
+                currentUser,
+                environmentType,
+                comment,
+                Status.REQUESTED,
+                null
+        );
+        try {
+            virtualEnvironmentRequestRepository.insert(virtualEnvironmentRequest);
+            return new ResponseEntity<>("Virtual Environment Request created successfully!", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
