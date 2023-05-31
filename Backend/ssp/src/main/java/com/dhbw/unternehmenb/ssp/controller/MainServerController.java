@@ -291,6 +291,9 @@ public class MainServerController implements ServerApi {
         if (vRequest == null){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
+        if (vRequest.getStatus().ordinal() != 0 || status == Status.REQUESTED){
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
         if (status == Status.APPROVED){
             //send Request to api
             ProvisioningResponse response = provisioningRepository.getTechnicalProvisioning(UUID.fromString(id), vRequest.getEnvironmentType());

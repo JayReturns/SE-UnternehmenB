@@ -135,7 +135,10 @@ public interface ServerApi {
     @PutMapping("/v_environment_request/status")
     @Operation(summary = "set Status of virtual environment requests")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Status updated", content = @Content)
+            @ApiResponse(responseCode = "200", description = "Status updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = VirtualEnvironment.class))),
+            @ApiResponse(responseCode = "401", description = "can only be updated by MANAGER", content = @Content),
+            @ApiResponse(responseCode = "403", description = "can not modify requested that is approved/rejected", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Request not found", content = @Content)
     })
     @Tag(name = "VirtualEnvironmentRequests")
     ResponseEntity<VirtualEnvironment> setEnvironmentStatus(
