@@ -14,7 +14,7 @@ import java.util.UUID;
 @Document(collection = "VirtualEnvironmentRequest")
 public class VirtualEnvironmentRequest {
     @Id
-    private UUID VirtualEnvironmentRequestId;
+    private UUID virtualEnvironmentRequestId;
     @JsonIgnore
     @DBRef
     private User user;

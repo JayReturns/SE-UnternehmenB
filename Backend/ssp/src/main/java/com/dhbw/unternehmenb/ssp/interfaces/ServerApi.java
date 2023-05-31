@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @RequestMapping("api/v1")
 @SecurityScheme(
@@ -130,4 +131,17 @@ public interface ServerApi {
     })
     @Tag(name = "VirtualEnvironmentRequests")
     ResponseEntity<List<VirtualEnvironmentRequest>> getVirtualEnvironmentRequestsFromUser() throws Exception;
+
+    @PutMapping("/v_environment_request/status")
+    @Operation(summary = "set Status of virtual environment requests")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Status updated", content = @Content)
+    })
+    @Tag(name = "VirtualEnvironmentRequests")
+    ResponseEntity<VirtualEnvironment> setEnvironmentStatus(
+            @RequestParam String id,
+            @RequestParam Status status,
+            @RequestParam(required = false) String rejectReason
+            ) throws Exception;
+
 }

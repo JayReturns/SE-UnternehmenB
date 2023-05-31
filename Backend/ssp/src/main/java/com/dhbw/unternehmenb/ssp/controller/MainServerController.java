@@ -4,9 +4,8 @@ import com.dhbw.unternehmenb.ssp.auth.FirebaseAuthFilter;
 import com.dhbw.unternehmenb.ssp.interfaces.ServerApi;
 import com.dhbw.unternehmenb.ssp.model.*;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
-import com.dhbw.unternehmenb.ssp.view.UserRepository;
-import com.dhbw.unternehmenb.ssp.view.VacationRequestRepository;
-import com.dhbw.unternehmenb.ssp.view.VirtualEnvironmentRequestRepository;
+import com.dhbw.unternehmenb.ssp.model.response.ProvisioningResponse;
+import com.dhbw.unternehmenb.ssp.view.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,11 +37,15 @@ public class MainServerController implements ServerApi {
     @Autowired
     private VirtualEnvironmentRequestRepository virtualEnvironmentRequestRepository;
     @Autowired
+    private VirtualEnvironmentRepository virtualEnvironmentRepository;
+    @Autowired
     private FirebaseAuth firebaseAuth;
     @Autowired
     private FirebaseAuthFilter firebaseAuthFilter;
     @Autowired
     private HttpServletRequest httpServletRequest;
+    @Autowired
+    private ProvisioningRepository provisioningRepository;
 
     private User getCurrentUser() {
         String token = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -271,9 +274,50 @@ public class MainServerController implements ServerApi {
         User currentUser = getCurrentUser();
         if (currentUser == null) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        }
+        }/*
+        List<VirtualEnvironmentRequest> virtualEnvironmentRequests2 = virtualEnvironmentRequestRepository.findAll();
+        logger.atInfo().log(virtualEnvironmentRequests2.toString());*/
         List<VirtualEnvironmentRequest> virtualEnvironmentRequests = virtualEnvironmentRequestRepository.findAllByUser(currentUser);
         return new ResponseEntity<>(virtualEnvironmentRequests, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<VirtualEnvironment> setEnvironmentStatus(String id, Status status, String rejectReason) throws Exception {
+        User currentUser = getCurrentUser();
+        if (currentUser == null || currentUser.getRole() != Role.MANAGER){
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        VirtualEnvironmentRequest vRequest = virtualEnvironmentRequestRepository.findById(UUID.fromString(id)).orElse(null);
+        if (vRequest == null){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        if (status == Status.APPROVED){
+            //send Request to api
+            ProvisioningResponse response = provisioningRepository.getTechnicalProvisioning(UUID.fromString(id), vRequest.getEnvironmentType());
+            if (response.getVerificationSuccessful()){
+                vRequest.setStatus(Status.APPROVED);
+                virtualEnvironmentRequestRepository.save(vRequest);
+                VirtualEnvironment virtEnv = new VirtualEnvironment(UUID.randomUUID(),
+                        vRequest.getUser(),
+                        vRequest.getEnvironmentType(),
+                        response.getIpAddress(),
+                        response.getUserName(),
+                        response.getInitialPassword());
+                virtualEnvironmentRepository.save(virtEnv);
+                return new ResponseEntity<>(virtEnv, HttpStatus.OK);
+            } else {
+                vRequest.setStatus(Status.REJECTED);
+                vRequest.setRejectReason("Your Request was approved by a Manager but rejected by Provisioning");
+                virtualEnvironmentRequestRepository.save(vRequest);
+                return new ResponseEntity<>(null, HttpStatus.OK);
+            }
+        }
+        else {
+            vRequest.setStatus(status);
+            if (status == Status.REJECTED)
+                vRequest.setRejectReason(rejectReason);
+            virtualEnvironmentRequestRepository.save(vRequest);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }
+    }
 }

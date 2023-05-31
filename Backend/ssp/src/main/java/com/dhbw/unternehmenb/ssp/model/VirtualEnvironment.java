@@ -13,7 +13,7 @@ import java.util.UUID;
 @Document(collection = "VirtualEnvironment")
 public class VirtualEnvironment {
     @Id
-    private UUID VirtualEnvironmentId;
+    private UUID virtualEnvironmentId;
     @DBRef
     private User user;
     private String environmentType;
