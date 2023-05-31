@@ -22,9 +22,9 @@
   </mat-form-field>
 
   <mat-dialog-actions align="end">
-    <button (click)="close()" mat-raised-button>Abbrechen</button>
-    <button (click)="delete()" mat-stroked-button color="warn" [disabled]="!editMode && vacation?.status == Status.REQUESTED">Löschen</button>
-    <button (click)="onSubmit()" color="primary" mat-raised-button [disabled]="!vacationForm.valid">{{title | titlecase}}</button>
+      <button (click)="close()" mat-raised-button>Abbrechen</button>
+      <button (click)="delete()" mat-stroked-button color="warn" *ngIf="editMode && vacation?.status == Status.REQUESTED">Löschen</button>
+      <button (click)="onSubmit()" color="primary" mat-raised-button [disabled]="!vacationForm.valid">{{title | titlecase}}</button>
   </mat-dialog-actions>
 
 </mat-dialog-content>

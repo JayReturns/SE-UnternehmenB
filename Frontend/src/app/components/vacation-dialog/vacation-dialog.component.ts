@@ -4,7 +4,10 @@ import {Status, Vacation} from "../../models/vacation.model";
 import {MessageService} from "../../services/message.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {VacationConfirmationPopupComponent} from "../vacation-confirmation-popup/vacation-confirmation-popup.component";
-import {ConfirmDialogModel} from "../shared/confirmation-dialog/confirmation-dialog.component";
+import {
+  ConfirmationDialogComponent,
+  ConfirmDialogModel
+} from "../shared/confirmation-dialog/confirmation-dialog.component";
 import {VacationService} from "../../services/vacation.service";
 
 @Component({
@@ -28,7 +31,7 @@ export class VacationDialogComponent {
               @Inject(MAT_DIALOG_DATA) public data: any,
               private vacationService: VacationService) {
     this.vacation = data?.vacation;
-    this.editMode = !!data.vacation;
+    this.editMode = !!data && !!data.vacation;
     this.title = `${this.editMode ? "bearbeiten" : "beantragen"}`;
     this.initializeForm();
   }
@@ -93,13 +96,12 @@ export class VacationDialogComponent {
 
     const dialogDate = new ConfirmDialogModel("Urlaubsantrag löschen", message);
 
-    this.dialog.open(ConfirmDialogModel, {
+    this.dialog.open(ConfirmationDialogComponent, {
       data: dialogDate
     }).afterClosed().subscribe(result => {
         if (result) {
-          this.vacationService.deleteVacationRequest(this.vacation?.vacationRequestId!).subscribe(res => {
-            console.log(res);
-            this.dialogRef.close();
+          this.vacationService.deleteVacationRequest(this.vacation?.vacationRequestId!).subscribe(() => {
+            this.dialogRef.close({refresh: true});
           })
         }
       }
