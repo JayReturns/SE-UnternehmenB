@@ -120,10 +120,13 @@ export class VacationRequestTableComponent implements AfterViewInit {
       }
     }).afterClosed().subscribe(result => {
       if (result)
-        this.vacationService.updateVacationRequest(result).subscribe(res => {
-          console.log(res);
-          this.refresh();
-        });
+        if ('refresh' in result) {
+          this.refresh()
+        } else
+          this.vacationService.updateVacationRequest(result).subscribe(res => {
+            console.log(res);
+            this.refresh();
+          });
     })
   }
 
