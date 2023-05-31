@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @RequestMapping("api/v1")
 @SecurityScheme(
@@ -152,4 +153,20 @@ public interface ServerApi {
             @RequestParam String environmentType,
             @RequestParam(required = false) String comment
     ) throws Exception;
+
+    @PutMapping("/v_environment_request/status")
+    @Operation(summary = "set Status of virtual environment requests")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Status updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = VirtualEnvironment.class))),
+            @ApiResponse(responseCode = "401", description = "can only be updated by MANAGER", content = @Content),
+            @ApiResponse(responseCode = "403", description = "can not modify requested that is approved/rejected", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Request not found", content = @Content)
+    })
+    @Tag(name = "VirtualEnvironmentRequests")
+    ResponseEntity<VirtualEnvironment> setEnvironmentStatus(
+            @RequestParam String id,
+            @RequestParam Status status,
+            @RequestParam(required = false) String rejectReason
+            ) throws Exception;
+
 }
