@@ -1,5 +1,3 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-
 plugins {
 	java
 	id("org.springframework.boot") version "3.0.6"
