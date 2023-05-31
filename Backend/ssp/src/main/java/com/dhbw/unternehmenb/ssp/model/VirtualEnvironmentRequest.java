@@ -18,7 +18,7 @@ public class VirtualEnvironmentRequest {
     @JsonIgnore
     @DBRef
     private User user;
-    private EnvironmentType environmentType;
+    private String environmentType;
     private String comment;
     private Status status;
     private String rejectReason;
