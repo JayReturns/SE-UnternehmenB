@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @RequestMapping("api/v1")
 @SecurityScheme(
@@ -124,6 +123,14 @@ public interface ServerApi {
     @Tag(name = "VacationRequests")
     ResponseEntity<String> deleteVacationRequest(@RequestParam String vacationRequestId) throws Exception;
 
+    @GetMapping("/v_environment_request")
+    @Operation(summary = "Get all virtual environment requests from the logged in user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Virtual environment requests sent", content = @Content(mediaType = "application/json", schema = @Schema(implementation = VirtualEnvironmentRequest.class))),
+    })
+    @Tag(name = "VirtualEnvironmentRequests")
+    ResponseEntity<List<VirtualEnvironmentRequest>> getVirtualEnvironmentRequestsFromUser() throws Exception;
+
     @PostMapping("/v_environment_request")
     @Operation(summary = "Create Virtual Environment Request")
     @ApiResponses({
@@ -133,7 +140,7 @@ public interface ServerApi {
     })
     @Tag(name = "VirtualEnvironmentRequests")
     ResponseEntity<String> createVirtualEnvironmentRequest(
-            @RequestParam EnvironmentType environmentType,
+            @RequestParam String environmentType,
             @RequestParam(required = false) String comment
     ) throws Exception;
 }

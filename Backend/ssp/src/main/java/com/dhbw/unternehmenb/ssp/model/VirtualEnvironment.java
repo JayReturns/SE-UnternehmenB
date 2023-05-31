@@ -10,13 +10,13 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-@Document(collation = "VirtualEnvironment")
+@Document(collection = "VirtualEnvironment")
 public class VirtualEnvironment {
     @Id
     private UUID VirtualEnvironmentId;
     @DBRef
     private User user;
-    private EnvironmentType environmentType;
+    private String environmentType;
     private String ipAddress;
     private String userName;
     private String password;

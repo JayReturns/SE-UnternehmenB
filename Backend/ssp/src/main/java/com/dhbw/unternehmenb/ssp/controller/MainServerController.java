@@ -265,21 +265,26 @@ public class MainServerController implements ServerApi {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }  
+    }
+
+    @Override
+    public ResponseEntity<List<VirtualEnvironmentRequest>> getVirtualEnvironmentRequestsFromUser() {
+        User currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        List<VirtualEnvironmentRequest> virtualEnvironmentRequests = virtualEnvironmentRequestRepository.findAllByUser(currentUser);
+        return new ResponseEntity<>(virtualEnvironmentRequests, HttpStatus.OK);
+    }
 
     @Override
     public ResponseEntity<String> createVirtualEnvironmentRequest(
-            EnvironmentType environmentType,
+            String environmentType,
             String comment
     ){
         User currentUser = getCurrentUser();
         if (currentUser == null){
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        }
-
-        boolean pendingRequest = virtualEnvironmentRequestRepository.existsByUserAndEnvironmentTypeAndStatus(currentUser, environmentType, Status.REQUESTED);
-        if (pendingRequest) {
-            return new ResponseEntity<>("User already has a pending request for the specified environment!", HttpStatus.BAD_REQUEST);
         }
 
         VirtualEnvironmentRequest virtualEnvironmentRequest = new VirtualEnvironmentRequest(
