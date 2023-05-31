@@ -1,6 +1,7 @@
 package com.dhbw.unternehmenb.ssp.interfaces;
 
 import com.dhbw.unternehmenb.ssp.model.*;
+import com.dhbw.unternehmenb.ssp.model.response.AllUsersVEnvRequestResponseBody;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -130,4 +131,12 @@ public interface ServerApi {
     })
     @Tag(name = "VirtualEnvironmentRequests")
     ResponseEntity<List<VirtualEnvironmentRequest>> getVirtualEnvironmentRequestsFromUser() throws Exception;
+
+    @GetMapping("v_environment_request/all")
+    @Operation(summary = "Get all virtual environment requests")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Virtual environment requests sent", content = @Content)
+    }
+    )@Tag(name = "VirtualEnvironmentRequests")
+    ResponseEntity<List<AllUsersVEnvRequestResponseBody>> getAllVirtualEnvironmentRequests() throws Exception;
 }

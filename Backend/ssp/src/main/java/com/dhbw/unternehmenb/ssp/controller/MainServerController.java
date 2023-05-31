@@ -3,6 +3,7 @@ package com.dhbw.unternehmenb.ssp.controller;
 import com.dhbw.unternehmenb.ssp.auth.FirebaseAuthFilter;
 import com.dhbw.unternehmenb.ssp.interfaces.ServerApi;
 import com.dhbw.unternehmenb.ssp.model.*;
+import com.dhbw.unternehmenb.ssp.model.response.AllUsersVEnvRequestResponseBody;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
 import com.dhbw.unternehmenb.ssp.view.UserRepository;
 import com.dhbw.unternehmenb.ssp.view.VacationRequestRepository;
@@ -274,6 +275,21 @@ public class MainServerController implements ServerApi {
         }
         List<VirtualEnvironmentRequest> virtualEnvironmentRequests = virtualEnvironmentRequestRepository.findAllByUser(currentUser);
         return new ResponseEntity<>(virtualEnvironmentRequests, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<AllUsersVEnvRequestResponseBody>> getAllVirtualEnvironmentRequests() throws Exception {
+        User currentUser = getCurrentUser();
+
+        if (currentUser == null || currentUser.getRole() != Role.MANAGER) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        List<AllUsersVEnvRequestResponseBody> responseBody = new ArrayList<>();
+        List<VirtualEnvironmentRequest> allRequests = virtualEnvironmentRequestRepository.findAll();
+        allRequests.stream()
+                .collect(Collectors.groupingBy(VirtualEnvironmentRequest::getUser))
+                .forEach((user, virtualEnvironmentRequests) -> responseBody.add(new AllUsersVEnvRequestResponseBody(user, virtualEnvironmentRequests)));
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
 }
