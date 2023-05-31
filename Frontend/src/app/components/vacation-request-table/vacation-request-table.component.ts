@@ -111,16 +111,22 @@ export class VacationRequestTableComponent implements AfterViewInit {
 
 
   editVacationRequest(row: Vacation) {
+    if (this.forManager)
+      return;
+
     this.dialog.open(VacationDialogComponent, {
       data: {
         vacation: row
       }
     }).afterClosed().subscribe(result => {
       if (result)
-        this.vacationService.updateVacationRequest(result).subscribe(res => {
-          console.log(res);
-          this.refresh();
-        });
+        if ('refresh' in result) {
+          this.refresh()
+        } else
+          this.vacationService.updateVacationRequest(result).subscribe(res => {
+            console.log(res);
+            this.refresh();
+          });
     })
   }
 

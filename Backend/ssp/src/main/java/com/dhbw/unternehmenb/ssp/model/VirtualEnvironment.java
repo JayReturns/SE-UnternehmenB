@@ -14,11 +14,11 @@ import java.util.UUID;
 @Document(collection = "VirtualEnvironment")
 public class VirtualEnvironment {
     @Id
-    private UUID VirtualEnvironmentId;
-    @JsonIgnore
+    private UUID virtualEnvironmentId;
     @DBRef
+    @JsonIgnore
     private User user;
-    private EnvironmentType environmentType;
+    private String environmentType;
     private String ipAddress;
     private String userName;
     private String password;

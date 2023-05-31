@@ -32,7 +32,8 @@ import {MAT_DATE_LOCALE, DateAdapter} from "@angular/material/core";
 import { VacationConfirmationPopupComponent } from './components/vacation-confirmation-popup/vacation-confirmation-popup.component';
 import {StartOfWeekAdapter} from "./adapter/start-of-week.adapter";
 import {registerLocaleData} from "@angular/common";
-import localeDe from '@angular/common/locales/de'
+import localeDe from '@angular/common/locales/de';
+import { ConfirmationDialogComponent } from './components/shared/confirmation-dialog/confirmation-dialog.component'
 registerLocaleData(localeDe)
 
 @NgModule({
@@ -46,7 +47,8 @@ registerLocaleData(localeDe)
     VacationRequestTableComponent,
     DashboardComponent,
     VacationDialogComponent,
-    VacationConfirmationPopupComponent
+    VacationConfirmationPopupComponent,
+    ConfirmationDialogComponent
   ],
     imports: [
         BrowserModule,

@@ -3,11 +3,14 @@ package com.dhbw.unternehmenb.ssp.controller;
 import com.dhbw.unternehmenb.ssp.auth.FirebaseAuthFilter;
 import com.dhbw.unternehmenb.ssp.interfaces.ServerApi;
 import com.dhbw.unternehmenb.ssp.model.*;
+import com.dhbw.unternehmenb.ssp.model.response.AllUsersVEnvRequestResponseBody;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
 import com.dhbw.unternehmenb.ssp.view.UserRepository;
 import com.dhbw.unternehmenb.ssp.view.VacationRequestRepository;
 import com.dhbw.unternehmenb.ssp.view.VirtualEnvironmentRepository;
 import com.dhbw.unternehmenb.ssp.view.VirtualEnvironmentRequestRepository;
+import com.dhbw.unternehmenb.ssp.model.response.ProvisioningResponse;
+import com.dhbw.unternehmenb.ssp.view.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,6 +50,8 @@ public class MainServerController implements ServerApi {
     private FirebaseAuthFilter firebaseAuthFilter;
     @Autowired
     private HttpServletRequest httpServletRequest;
+    @Autowired
+    private ProvisioningRepository provisioningRepository;
 
     private User getCurrentUser() {
         String token = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -278,7 +284,6 @@ public class MainServerController implements ServerApi {
         List<VirtualEnvironmentRequest> virtualEnvironmentRequests = virtualEnvironmentRequestRepository.findAllByUser(currentUser);
         return new ResponseEntity<>(virtualEnvironmentRequests, HttpStatus.OK);
     }
-
     @Override
     public ResponseEntity<List<VirtualEnvironment>> getVirtualEnvironmentsFromUser()  {
         User currentUser = getCurrentUser();
@@ -290,4 +295,86 @@ public class MainServerController implements ServerApi {
 
     }
 
+    @Override
+    public ResponseEntity<VirtualEnvironment> setEnvironmentStatus(String id, Status status, String rejectReason) throws Exception {
+        User currentUser = getCurrentUser();
+        if (currentUser == null || currentUser.getRole() != Role.MANAGER){
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        VirtualEnvironmentRequest vRequest = virtualEnvironmentRequestRepository.findById(UUID.fromString(id)).orElse(null);
+        if (vRequest == null){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        if (vRequest.getStatus().ordinal() != 0 || status == Status.REQUESTED){
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
+        if (status == Status.APPROVED){
+            //send Request to api
+            ProvisioningResponse response = provisioningRepository.getTechnicalProvisioning(UUID.fromString(id), vRequest.getEnvironmentType());
+            if (response.getVerificationSuccessful()){
+                vRequest.setStatus(Status.APPROVED);
+                virtualEnvironmentRequestRepository.save(vRequest);
+                VirtualEnvironment virtEnv = new VirtualEnvironment(UUID.randomUUID(),
+                        vRequest.getUser(),
+                        vRequest.getEnvironmentType(),
+                        response.getIpAddress(),
+                        response.getUserName(),
+                        response.getInitialPassword());
+                virtualEnvironmentRepository.save(virtEnv);
+                return new ResponseEntity<>(virtEnv, HttpStatus.OK);
+            } else {
+                vRequest.setStatus(Status.REJECTED);
+                vRequest.setRejectReason("Your Request was approved by a Manager but rejected by Provisioning");
+                virtualEnvironmentRequestRepository.save(vRequest);
+                return new ResponseEntity<>(null, HttpStatus.OK);
+            }
+        }
+        else {
+            vRequest.setStatus(status);
+            if (status == Status.REJECTED)
+                vRequest.setRejectReason(rejectReason);
+            virtualEnvironmentRequestRepository.save(vRequest);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }
+    }
+    @Override
+    public ResponseEntity<List<AllUsersVEnvRequestResponseBody>> getAllVirtualEnvironmentRequests() throws Exception {
+        User currentUser = getCurrentUser();
+
+        if (currentUser == null || currentUser.getRole() != Role.MANAGER) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        List<AllUsersVEnvRequestResponseBody> responseBody = new ArrayList<>();
+        List<VirtualEnvironmentRequest> allRequests = virtualEnvironmentRequestRepository.findAll();
+        allRequests.stream()
+                .collect(Collectors.groupingBy(VirtualEnvironmentRequest::getUser))
+                .forEach((user, virtualEnvironmentRequests) -> responseBody.add(new AllUsersVEnvRequestResponseBody(user, virtualEnvironmentRequests)));
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<String> createVirtualEnvironmentRequest(
+            String environmentType,
+            String comment
+    ){
+        User currentUser = getCurrentUser();
+        if (currentUser == null){
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        VirtualEnvironmentRequest virtualEnvironmentRequest = new VirtualEnvironmentRequest(
+                UUID.randomUUID(),
+                currentUser,
+                environmentType,
+                comment,
+                Status.REQUESTED,
+                null
+        );
+        try {
+            virtualEnvironmentRequestRepository.insert(virtualEnvironmentRequest);
+            return new ResponseEntity<>("Virtual Environment Request created successfully!", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
