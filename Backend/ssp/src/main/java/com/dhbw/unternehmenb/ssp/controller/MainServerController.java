@@ -244,7 +244,7 @@ public class MainServerController implements ServerApi {
         leftDays -= vacationDays;
         return new LeftAndMaxVacationDays(maxDays, leftDays);
     }
-  
+
     @Override
     public ResponseEntity<String> deleteVacationRequest(String vacationRequestId) {
         User currentUser = getCurrentUser();
@@ -337,6 +337,26 @@ public class MainServerController implements ServerApi {
             return new ResponseEntity<>(null, HttpStatus.OK);
         }
     }
+
+    @Override
+    public ResponseEntity<String> setVirtualEnvironmentRequestInfos(String id, String environmentType, String comment) {
+        User currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        VirtualEnvironmentRequest vRequest = virtualEnvironmentRequestRepository.findById(UUID.fromString(id)).orElse(null);
+        if (vRequest == null) {
+            return new ResponseEntity<>("Virtual Environment Request not found!", HttpStatus.NOT_FOUND);
+        }
+        if (vRequest.getStatus() != Status.REQUESTED) {
+            return new ResponseEntity<>("Unauthorized: You can only edit Virtual Environment Requests with status 'Requested'!", HttpStatus.FORBIDDEN);
+        }
+        if (environmentType != null) vRequest.setEnvironmentType(environmentType);
+        if (comment != null) vRequest.setComment(comment);
+        virtualEnvironmentRequestRepository.save(vRequest);
+        return new ResponseEntity<>("Saved Virtual Environment Request successfully!", HttpStatus.OK);
+    }
+
     @Override
     public ResponseEntity<List<AllUsersVEnvRequestResponseBody>> getAllVirtualEnvironmentRequests() throws Exception {
         User currentUser = getCurrentUser();
