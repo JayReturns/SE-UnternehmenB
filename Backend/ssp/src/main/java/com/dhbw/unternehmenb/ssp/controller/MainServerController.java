@@ -339,7 +339,7 @@ public class MainServerController implements ServerApi {
     }
 
     @Override
-    public ResponseEntity<String> setVirtualEnvironmentRequestInfos(String id, String environmentType, String comment) {
+    public ResponseEntity<String> setVirtualEnvironmentRequestProperties(String id, String environmentType, String comment) {
         User currentUser = getCurrentUser();
         if (currentUser == null) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -354,7 +354,7 @@ public class MainServerController implements ServerApi {
         if (environmentType != null) vRequest.setEnvironmentType(environmentType);
         if (comment != null) vRequest.setComment(comment);
         virtualEnvironmentRequestRepository.save(vRequest);
-        return new ResponseEntity<>("Saved Virtual Environment Request successfully!", HttpStatus.OK);
+        return new ResponseEntity<>("Virtual Environment Request updated successfully!", HttpStatus.OK);
     }
 
     @Override

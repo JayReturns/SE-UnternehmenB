@@ -179,15 +179,15 @@ public interface ServerApi {
     ) throws Exception;
 
     @PutMapping("/v_environment_request")
-    @Operation(summary = "set Status of virtual environment requests")
+    @Operation(summary = "set properties of virtual environment requests")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Status updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = VirtualEnvironment.class))),
+            @ApiResponse(responseCode = "200", description = "Request updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = VirtualEnvironment.class))),
             @ApiResponse(responseCode = "401", description = "can only be updated by owner of request", content = @Content),
             @ApiResponse(responseCode = "403", description = "can not modify requested that is approved/rejected", content = @Content),
             @ApiResponse(responseCode = "404", description = "Request not found", content = @Content)
     })
     @Tag(name = "VirtualEnvironmentRequests")
-    ResponseEntity<String> setVirtualEnvironmentRequestInfos(
+    ResponseEntity<String> setVirtualEnvironmentRequestProperties(
             @RequestParam String id,
             @RequestParam(required = false) String environmentType,
             @RequestParam(required = false) String comment
