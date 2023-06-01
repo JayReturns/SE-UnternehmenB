@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @RequestMapping("api/v1")
 @SecurityScheme(
@@ -114,7 +113,7 @@ public interface ServerApi {
     ResponseEntity<LeftAndMaxVacationDays> getLeftVacationDays(
             @RequestParam int year
     );
-  
+
     @DeleteMapping("vacation_request")
     @Operation(summary = "Delete Vacation Request by ID")
     @ApiResponses({
@@ -147,7 +146,8 @@ public interface ServerApi {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Virtual environment requests sent", content = @Content)
     }
-    )@Tag(name = "VirtualEnvironmentRequests")
+    )
+    @Tag(name = "VirtualEnvironmentRequests")
     ResponseEntity<List<AllUsersVEnvRequestResponseBody>> getAllVirtualEnvironmentRequests() throws Exception;
 
     @PostMapping("/v_environment_request")
@@ -176,6 +176,16 @@ public interface ServerApi {
             @RequestParam String id,
             @RequestParam Status status,
             @RequestParam(required = false) String rejectReason
-            ) throws Exception;
+    ) throws Exception;
+
+    @DeleteMapping("/v_environment_request")
+    @Operation(summary = "Delete virtual environment Request by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "virtual environment request deleted successfully", content = @Content),
+            @ApiResponse(responseCode = "404", description = "virtual environment request not found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Failed to delete virtual environment request", content = @Content),
+    })
+    @Tag(name = "VirtualEnvironmentRequests")
+    ResponseEntity<String> deleteVirtualEnvironmentRequest(@RequestParam String vacationRequestId) throws Exception;
 
 }
