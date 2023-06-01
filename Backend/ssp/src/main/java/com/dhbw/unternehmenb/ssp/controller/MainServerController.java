@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -104,7 +103,8 @@ public class MainServerController implements ServerApi {
         if (duration < 1)
             return new ResponseEntity<>("Duration must be at least 1 day!", HttpStatus.BAD_REQUEST);
 
-        //TODO: use User Story #31 to check if requested vacation exceeds the limit
+        if (getDaysLeftAndMaxDays(user, startDate.getYear()).getMaxDays() < duration)
+            return new ResponseEntity<>("Duration exceeds maximum vacation days!", HttpStatus.BAD_REQUEST);
 
         if (vacationRequestRepository.isOverlappingWithAnotherVacationRequest(user.getUserId(), startDate, endDate)){
             return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
@@ -296,7 +296,7 @@ public class MainServerController implements ServerApi {
     }
 
     @Override
-    public ResponseEntity<VirtualEnvironment> setEnvironmentStatus(String id, Status status, String rejectReason) throws Exception {
+    public ResponseEntity<VirtualEnvironment> setEnvironmentStatus(String id, Status status, String rejectReason) {
         User currentUser = getCurrentUser();
         if (currentUser == null || currentUser.getRole() != Role.MANAGER){
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -339,7 +339,7 @@ public class MainServerController implements ServerApi {
     }
 
     @Override
-    public ResponseEntity<String> deleteVirtualEnvironmentRequest(String vacationRequestId) throws Exception {
+    public ResponseEntity<String> deleteVirtualEnvironmentRequest(String vacationRequestId) {
         User currentUser = getCurrentUser();
         if (currentUser == null){
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -369,7 +369,7 @@ public class MainServerController implements ServerApi {
     }
 
     @Override
-    public ResponseEntity<List<AllUsersVEnvRequestResponseBody>> getAllVirtualEnvironmentRequests() throws Exception {
+    public ResponseEntity<List<AllUsersVEnvRequestResponseBody>> getAllVirtualEnvironmentRequests() {
         User currentUser = getCurrentUser();
 
         if (currentUser == null || currentUser.getRole() != Role.MANAGER) {
