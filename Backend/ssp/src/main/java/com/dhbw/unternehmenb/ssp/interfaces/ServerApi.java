@@ -38,7 +38,6 @@ public interface ServerApi {
     @Tag(name = "User")
     ResponseEntity<User> getUserData() throws Exception;
 
-
     @PostMapping("user")
     @Operation(summary = "Register User")
     @ApiResponses({
@@ -69,8 +68,8 @@ public interface ServerApi {
             @RequestParam(required = false) String comment
     ) throws Exception;
 
-    @Operation(summary = "Get all vacation requests from the logged in user")
     @GetMapping("vacation_request")
+    @Operation(summary = "Get all vacation requests from the logged in user")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Vacation requests sent", content = @Content(mediaType = "application/json", schema = @Schema(implementation = VacationRequest.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
@@ -103,13 +102,13 @@ public interface ServerApi {
             @RequestParam(required = false) String rejection_cause
     ) throws Exception;
 
+    @GetMapping("/vacation/days")
     @Operation(summary = "Übrige und maximale Urlaubstage zurückgeben")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "calculated left days", content = @Content),
             @ApiResponse(responseCode = "404", description = "User not Found")
     })
     @Tag(name = "DaysLeft")
-    @GetMapping("/vacation/days")
     ResponseEntity<LeftAndMaxVacationDays> getLeftVacationDays(
             @RequestParam int year
     );
@@ -139,7 +138,6 @@ public interface ServerApi {
     })
     @Tag(name = "VirtualEnvironments")
     ResponseEntity<List<VirtualEnvironment>> getVirtualEnvironmentsFromUser() throws Exception;
-
 
     @GetMapping("v_environment_request/all")
     @Operation(summary = "Get all virtual environment requests")
@@ -176,6 +174,21 @@ public interface ServerApi {
             @RequestParam String id,
             @RequestParam Status status,
             @RequestParam(required = false) String rejectReason
+    ) throws Exception;
+
+    @PutMapping("/v_environment_request")
+    @Operation(summary = "set properties of virtual environment requests")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Request updated", content = @Content),
+            @ApiResponse(responseCode = "401", description = "can only be updated by owner of request", content = @Content),
+            @ApiResponse(responseCode = "403", description = "can not modify requested that is approved/rejected", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Request not found", content = @Content)
+    })
+    @Tag(name = "VirtualEnvironmentRequests")
+    ResponseEntity<String> setVirtualEnvironmentRequestProperties(
+            @RequestParam String id,
+            @RequestParam(required = false) String environmentType,
+            @RequestParam(required = false) String comment
     ) throws Exception;
 
     @DeleteMapping("/v_environment_request")
