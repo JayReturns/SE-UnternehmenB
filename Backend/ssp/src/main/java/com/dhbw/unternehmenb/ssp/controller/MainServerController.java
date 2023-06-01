@@ -337,6 +337,37 @@ public class MainServerController implements ServerApi {
             return new ResponseEntity<>(null, HttpStatus.OK);
         }
     }
+
+    @Override
+    public ResponseEntity<String> deleteVirtualEnvironmentRequest(String vacationRequestId) throws Exception {
+        User currentUser = getCurrentUser();
+        if (currentUser == null){
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        UUID requestId = UUID.fromString(vacationRequestId);
+        Optional<VirtualEnvironmentRequest> optionalVirtualEnvironmentRequest = virtualEnvironmentRequestRepository.findById(requestId);
+        if (optionalVirtualEnvironmentRequest.isEmpty()) {
+            return new ResponseEntity<>("Virtual Environment Request not found!", HttpStatus.NOT_FOUND);
+        }
+
+        VirtualEnvironmentRequest virtualEnvironmentRequest = optionalVirtualEnvironmentRequest.get();
+
+        if (!virtualEnvironmentRequest.getUser().getUserId().equals(currentUser.getUserId())) {
+            return new ResponseEntity<>("Unauthorized: You can only delete your own Virtual Environment Requests!", HttpStatus.UNAUTHORIZED);
+        }
+
+        if (virtualEnvironmentRequest.getStatus() == Status.APPROVED) {
+            return new ResponseEntity<>("Cannot delete an approved Virtual Environment Request!", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            virtualEnvironmentRequestRepository.deleteByVirtualEnvironmentRequestId(requestId);
+            return new ResponseEntity<>("Virtual Environment Request deleted successfully!", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @Override
     public ResponseEntity<List<AllUsersVEnvRequestResponseBody>> getAllVirtualEnvironmentRequests() throws Exception {
         User currentUser = getCurrentUser();
