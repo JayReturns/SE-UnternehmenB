@@ -20,7 +20,7 @@ export class VirtualEnvironmentService {
   }
 
   getVirtualEnvironments(){
-    return this.http.get<VirtualEnvironment>(this.urlVE)
+    return this.http.get<VirtualEnvironment[]>(this.urlVE)
   }
 
   getVERequests() {
