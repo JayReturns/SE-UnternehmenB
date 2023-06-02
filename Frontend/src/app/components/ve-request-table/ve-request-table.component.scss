@@ -1,0 +1,17 @@
+.full-width-table {
+  width: 100%;
+}
+
+.mat-column-name{
+  width: 32px;
+  border-right: 1px solid lightgrey;
+  text-align: center;
+}
+
+.sticky {
+  top: auto !important;
+  right: 20px !important;
+  bottom: 20px !important;
+  left: auto !important;
+  position: fixed !important;
+}
