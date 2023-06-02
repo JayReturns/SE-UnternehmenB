@@ -9,6 +9,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
 import {HttpErrorResponse} from "@angular/common/http";
+import {GroupedVERequest, VERequest} from "../../models/virtual-environment.model";
+import {VirtualEnvironmentService} from "../../services/virtual-environment.service";
 
 @Component({
   selector: 've-request-table',
@@ -19,15 +21,15 @@ export class VeRequestTableComponent {
   @Input() forManager!: boolean;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatTable) table!: MatTable<Vacation>;
+  @ViewChild(MatTable) table!: MatTable<VERequest>;
   dataSource = new MatTableDataSource();
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns;
   snackbar: any;
 
-  constructor(private vacationService: VacationService, public dialog: MatDialog, private messageService: MessageService) {
-    this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
+  constructor(private veService: VirtualEnvironmentService, public dialog: MatDialog, private messageService: MessageService) {
+    this.displayedColumns = ['environmentType', 'comment', 'status'];
   }
 
   ngAfterViewInit(): void {
@@ -40,6 +42,7 @@ export class VeRequestTableComponent {
   ngOnChanges(changes: SimpleChanges) {
     //if (!changes["forManager"].firstChange) {
     if (this.forManager) {
+      console.log("SHOW ME MANAGER")
       this.displayedColumns = ['name', ...this.displayedColumns, 'action']
     }
     this.refresh()
@@ -54,9 +57,9 @@ export class VeRequestTableComponent {
 
   getData() {
     if (this.forManager) {
-      return this.vacationService.getAllVacationRequests().pipe(map(v => this.castToVacation(v)))
+      return this.veService.getAllVERequests().pipe(map(v => this.castToVERequest(v)))
     } else {
-      return this.vacationService.getVacationRequests();
+      return this.veService.getVERequests();
     }
   }
 
@@ -74,7 +77,7 @@ export class VeRequestTableComponent {
   }
 
 
-  castToVacation(data: GroupedVacation[]): Vacation[] {
+  castToVERequest(data: GroupedVERequest[]): VERequest[] {
     return data.map(d =>
       d.requests.map(r => {
         r.user = d.user
@@ -84,11 +87,11 @@ export class VeRequestTableComponent {
   }
 
   accept(id: string) {
-    this.vacationService.acceptVacationRequest(id).subscribe(() => this.refresh());
+    this.veService.acceptVERequest(id).subscribe(() => this.refresh());
   }
 
   reject(id: string) {
-    this.vacationService.rejectVacationRequest(id).subscribe(() => this.refresh());
+    this.veService.rejectVERequest(id, "None").subscribe(() => this.refresh());
   }
 
   openDialog() {
@@ -98,7 +101,7 @@ export class VeRequestTableComponent {
       if (!result)
         return;
 
-      this.vacationService.makeVacationRequest(result).subscribe(() => {
+      this.veService.makeVEnRequest(result).subscribe(() => {
       }, err => {
         if (err) {
           if (err instanceof HttpErrorResponse) {
