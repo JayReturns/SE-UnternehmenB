@@ -33,7 +33,8 @@ import { VacationConfirmationPopupComponent } from './components/vacation-confir
 import {StartOfWeekAdapter} from "./adapter/start-of-week.adapter";
 import {registerLocaleData} from "@angular/common";
 import localeDe from '@angular/common/locales/de';
-import { VeRequestTableComponent } from './components/ve-request-table/ve-request-table.component'
+import { VeRequestTableComponent } from './components/ve-request-table/ve-request-table.component';
+import { VirtualEnvironmentsTableComponent } from './components/virtual-environments-table/virtual-environments-table.component'
 registerLocaleData(localeDe)
 
 @NgModule({
@@ -48,7 +49,8 @@ registerLocaleData(localeDe)
     DashboardComponent,
     VacationDialogComponent,
     VacationConfirmationPopupComponent,
-    VeRequestTableComponent
+    VeRequestTableComponent,
+    VirtualEnvironmentsTableComponent
   ],
     imports: [
         BrowserModule,
