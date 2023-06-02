@@ -9,7 +9,7 @@ export interface VirtualEnvironment {
 }
 
 export interface VERequest {
-  virtualEnvironmentRequestId: string
+  virtualEnvironmentRequestId?: string
   user?: User
   environmentType: string
   comment: string
