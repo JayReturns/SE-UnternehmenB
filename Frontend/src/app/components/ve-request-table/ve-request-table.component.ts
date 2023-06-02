@@ -40,18 +40,17 @@ export class VeRequestTableComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    //if (!changes["forManager"].firstChange) {
+
     if (this.forManager) {
       console.log("SHOW ME MANAGER")
       this.displayedColumns = ['name', ...this.displayedColumns, 'action']
     }
     this.refresh()
-    //}
   }
 
   refresh() {
-    this.getData().subscribe(vacations => {
-      this.dataSource.data = vacations
+    this.getData().subscribe(veRequests => {
+      this.dataSource.data = veRequests
     })
   }
 
@@ -91,6 +90,7 @@ export class VeRequestTableComponent {
   }
 
   reject(id: string) {
+    // TODO change rejection reason into forced input from Manager
     this.veService.rejectVERequest(id, "None").subscribe(() => this.refresh());
   }
 
@@ -101,7 +101,7 @@ export class VeRequestTableComponent {
       if (!result)
         return;
 
-      this.veService.makeVEnRequest(result).subscribe(() => {
+      this.veService.makeVERequest(result).subscribe(() => {
       }, err => {
         if (err) {
           if (err instanceof HttpErrorResponse) {

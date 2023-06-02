@@ -31,7 +31,7 @@ export class VirtualEnvironmentService {
     return this.http.get<GroupedVERequest[]>(this.urlRequests + this.getAllSuffix)
   }
 
-  makeVEnRequest(veRequest: VERequest) {
+  makeVERequest(veRequest: VERequest) {
     let params = new HttpParams()
       .set('environmentType', veRequest.environmentType)
       .set('comment', veRequest.comment)
