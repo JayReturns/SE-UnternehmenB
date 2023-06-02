@@ -2,7 +2,7 @@ import {AfterViewInit, Component, Input, SimpleChanges, ViewChild} from '@angula
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
-import {GroupedVacation, Vacation} from "../../models/vacation.model";
+import {GroupedVacation, Status, Vacation} from "../../models/vacation.model";
 import {VacationService} from "../../services/vacation.service";
 import {map} from "rxjs/operators";
 import {MatDialog} from "@angular/material/dialog";
@@ -111,7 +111,7 @@ export class VacationRequestTableComponent implements AfterViewInit {
 
 
   editVacationRequest(row: Vacation) {
-    if (this.forManager)
+    if (this.forManager || row.status != Status.REQUESTED)
       return;
 
     this.dialog.open(VacationDialogComponent, {
