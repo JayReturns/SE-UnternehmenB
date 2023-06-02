@@ -1,12 +1,11 @@
 import {User} from "./user.model";
-import {Vacation} from "./vacation.model";
 
 export interface VirtualEnvironment {
-  virtualEnvironmentId:	string
-  environmentType:	string
-  ipAddress:	string
-  userName:	string
-  password:	string
+  virtualEnvironmentId: string
+  environmentType: string
+  ipAddress: string
+  userName: string
+  password: string
 }
 
 export interface VERequest {
