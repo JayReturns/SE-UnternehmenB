@@ -34,8 +34,8 @@ import { VacationConfirmationPopupComponent } from './components/vacation-confir
 import {StartOfWeekAdapter} from "./adapter/start-of-week.adapter";
 import {registerLocaleData} from "@angular/common";
 import localeDe from '@angular/common/locales/de';
+import { ConfirmationDialogComponent } from './components/shared/confirmation-dialog/confirmation-dialog.component'
 import { VEnvironmentConfirmationPopupComponent } from './components/v-environment-confirmation-popup/v-environment-confirmation-popup.component'
-
 registerLocaleData(localeDe)
 
 @NgModule({
@@ -50,6 +50,7 @@ registerLocaleData(localeDe)
     DashboardComponent,
     VacationDialogComponent,
     VacationConfirmationPopupComponent,
+    ConfirmationDialogComponent,
     VEnvironmentRequestComponent,
     VEnvironmentConfirmationPopupComponent
   ],

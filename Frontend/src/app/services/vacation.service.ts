@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {MessageService} from "./message.service";
 import {environment} from "../../environments/environment";
 import {GroupedVacation, Vacation} from "../models/vacation.model";
 import {Observable} from "rxjs";
@@ -14,7 +13,7 @@ export class VacationService {
   private url = `${environment.baseApiUrl}/api/v1/vacation_request`;
   private readonly getAllSuffix = "/all"
 
-  constructor(private http: HttpClient, private messageService: MessageService) {
+  constructor(private http: HttpClient) {
   }
 
   getVacationRequests() {
@@ -88,4 +87,12 @@ export class VacationService {
 
     return this.http.put(this.url, null, {params: params, responseType: "text"})
   }
+
+  deleteVacationRequest(vacationRequestId: string) {
+    let params = new HttpParams()
+      .set('vacationRequestId', vacationRequestId);
+
+    return this.http.delete(this.url, {params: params, responseType: "text"});
+  }
+
 }
