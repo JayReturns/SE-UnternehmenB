@@ -28,11 +28,14 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { MatSortModule } from '@angular/material/sort';
 import { VacationRequestTableComponent } from './components/vacation-request-table/vacation-request-table.component';
 import { VacationDialogComponent } from './components/vacation-dialog/vacation-dialog.component';
+import {VEnvironmentRequestComponent} from "./components/v-environment-request-dialog/v-environment-request-dialog.component";
 import {MAT_DATE_LOCALE, DateAdapter} from "@angular/material/core";
 import { VacationConfirmationPopupComponent } from './components/vacation-confirmation-popup/vacation-confirmation-popup.component';
 import {StartOfWeekAdapter} from "./adapter/start-of-week.adapter";
 import {registerLocaleData} from "@angular/common";
-import localeDe from '@angular/common/locales/de'
+import localeDe from '@angular/common/locales/de';
+import { VEnvironmentConfirmationPopupComponent } from './components/v-environment-confirmation-popup/v-environment-confirmation-popup.component'
+
 registerLocaleData(localeDe)
 
 @NgModule({
@@ -46,7 +49,9 @@ registerLocaleData(localeDe)
     VacationRequestTableComponent,
     DashboardComponent,
     VacationDialogComponent,
-    VacationConfirmationPopupComponent
+    VacationConfirmationPopupComponent,
+    VEnvironmentRequestComponent,
+    VEnvironmentConfirmationPopupComponent
   ],
     imports: [
         BrowserModule,
