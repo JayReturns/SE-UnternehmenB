@@ -27,9 +27,10 @@ export class VacationRequestTableComponent implements AfterViewInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns;
   snackbar: any;
-  private vEnvironmentRequestService: any;
 
-  constructor(private vacationService: VacationService, public dialog: MatDialog, private messageService: MessageService) {
+
+  // TODO Move vEnvironmentRequestService to request table for virtual environments
+  constructor(private vacationService: VacationService, private vEnvironmentRequestService: VEnvironmentRequestService, public dialog: MatDialog, private messageService: MessageService) {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
   }
 
@@ -113,11 +114,11 @@ export class VacationRequestTableComponent implements AfterViewInit {
     })
   }
 
-
-  openDialog2() {
+  //TODO Move openVEnvironmentDialog to request table for virtual environments
+  openVEnvironmentDialog() {
     const dialogRef = this.dialog.open(VEnvironmentRequestComponent);
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe(result => {
       if (!result)
         return;
 
@@ -131,7 +132,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
         }
       });
 
-      console.log("Das ist eine gute meldung.")
       return;
     })
   }

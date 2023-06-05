@@ -1,11 +1,4 @@
 <div class="mat-elevation-z8">
-  <ng-template [ngIf]="!forManager">
-    <ng-container>
-      <button mat-raised-button color="accent" (click)="openDialog2()" >
-        Virtuelle Umgebung beantragen
-      </button>
-    </ng-container>
-  </ng-template>
 
   <table mat-table class="full-width-table" matSort matSortActive="start" aria-label="Elements"
          [dataSource]="dataSource">
@@ -75,7 +68,16 @@
                  [pageSizeOptions]="[5, 10, 20]"
                  aria-label="Select page">
   </mat-paginator>
+
 </div>
+
+<ng-template [ngIf]="!forManager">
+  <ng-container>
+    <button mat-raised-button color="accent" (click)="openVEnvironmentDialog()" >
+      Virtuelle Umgebung beantragen
+    </button>
+  </ng-container>
+</ng-template>
 
 <ng-template [ngIf]="!forManager">
   <ng-container>

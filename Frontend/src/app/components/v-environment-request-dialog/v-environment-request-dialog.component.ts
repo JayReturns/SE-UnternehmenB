@@ -47,8 +47,6 @@ export class VEnvironmentRequestComponent {
       environmentType: this.vEnvironmentRequestForm.controls['environmentType'].value,
       comment: this.vEnvironmentRequestForm.controls['comment'].value || ""
     }
-    console.log(vEnvironmentRequest.environmentType);
-    console.log(vEnvironmentRequest.comment);
 
     this.dialog.open(VEnvironmentConfirmationPopupComponent, {data: vEnvironmentRequest}).afterClosed().subscribe(confirmed => {
       if (confirmed)
