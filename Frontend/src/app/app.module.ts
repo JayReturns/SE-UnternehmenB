@@ -11,7 +11,6 @@ import {SignInComponent} from './components/sign-in/sign-in.component';
 import {SignUpComponent} from './components/sign-up/sign-up.component';
 import {ForgotPasswordComponent} from './components/forgot-password/forgot-password.component';
 import {VerifyEmailComponent} from './components/verify-email/verify-email.component';
-import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {AngularFireDatabaseModule} from "@angular/fire/compat/database";
 import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
 import {AngularFireStorageModule} from "@angular/fire/compat/storage";
@@ -45,9 +44,7 @@ registerLocaleData(localeDe)
     SignUpComponent,
     ForgotPasswordComponent,
     VerifyEmailComponent,
-    DashboardComponent,
     VacationRequestTableComponent,
-    DashboardComponent,
     VacationDialogComponent,
     VacationConfirmationPopupComponent,
     ConfirmationDialogComponent,

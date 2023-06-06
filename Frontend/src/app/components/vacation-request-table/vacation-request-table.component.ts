@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, SimpleChanges, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, SimpleChanges, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
@@ -11,6 +11,7 @@ import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.compon
 import {HttpErrorResponse} from "@angular/common/http";
 import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
 import {VEnvironmentRequestService} from "../../services/v-environment-request.service";
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'vacation-request-table',
@@ -18,7 +19,7 @@ import {VEnvironmentRequestService} from "../../services/v-environment-request.s
   styleUrls: ['./vacation-request-table.component.scss']
 })
 export class VacationRequestTableComponent implements AfterViewInit {
-  @Input() forManager!: boolean;
+  forManager: boolean | undefined;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Vacation>;
@@ -30,8 +31,14 @@ export class VacationRequestTableComponent implements AfterViewInit {
 
 
   // TODO Move vEnvironmentRequestService to request table for virtual environments
-  constructor(private vacationService: VacationService, private vEnvironmentRequestService: VEnvironmentRequestService, public dialog: MatDialog, private messageService: MessageService) {
+  constructor(private vacationService: VacationService,
+              private vEnvironmentRequestService: VEnvironmentRequestService,
+              public dialog: MatDialog, private messageService: MessageService,
+              private userService: UserService) {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
+    this.userService.getUser().subscribe(user => {
+      this.forManager = user?.role == 'MANAGER';
+    })
   }
 
   ngAfterViewInit(): void {
