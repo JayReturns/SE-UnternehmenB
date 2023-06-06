@@ -10,7 +10,6 @@ import {Vacation} from "../../models/vacation.model";
 export class VacationConfirmationPopupComponent {
 
   vacation: Vacation;
-  comment = "";
 
   constructor(private dialogRef: MatDialogRef<VacationConfirmationPopupComponent>,
               @Inject(MAT_DIALOG_DATA) data: any) {

@@ -11,7 +11,6 @@ import {VEnvironmentRequest} from "../../models/v-environment-request.model";
 export class VEnvironmentConfirmationPopupComponent {
 
   vEnvironmentRequest: VEnvironmentRequest;
-  comment = "";
 
   constructor(private dialogRef: MatDialogRef<VEnvironmentConfirmationPopupComponent>,
               @Inject(MAT_DIALOG_DATA) data: any) {
