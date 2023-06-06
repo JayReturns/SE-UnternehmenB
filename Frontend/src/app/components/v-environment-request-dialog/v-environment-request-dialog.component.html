@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Virtuelle Umgebung {{title}}</h2>
+<mat-dialog-content [formGroup]="vEnvironmentRequestForm">
+
+
+  <mat-form-field>
+    <mat-label>Umgebungsart</mat-label>
+    <input matInput type="string" placeholder="Umgebungsart" formControlName="environmentType" required>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Bemerkung</mat-label>
+    <textarea formControlName="comment" matInput placeholder="Bemerkung" [maxLength]="maxCommentLength"
+              #comment></textarea>
+    <mat-hint align="end">{{comment.value.length}}/{{maxCommentLength}}</mat-hint>
+  </mat-form-field>
+
+  <mat-dialog-actions align="end">
+    <button (click)="close()" mat-raised-button>Abbrechen</button>
+    <button (click)="onSubmit()" color="primary" mat-raised-button
+            [disabled]="!vEnvironmentRequestForm.valid">{{title | titlecase}}</button>
+  </mat-dialog-actions>
+
+</mat-dialog-content>

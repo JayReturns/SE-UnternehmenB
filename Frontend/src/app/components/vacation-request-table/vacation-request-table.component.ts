@@ -9,6 +9,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
 import {HttpErrorResponse} from "@angular/common/http";
+import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
+import {VEnvironmentRequestService} from "../../services/v-environment-request.service";
 
 @Component({
   selector: 'vacation-request-table',
@@ -26,7 +28,9 @@ export class VacationRequestTableComponent implements AfterViewInit {
   displayedColumns;
   snackbar: any;
 
-  constructor(private vacationService: VacationService, public dialog: MatDialog, private messageService: MessageService) {
+
+  // TODO Move vEnvironmentRequestService to request table for virtual environments
+  constructor(private vacationService: VacationService, private vEnvironmentRequestService: VEnvironmentRequestService, public dialog: MatDialog, private messageService: MessageService) {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
   }
 
@@ -39,10 +43,10 @@ export class VacationRequestTableComponent implements AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges) {
     //if (!changes["forManager"].firstChange) {
-      if (this.forManager) {
-        this.displayedColumns = ['name', ...this.displayedColumns, 'action']
-      }
-      this.refresh()
+    if (this.forManager) {
+      this.displayedColumns = ['name', ...this.displayedColumns, 'action']
+    }
+    this.refresh()
     //}
   }
 
@@ -84,11 +88,11 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   accept(id: string) {
-    this.vacationService.acceptVacationRequest(id).subscribe(()=>this.refresh());
+    this.vacationService.acceptVacationRequest(id).subscribe(() => this.refresh());
   }
 
   reject(id: string) {
-    this.vacationService.rejectVacationRequest(id).subscribe(()=>this.refresh());
+    this.vacationService.rejectVacationRequest(id).subscribe(() => this.refresh());
   }
 
   openDialog() {
@@ -98,7 +102,8 @@ export class VacationRequestTableComponent implements AfterViewInit {
       if (!result)
         return;
 
-      this.vacationService.makeVacationRequest(result).subscribe(() => { }, err => {
+      this.vacationService.makeVacationRequest(result).subscribe(() => {
+      }, err => {
         if (err) {
           if (err instanceof HttpErrorResponse) {
             this.messageService.notifyUser(err.error);
@@ -106,6 +111,28 @@ export class VacationRequestTableComponent implements AfterViewInit {
           }
         }
       });
+    })
+  }
+
+  //TODO Move openVEnvironmentDialog to request table for virtual environments
+  openVEnvironmentDialog() {
+    const dialogRef = this.dialog.open(VEnvironmentRequestComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result)
+        return;
+
+      this.vEnvironmentRequestService.makeVEnvironmentRequest(result).subscribe(() => {
+      }, (err: { error: string; }) => {
+        if (err) {
+          if (err instanceof HttpErrorResponse) {
+            this.messageService.notifyUser(err.error);
+            console.log(err);
+          }
+        }
+      });
+
+      return;
     })
   }
 
