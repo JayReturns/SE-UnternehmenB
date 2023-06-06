@@ -4,10 +4,7 @@ import {Status, Vacation} from "../../models/vacation.model";
 import {MessageService} from "../../services/message.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {VacationConfirmationPopupComponent} from "../vacation-confirmation-popup/vacation-confirmation-popup.component";
-import {
-  ConfirmationDialogComponent,
-  ConfirmDialogModel
-} from "../shared/confirmation-dialog/confirmation-dialog.component";
+import {ConfirmationDialogComponent,ConfirmDialogModel} from "../shared/confirmation-dialog/confirmation-dialog.component";
 import {VacationService} from "../../services/vacation.service";
 
 @Component({

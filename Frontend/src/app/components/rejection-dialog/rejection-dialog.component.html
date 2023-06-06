@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Ablehungsgrund angeben</h2>
+<mat-dialog-content [formGroup]="rejectionForm">
+
+  <mat-form-field>
+    <mat-label>Ablehnungsgrund</mat-label>
+    <textarea formControlName="rejectReason" matInput placeholder="Ablehnungsgrund" [maxLength]="maxCommentLength" #rejectReason></textarea>
+    <mat-hint align="end">{{rejectReason.value.length}}/{{maxCommentLength}}</mat-hint>
+  </mat-form-field>
+
+  <mat-dialog-actions align="end">
+    <button (click)="close()" mat-raised-button>Abbrechen</button>
+    <button (click)="onSubmit()" color="primary" mat-raised-button
+            [disabled]="!rejectionForm.valid">Antrag ablehnen</button>
+  </mat-dialog-actions>
+
+</mat-dialog-content>

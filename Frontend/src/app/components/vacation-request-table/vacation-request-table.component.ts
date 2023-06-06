@@ -11,6 +11,7 @@ import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.compon
 import {HttpErrorResponse} from "@angular/common/http";
 import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
 import {VEnvironmentRequestService} from "../../services/v-environment-request.service";
+import {RejectionDialogComponent} from "../rejection-dialog/rejection-dialog.component";
 
 @Component({
   selector: 'vacation-request-table',
@@ -92,7 +93,15 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   reject(id: string) {
-    this.vacationService.rejectVacationRequest(id).subscribe(() => this.refresh());
+    const dialogRef = this.dialog.open(RejectionDialogComponent);
+
+    dialogRef.afterClosed().subscribe(rejectReason => {
+      if (!rejectReason)
+        return;
+
+      this.vacationService.rejectVacationRequest(id,rejectReason).subscribe(() => this.refresh());
+    })
+
   }
 
   openDialog() {
