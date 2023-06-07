@@ -2,8 +2,6 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {MessageService} from "./message.service";
 import {environment} from "../../environments/environment";
-
-import {map} from "rxjs/operators";
 import {GroupedVERequest, VERequest, VirtualEnvironment} from "../models/virtual-environment.model";
 
 @Injectable({
@@ -38,6 +36,7 @@ export class VirtualEnvironmentService {
 
     return this.http.post(this.urlRequests, null, {params: params, responseType: "text"});
   }
+
 
   acceptVERequest(veRequestId: string) {
     let params = new HttpParams()
