@@ -118,24 +118,23 @@ export class VeRequestTableComponent {
     })
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(VacationDialogComponent);
+  editVacationRequest(row: VERequest) {
+    if (this.forManager || row.status != Status.REQUESTED)
+      return;
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (!result)
-        return;
-
-      this.veService.makeVERequest(result).subscribe(() => {
-      }, err => {
-        if (err) {
-          if (err instanceof HttpErrorResponse) {
-            this.messageService.notifyUser(err.error);
-            console.log(err);
-          }
-        }
-      }, () => {
-        this.refresh()
-      });
+    this.dialog.open(VEnvironmentRequestComponent, {
+      data: {
+        vEnvironmentRequest: row
+      }
+    }).afterClosed().subscribe(result => {
+      if (result)
+        if ('refresh' in result) {
+          this.refresh()
+        } else
+          this.veService.updateVERequest(result).subscribe(res => {
+            console.log(res);
+            this.refresh();
+          });
     })
   }
 

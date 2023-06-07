@@ -3,6 +3,8 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {MessageService} from "./message.service";
 import {environment} from "../../environments/environment";
 import {GroupedVERequest, VERequest, VirtualEnvironment} from "../models/virtual-environment.model";
+import {Vacation} from "../models/vacation.model";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +39,14 @@ export class VirtualEnvironmentService {
     return this.http.post(this.urlRequests, null, {params: params, responseType: "text"});
   }
 
+  updateVERequest(veRequest: VERequest): Observable<string> {
+    let params = new HttpParams()
+      .set('environmentType', veRequest.environmentType)
+      .set('comment', veRequest.comment)
+      .set('id', veRequest.virtualEnvironmentRequestId!)
+
+    return this.http.put(this.urlRequests, null, {params: params, responseType: "text"})
+  }
 
   acceptVERequest(veRequestId: string) {
     let params = new HttpParams()
