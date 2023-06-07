@@ -67,11 +67,11 @@ export class VEnvironmentRequestComponent {
   }
 
   delete() {
-    const message = "Soll dieser Urlaubsantrag wirklich gelöscht werden?"
+    const message = "Soll diese Bedarfsmeldung wirklich gelöscht werden?"
 
-    const dialogDate = new ConfirmDialogModel("Urlaubsantrag löschen", message);
+    const dialogDate = new ConfirmDialogModel("Bedarfsmeldung löschen", message);
 
-    this.dialog.open(VEnvironmentConfirmationPopupComponent, {
+    this.dialog.open(ConfirmationDialogComponent, {
       data: dialogDate
     }).afterClosed().subscribe(result => {
         if (result) {
