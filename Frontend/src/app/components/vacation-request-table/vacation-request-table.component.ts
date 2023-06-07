@@ -130,6 +130,7 @@ export class VacationRequestTableComponent implements AfterViewInit {
     })
   }
 
+  protected readonly Status = Status;
 }
 
 

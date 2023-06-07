@@ -1,15 +1,14 @@
-import {AfterViewInit, Component, Input, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, Input, SimpleChanges, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
-import {GroupedVacation, Vacation} from "../../models/vacation.model";
-import {VacationService} from "../../services/vacation.service";
+import {Vacation} from "../../models/vacation.model";
 import {map} from "rxjs/operators";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
 import {HttpErrorResponse} from "@angular/common/http";
-import {GroupedVERequest, VERequest} from "../../models/virtual-environment.model";
+import {GroupedVERequest, Status, VERequest} from "../../models/virtual-environment.model";
 import {VirtualEnvironmentService} from "../../services/virtual-environment.service";
 
 @Component({
@@ -50,6 +49,7 @@ export class VeRequestTableComponent {
 
   refresh() {
     this.getData().subscribe(veRequests => {
+      console.log("Got data:", veRequests)
       this.dataSource.data = veRequests
     })
   }
@@ -112,4 +112,6 @@ export class VeRequestTableComponent {
       });
     })
   }
+
+  protected readonly Status = Status;
 }
