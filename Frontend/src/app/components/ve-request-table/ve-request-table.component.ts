@@ -133,6 +133,8 @@ export class VeRequestTableComponent {
             console.log(err);
           }
         }
+      }, () => {
+        this.refresh()
       });
     })
   }

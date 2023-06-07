@@ -118,6 +118,8 @@ export class VacationRequestTableComponent implements AfterViewInit {
             console.log(err);
           }
         }
+      }, () => {
+        this.refresh()
       });
     })
   }
