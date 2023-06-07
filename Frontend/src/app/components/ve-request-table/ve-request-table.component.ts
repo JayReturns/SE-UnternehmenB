@@ -95,8 +95,6 @@ export class VeRequestTableComponent {
     this.veService.rejectVERequest(id, "None").subscribe(() => this.refresh());
   }
 
-
-  //TODO Move openVEnvironmentDialog to request table for virtual environments
   openVEnvironmentDialog() {
     const dialogRef = this.dialog.open(VEnvironmentRequestComponent);
 
