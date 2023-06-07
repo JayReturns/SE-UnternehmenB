@@ -1,5 +1,5 @@
-<ng-template [ngIf]="user?.role == Role.EMPLOYEE">
+<ng-template [ngIf]="user.role == Role.EMPLOYEE">
   <virtual-environments-table></virtual-environments-table>
   <mat-divider></mat-divider>
 </ng-template>
-<ve-request-table [forManager]="user?.role == Role.MANAGER"></ve-request-table>
+<ve-request-table [forManager]="user.role == Role.MANAGER"></ve-request-table>
