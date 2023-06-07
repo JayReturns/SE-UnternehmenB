@@ -45,7 +45,8 @@ import {ConfirmationDialogComponent} from './components/shared/confirmation-dial
 import {
   VEnvironmentConfirmationPopupComponent
 } from './components/v-environment-confirmation-popup/v-environment-confirmation-popup.component';
-import {RejectionDialogComponent} from './components/rejection-dialog/rejection-dialog.component'
+import {RejectionDialogComponent} from './components/rejection-dialog/rejection-dialog.component';
+import { VirtualEnvironmentContainerComponent } from './components/virtual-environment-container/virtual-environment-container.component'
 
 registerLocaleData(localeDe)
 
@@ -64,7 +65,8 @@ registerLocaleData(localeDe)
     ConfirmationDialogComponent,
     VEnvironmentRequestComponent,
     VEnvironmentConfirmationPopupComponent,
-    RejectionDialogComponent
+    RejectionDialogComponent,
+    VirtualEnvironmentContainerComponent
   ],
     imports: [
         BrowserModule,
