@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../shared/services/auth.service";
-import {EmailValidator, FormControl, FormGroup, Validators} from "@angular/forms";
-import {ErrorStateMatcher} from '@angular/material/core';
+import {FormControl, FormGroup} from "@angular/forms";
 
 @Component({
   selector: 'app-forgot-password',
