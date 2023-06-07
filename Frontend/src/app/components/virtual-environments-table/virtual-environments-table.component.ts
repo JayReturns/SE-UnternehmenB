@@ -35,6 +35,7 @@ export class VirtualEnvironmentsTableComponent {
     this.dataSource.paginator = this.paginator;
     this.dataSource.data = []
     this.dataSource.sortingDataAccessor = (item, property) => this.sortData(item as Vacation, property)
+    this.refresh()
   }
 
   refresh() {
