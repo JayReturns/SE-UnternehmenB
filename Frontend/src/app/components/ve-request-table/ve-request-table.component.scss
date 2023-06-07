@@ -8,6 +8,19 @@
   text-align: center;
 }
 
+.mat-column-comment{
+  max-width: 300px;
+}
+
+.mat-column-action{
+  text-align: right;
+  justify-content: flex-end;
+}
+
+th.mat-column-action{
+  padding-right: 60px;
+}
+
 .sticky {
   top: auto !important;
   right: 20px !important;
