@@ -18,15 +18,21 @@
 
     <mat-drawer class="SideBar" mode="side" opened>
       <mat-nav-list>
-        <mat-list-item>
-          <mat-icon matListItemIcon>beach_access</mat-icon>
-          <a mat-list-item href="/#/dashboard" routerLinkActive="active">Urlaubsanträge</a>
-        </mat-list-item>
+        <a mat-list-item href="/#/dashboard" routerLinkActive="active">
+          <mat-list-item>
+            <mat-icon matListItemIcon>beach_access</mat-icon>
+
+            Urlaubsanträge
+          </mat-list-item>
+        </a>
+
         <mat-divider></mat-divider>
-        <mat-list-item>
-          <mat-icon matListItemIcon>dns</mat-icon>
-          <a mat-list-item href="/#/venv" routerLinkActive="active">Virtuelle Umgebungen</a>
-        </mat-list-item>
+        <a mat-list-item href="/#/venv" routerLinkActive="active">
+          <mat-list-item>
+            <mat-icon matListItemIcon>dns</mat-icon>
+            Virtuelle Umgebungen
+          </mat-list-item>
+        </a>
       </mat-nav-list>
     </mat-drawer>
 
