@@ -1,9 +1,11 @@
 import {Component, Inject} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {VEnvironmentRequest} from "../../models/v-environment-request.model";
 import {MessageService} from "../../services/message.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {VEnvironmentConfirmationPopupComponent} from "../v-environment-confirmation-popup/v-environment-confirmation-popup.component";
+import {
+  VEnvironmentConfirmationPopupComponent
+} from "../v-environment-confirmation-popup/v-environment-confirmation-popup.component";
+import {Status, VERequest} from "../../models/virtual-environment.model";
 
 
 @Component({
@@ -16,7 +18,7 @@ export class VEnvironmentRequestComponent {
   maxCommentLength = 100;
 
   vEnvironmentRequestForm: FormGroup = new FormGroup<any>({});
-  vEnvironmentRequest: VEnvironmentRequest | null;
+  vEnvironmentRequest: VERequest | null;
   title: string;
 
   constructor(private formBuilder: FormBuilder,
@@ -43,9 +45,10 @@ export class VEnvironmentRequestComponent {
       return;
     }
 
-    const vEnvironmentRequest: VEnvironmentRequest = {
+    const vEnvironmentRequest: VERequest = {
       environmentType: this.vEnvironmentRequestForm.controls['environmentType'].value,
-      comment: this.vEnvironmentRequestForm.controls['comment'].value || ""
+      comment: this.vEnvironmentRequestForm.controls['comment'].value || "",
+      status: Status.REQUESTED
     }
 
     this.dialog.open(VEnvironmentConfirmationPopupComponent, {data: vEnvironmentRequest}).afterClosed().subscribe(confirmed => {

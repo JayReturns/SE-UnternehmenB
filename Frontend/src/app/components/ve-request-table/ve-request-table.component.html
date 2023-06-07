@@ -54,8 +54,9 @@
 </div>
 
 <ng-template [ngIf]="!forManager">
-  <button mat-raised-button color="accent" (click)="openDialog()" class="sticky">
-    Bedarfsmeldung senden
-  </button>
+  <ng-container>
+    <button mat-raised-button color="accent" (click)="openVEnvironmentDialog()" >
+      Virtuelle Umgebung beantragen
+    </button>
+  </ng-container>
 </ng-template>
-

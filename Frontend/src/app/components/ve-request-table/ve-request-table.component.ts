@@ -10,6 +10,7 @@ import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.compon
 import {HttpErrorResponse} from "@angular/common/http";
 import {GroupedVERequest, Status, VERequest} from "../../models/virtual-environment.model";
 import {VirtualEnvironmentService} from "../../services/virtual-environment.service";
+import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
 
 @Component({
   selector: 've-request-table',
@@ -92,6 +93,29 @@ export class VeRequestTableComponent {
   reject(id: string) {
     // TODO change rejection reason into forced input from Manager
     this.veService.rejectVERequest(id, "None").subscribe(() => this.refresh());
+  }
+
+
+  //TODO Move openVEnvironmentDialog to request table for virtual environments
+  openVEnvironmentDialog() {
+    const dialogRef = this.dialog.open(VEnvironmentRequestComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result)
+        return;
+
+      this.veService.makeVERequest(result).subscribe(() => {
+      }, (err: { error: string; }) => {
+        if (err) {
+          if (err instanceof HttpErrorResponse) {
+            this.messageService.notifyUser(err.error);
+            console.log(err);
+          }
+        }
+      });
+
+      return;
+    })
   }
 
   openDialog() {

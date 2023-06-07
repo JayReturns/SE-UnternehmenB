@@ -9,8 +9,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
 import {HttpErrorResponse} from "@angular/common/http";
-import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
-import {VEnvironmentRequestService} from "../../services/v-environment-request.service";
+
 import {RejectionDialogComponent} from "../rejection-dialog/rejection-dialog.component";
 import {UserService} from "../../services/user.service";
 
@@ -31,15 +30,16 @@ export class VacationRequestTableComponent implements AfterViewInit {
   displayedColumns;
   snackbar: any;
 
-
-  // TODO Move vEnvironmentRequestService to request table for virtual environments
   constructor(private vacationService: VacationService,
-              private vEnvironmentRequestService: VEnvironmentRequestService,
               public dialog: MatDialog, private messageService: MessageService,
               private userService: UserService) {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
     this.userService.getUser().subscribe(user => {
       this.forManager = user?.role == 'MANAGER';
+      if (this.forManager) {
+        this.displayedColumns = ['name', ...this.displayedColumns, 'action']
+      }
+      this.refresh()
     })
   }
 
@@ -48,15 +48,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.data = []
     this.dataSource.sortingDataAccessor = (item, property) => this.sortData(item as Vacation, property)
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    //if (!changes["forManager"].firstChange) {
-    if (this.forManager) {
-      this.displayedColumns = ['name', ...this.displayedColumns, 'action']
-    }
-    this.refresh()
-    //}
   }
 
   refresh() {
@@ -130,29 +121,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
       });
     })
   }
-
-  //TODO Move openVEnvironmentDialog to request table for virtual environments
-  openVEnvironmentDialog() {
-    const dialogRef = this.dialog.open(VEnvironmentRequestComponent);
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (!result)
-        return;
-
-      this.vEnvironmentRequestService.makeVEnvironmentRequest(result).subscribe(() => {
-      }, (err: { error: string; }) => {
-        if (err) {
-          if (err instanceof HttpErrorResponse) {
-            this.messageService.notifyUser(err.error);
-            console.log(err);
-          }
-        }
-      });
-
-      return;
-    })
-  }
-
 
   editVacationRequest(row: Vacation) {
     if (this.forManager || row.status != Status.REQUESTED)
