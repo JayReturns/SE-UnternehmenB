@@ -11,6 +11,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {GroupedVERequest, Status, VERequest} from "../../models/virtual-environment.model";
 import {VirtualEnvironmentService} from "../../services/virtual-environment.service";
 import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
+import {RejectionDialogComponent} from "../rejection-dialog/rejection-dialog.component";
 
 @Component({
   selector: 've-request-table',
@@ -90,9 +91,17 @@ export class VeRequestTableComponent {
     this.veService.acceptVERequest(id).subscribe(() => this.refresh());
   }
 
+
   reject(id: string) {
-    // TODO change rejection reason into forced input from Manager
-    this.veService.rejectVERequest(id, "None").subscribe(() => this.refresh());
+    const dialogRef = this.dialog.open(RejectionDialogComponent);
+
+    dialogRef.afterClosed().subscribe(rejectReason => {
+      if (!rejectReason)
+        return;
+
+      this.veService.rejectVERequest(id,rejectReason).subscribe(() => this.refresh());
+    })
+
   }
 
   openVEnvironmentDialog() {
