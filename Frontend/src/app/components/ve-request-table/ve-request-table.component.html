@@ -27,7 +27,7 @@
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef>Aktion</th>
         <td mat-cell *matCellDef="let row">
-        <span>
+        <span *ngIf="row.status == Status.REQUESTED">
           <button mat-button matTooltip="Genehmigen" (click)="accept(row.vacationRequestId)" >
             <mat-icon>check_circle</mat-icon>
           </button>
