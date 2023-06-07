@@ -1,7 +1,10 @@
+
 <div class="mat-elevation-z8">
-  <div class="additional_feature_box">
-    <button mat-button matTooltip="Beispiel1" ><mat-icon>check_circle</mat-icon></button>
+  <div class="additional_feature_box" >
+    <button mat-button matTooltip="Beispiel1" (click)="setDaysLeft()" ><mat-icon>check_circle</mat-icon></button>
     <button mat-button matTooltip="Beispiel1"><mat-icon>check_circle</mat-icon></button>
+    <mat-progress-bar mode="determinate" [value]="setDaysLeft()" class="left_days_progress_bar"> 30 </mat-progress-bar>
+
   </div>
 
   <table mat-table class="full-width-table" matSort matSortActive="start" aria-label="Elements"
@@ -90,7 +93,6 @@
     </button>
   </ng-container>
 </ng-template>
-
 
 
 

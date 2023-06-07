@@ -11,6 +11,8 @@ import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.compon
 import {HttpErrorResponse} from "@angular/common/http";
 import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
 import {VEnvironmentRequestService} from "../../services/v-environment-request.service";
+import {Observable, throwError } from 'rxjs';
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'vacation-request-table',
@@ -23,16 +25,19 @@ export class VacationRequestTableComponent implements AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Vacation>;
   dataSource = new MatTableDataSource();
-
+  accessToken : any
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns;
   snackbar: any;
-
+  left_day: any;
+  year: any = new Date().getFullYear()
 
   // TODO Move vEnvironmentRequestService to request table for virtual environments
-  constructor(private vacationService: VacationService, private vEnvironmentRequestService: VEnvironmentRequestService, public dialog: MatDialog, private messageService: MessageService) {
+  constructor(private vacationService: VacationService, private vEnvironmentRequestService: VEnvironmentRequestService, public dialog: MatDialog, private messageService: MessageService ) {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
   }
+
+
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
@@ -62,6 +67,13 @@ export class VacationRequestTableComponent implements AfterViewInit {
     } else {
       return this.vacationService.getVacationRequests();
     }
+  }
+
+  setDaysLeft(): number{
+    this.left_day = this.vacationService.http.get(environment.baseApiUrl+'/api/v1/vacation/days?year='+this.year);
+    console.log(this.left_day);
+    return (this.left_day/30)*100;
+
   }
 
 

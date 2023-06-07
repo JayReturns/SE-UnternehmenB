@@ -13,7 +13,7 @@ export class VacationService {
   private url = `${environment.baseApiUrl}/api/v1/vacation_request`;
   private readonly getAllSuffix = "/all"
 
-  constructor(private http: HttpClient) {
+  constructor(public http: HttpClient) {
   }
 
   getVacationRequests() {
