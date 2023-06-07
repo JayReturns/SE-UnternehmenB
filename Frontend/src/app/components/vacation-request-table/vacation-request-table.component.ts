@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, SimpleChanges, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, SimpleChanges, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
@@ -9,6 +9,11 @@ import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
 import {HttpErrorResponse} from "@angular/common/http";
+import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
+import {VEnvironmentRequestService} from "../../services/v-environment-request.service";
+import {RejectionDialogComponent} from "../rejection-dialog/rejection-dialog.component";
+import {UserService} from "../../services/user.service";
+
 
 @Component({
   selector: 'vacation-request-table',
@@ -16,7 +21,7 @@ import {HttpErrorResponse} from "@angular/common/http";
   styleUrls: ['./vacation-request-table.component.scss']
 })
 export class VacationRequestTableComponent implements AfterViewInit {
-  @Input() forManager!: boolean;
+  forManager: boolean | undefined;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Vacation>;
@@ -26,8 +31,16 @@ export class VacationRequestTableComponent implements AfterViewInit {
   displayedColumns;
   snackbar: any;
 
-  constructor(private vacationService: VacationService, public dialog: MatDialog, private messageService: MessageService) {
+
+  // TODO Move vEnvironmentRequestService to request table for virtual environments
+  constructor(private vacationService: VacationService,
+              private vEnvironmentRequestService: VEnvironmentRequestService,
+              public dialog: MatDialog, private messageService: MessageService,
+              private userService: UserService) {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
+    this.userService.getUser().subscribe(user => {
+      this.forManager = user?.role == 'MANAGER';
+    })
   }
 
   ngAfterViewInit(): void {
@@ -39,10 +52,10 @@ export class VacationRequestTableComponent implements AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges) {
     //if (!changes["forManager"].firstChange) {
-      if (this.forManager) {
-        this.displayedColumns = ['name', ...this.displayedColumns, 'action']
-      }
-      this.refresh()
+    if (this.forManager) {
+      this.displayedColumns = ['name', ...this.displayedColumns, 'action']
+    }
+    this.refresh()
     //}
   }
 
@@ -84,11 +97,19 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   accept(id: string) {
-    this.vacationService.acceptVacationRequest(id).subscribe(()=>this.refresh());
+    this.vacationService.acceptVacationRequest(id).subscribe(() => this.refresh());
   }
 
   reject(id: string) {
-    this.vacationService.rejectVacationRequest(id).subscribe(()=>this.refresh());
+    const dialogRef = this.dialog.open(RejectionDialogComponent);
+
+    dialogRef.afterClosed().subscribe(rejectReason => {
+      if (!rejectReason)
+        return;
+
+      this.vacationService.rejectVacationRequest(id,rejectReason).subscribe(() => this.refresh());
+    })
+
   }
 
   openDialog() {
@@ -98,7 +119,8 @@ export class VacationRequestTableComponent implements AfterViewInit {
       if (!result)
         return;
 
-      this.vacationService.makeVacationRequest(result).subscribe(() => { }, err => {
+      this.vacationService.makeVacationRequest(result).subscribe(() => {
+      }, err => {
         if (err) {
           if (err instanceof HttpErrorResponse) {
             this.messageService.notifyUser(err.error);
@@ -106,6 +128,28 @@ export class VacationRequestTableComponent implements AfterViewInit {
           }
         }
       });
+    })
+  }
+
+  //TODO Move openVEnvironmentDialog to request table for virtual environments
+  openVEnvironmentDialog() {
+    const dialogRef = this.dialog.open(VEnvironmentRequestComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result)
+        return;
+
+      this.vEnvironmentRequestService.makeVEnvironmentRequest(result).subscribe(() => {
+      }, (err: { error: string; }) => {
+        if (err) {
+          if (err instanceof HttpErrorResponse) {
+            this.messageService.notifyUser(err.error);
+            console.log(err);
+          }
+        }
+      });
+
+      return;
     })
   }
 

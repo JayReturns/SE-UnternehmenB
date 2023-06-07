@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Antrag bestätigen</h2>
+<mat-dialog-content>
+  <p>
+    <strong>Umgebungsart: </strong> {{vEnvironmentRequest.environmentType}}
+  </p>
+  <p>
+    <strong>Kommentar:</strong> {{vEnvironmentRequest.comment}}
+  </p>
+
+  <mat-dialog-actions align="end">
+    <button (click)="close()" color="warn" mat-raised-button>Abbrechen</button>
+    <button (click)="save()" color="primary" mat-raised-button>Bestätigen</button>
+  </mat-dialog-actions>
+</mat-dialog-content>

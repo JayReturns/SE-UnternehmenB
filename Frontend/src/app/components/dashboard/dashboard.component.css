@@ -1,20 +1,3 @@
-.ContentContainer {
-  width: auto;
-  height: 100vh;
-}
-
-.SideBar {
-  background-color: whitesmoke;
-  width: 25%;
-}
-
-.MainContent {
-  background-color: darkgrey;
-}
-
-.spacer {
-  flex: 1 1 auto;
-}
 
 .mat-divider{
   margin-bottom: .5%;

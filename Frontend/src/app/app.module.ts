@@ -11,7 +11,6 @@ import {SignInComponent} from './components/sign-in/sign-in.component';
 import {SignUpComponent} from './components/sign-up/sign-up.component';
 import {ForgotPasswordComponent} from './components/forgot-password/forgot-password.component';
 import {VerifyEmailComponent} from './components/verify-email/verify-email.component';
-import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {AngularFireDatabaseModule} from "@angular/fire/compat/database";
 import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
 import {AngularFireStorageModule} from "@angular/fire/compat/storage";
@@ -32,6 +31,9 @@ import {DateAdapter, MAT_DATE_LOCALE} from "@angular/material/core";
 import {
   VacationConfirmationPopupComponent
 } from './components/vacation-confirmation-popup/vacation-confirmation-popup.component';
+import {
+  VEnvironmentRequestComponent
+} from "./components/v-environment-request-dialog/v-environment-request-dialog.component";
 import {StartOfWeekAdapter} from "./adapter/start-of-week.adapter";
 import {registerLocaleData} from "@angular/common";
 import localeDe from '@angular/common/locales/de';
@@ -40,6 +42,10 @@ import {
 } from './components/virtual-environments-table/virtual-environments-table.component';
 import {VeRequestTableComponent} from './components/ve-request-table/ve-request-table.component';
 import {ConfirmationDialogComponent} from './components/shared/confirmation-dialog/confirmation-dialog.component';
+import {
+  VEnvironmentConfirmationPopupComponent
+} from './components/v-environment-confirmation-popup/v-environment-confirmation-popup.component';
+import {RejectionDialogComponent} from './components/rejection-dialog/rejection-dialog.component'
 
 registerLocaleData(localeDe)
 
@@ -50,14 +56,15 @@ registerLocaleData(localeDe)
     SignUpComponent,
     ForgotPasswordComponent,
     VerifyEmailComponent,
-    DashboardComponent,
     VacationRequestTableComponent,
-    DashboardComponent,
     VacationDialogComponent,
     VacationConfirmationPopupComponent,
     VeRequestTableComponent,
     VirtualEnvironmentsTableComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    VEnvironmentRequestComponent,
+    VEnvironmentConfirmationPopupComponent,
+    RejectionDialogComponent
   ],
     imports: [
         BrowserModule,
