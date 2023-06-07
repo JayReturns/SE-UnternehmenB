@@ -28,10 +28,10 @@
         <th mat-header-cell *matHeaderCellDef>Aktion</th>
         <td mat-cell *matCellDef="let row">
         <span *ngIf="row.status == Status.REQUESTED">
-          <button mat-button matTooltip="Genehmigen" (click)="accept(row.vacationRequestId)" >
+          <button mat-button matTooltip="Genehmigen" (click)="accept(row.virtualEnvironmentRequestId)" >
             <mat-icon>check_circle</mat-icon>
           </button>
-          <button mat-button matTooltip="Ablehnen" (click)="reject(row.vacationRequestId)">
+          <button mat-button matTooltip="Ablehnen" (click)="reject(row.virtualEnvironmentRequestId)">
             <mat-icon>cancel</mat-icon>
           </button>
         </span>
