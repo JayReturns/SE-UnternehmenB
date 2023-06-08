@@ -55,10 +55,11 @@ export class VacationService {
     return this.http.put(this.url, null, {params: params,responseType: "text"});
   }
 
-  rejectVacationRequest(vacationRequestId: string) {
+  rejectVacationRequest(vacationRequestId: string, rejectReason: string) {
     let params = new HttpParams()
       .set('vacationId', vacationRequestId)
       .set('status', 'REJECTED')
+      .set('rejection_cause', rejectReason)
 
     return this.http.put(this.url, null, {params: params,responseType: "text"});
   }

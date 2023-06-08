@@ -1,15 +1,5 @@
-
 <div class="mat-elevation-z8">
-  <div class="additional_feature_box" >
-    <button mat-button matTooltip="Beispiel1"><mat-icon>check_circle</mat-icon></button>
-    <button mat-button matTooltip="Beispiel1"><mat-icon>check_circle</mat-icon></button>
-    <mat-progress-bar mode="determinate" [value]="progress" class="left_days_progress_bar">
-    </mat-progress-bar>
-
-  </div>
-
-  <table mat-table class="full-width-table" matSort matSortActive="start" aria-label="Elements"
-         [dataSource]="dataSource">
+  <table mat-table class="full-width-table" matSort matSortActive="start" aria-label="Elements" [dataSource]="dataSource">
     <!-- Optional Name Column -->
     <ng-template [ngIf]="forManager">
       <ng-container matColumnDef="name">
@@ -18,45 +8,30 @@
       </ng-container>
     </ng-template>
 
-    <!-- Start Column -->
-    <ng-container matColumnDef="vacationStart">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Start</th>
-      <td mat-cell *matCellDef="let row">{{row.vacationStart.toLocaleDateString()}}</td>
+    <ng-container matColumnDef="environmentType">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Maschinentyp</th>
+      <td mat-cell *matCellDef="let row">{{row.environmentType}}</td>
     </ng-container>
 
-    <!-- End Column -->
-    <ng-container matColumnDef="vacationEnd">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Ende</th>
-      <td mat-cell *matCellDef="let row">{{row.vacationEnd.toLocaleDateString()}}</td>
-    </ng-container>
-
-    <!-- Duration Column -->
-    <ng-container matColumnDef="duration">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Dauer in Tagen</th>
-      <td mat-cell *matCellDef="let row">{{row.duration}}</td>
-    </ng-container>
-
-    <!-- Comment Column -->
     <ng-container matColumnDef="comment">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Bemerkung</th>
       <td mat-cell *matCellDef="let row">{{row.comment}}</td>
     </ng-container>
 
-    <!-- Status Column -->
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
       <td mat-cell *matCellDef="let row" matTooltip="Ablehnungsgrund: {{row.rejectReason}}" [matTooltipDisabled]="row.status != 'REJECTED'">{{row.status}}</td>
     </ng-container>
 
     <ng-template [ngIf]="forManager">
-    <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef>Aktion</th>
-      <td mat-cell *matCellDef="let row">
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Aktion</th>
+        <td mat-cell *matCellDef="let row">
         <span *ngIf="row.status == Status.REQUESTED">
-          <button mat-button matTooltip="Genehmigen" (click)="accept(row.vacationRequestId)" >
+          <button mat-button matTooltip="Genehmigen" (click)="accept(row.virtualEnvironmentRequestId)" >
             <mat-icon>check_circle</mat-icon>
           </button>
-          <button mat-button matTooltip="Ablehnen" (click)="reject(row.vacationRequestId)">
+          <button mat-button matTooltip="Ablehnen" (click)="reject(row.virtualEnvironmentRequestId)">
             <mat-icon>cancel</mat-icon>
           </button>
         </span>
@@ -76,16 +51,12 @@
                  [pageSizeOptions]="[5, 10, 20]"
                  aria-label="Select page">
   </mat-paginator>
-
 </div>
 
 <ng-template [ngIf]="!forManager">
   <ng-container>
-    <button mat-raised-button color="accent" (click)="openDialog()" class="sticky">
-      Urlaub beantragen
+    <button mat-raised-button color="accent" (click)="openVEnvironmentDialog()" class="sticky">
+      Virtuelle Umgebung beantragen
     </button>
   </ng-container>
 </ng-template>
-
-
-

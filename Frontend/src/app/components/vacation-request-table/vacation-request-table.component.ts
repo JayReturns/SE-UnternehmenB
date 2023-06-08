@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, SimpleChanges, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, SimpleChanges, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
@@ -8,12 +8,16 @@ import {map} from "rxjs/operators";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
+
 import {HttpErrorResponse, HttpParams} from "@angular/common/http";
 import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
 import {VEnvironmentRequestService} from "../../services/v-environment-request.service";
 import {Observable, throwError } from 'rxjs';
 import {environment} from "../../../environments/environment";
 import {Injectable} from '@angular/core';
+import {RejectionDialogComponent} from "../rejection-dialog/rejection-dialog.component";
+import {UserService} from "../../services/user.service";
+
 
 @Component({
   selector: 'vacation-request-table',
@@ -25,7 +29,7 @@ import {Injectable} from '@angular/core';
   providedIn: 'root'
 })
 export class VacationRequestTableComponent implements AfterViewInit {
-  @Input() forManager!: boolean;
+  forManager: boolean | undefined;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Vacation>;
@@ -34,17 +38,27 @@ export class VacationRequestTableComponent implements AfterViewInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns;
   snackbar: any;
+
   left_day: any;
   year: any = new Date().getFullYear()
   progress: any;
 
   // TODO Move vEnvironmentRequestService to request table for virtual environments
-  constructor(private vacationService: VacationService, private vEnvironmentRequestService: VEnvironmentRequestService, public dialog: MatDialog, private messageService: MessageService) {
+  constructor(private vacationService: VacationService,
+              public dialog: MatDialog, private messageService: MessageService,
+              private userService: UserService) {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
     this.progress = vacationService.getDaysLeft()
     setInterval(() => {
       this.progress = vacationService.getDaysLeft()
     }, 10000);
+    this.userService.getUser().subscribe(user => {
+      this.forManager = user?.role == 'MANAGER';
+      if (this.forManager) {
+        this.displayedColumns = ['name', ...this.displayedColumns, 'action']
+      }
+      this.refresh()
+    })
   }
 
 
@@ -54,15 +68,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.data = []
     this.dataSource.sortingDataAccessor = (item, property) => this.sortData(item as Vacation, property)
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    //if (!changes["forManager"].firstChange) {
-    if (this.forManager) {
-      this.displayedColumns = ['name', ...this.displayedColumns, 'action']
-    }
-    this.refresh()
-    //}
   }
 
   refresh() {
@@ -106,7 +111,15 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   reject(id: string) {
-    this.vacationService.rejectVacationRequest(id).subscribe(() => this.refresh());
+    const dialogRef = this.dialog.open(RejectionDialogComponent);
+
+    dialogRef.afterClosed().subscribe(rejectReason => {
+      if (!rejectReason)
+        return;
+
+      this.vacationService.rejectVacationRequest(id,rejectReason).subscribe(() => this.refresh());
+    })
+
   }
 
   openDialog() {
@@ -124,32 +137,11 @@ export class VacationRequestTableComponent implements AfterViewInit {
             console.log(err);
           }
         }
+      }, () => {
+        this.refresh()
       });
     })
   }
-
-  //TODO Move openVEnvironmentDialog to request table for virtual environments
-  openVEnvironmentDialog() {
-    const dialogRef = this.dialog.open(VEnvironmentRequestComponent);
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (!result)
-        return;
-
-      this.vEnvironmentRequestService.makeVEnvironmentRequest(result).subscribe(() => {
-      }, (err: { error: string; }) => {
-        if (err) {
-          if (err instanceof HttpErrorResponse) {
-            this.messageService.notifyUser(err.error);
-            console.log(err);
-          }
-        }
-      });
-
-      return;
-    })
-  }
-
 
   editVacationRequest(row: Vacation) {
     if (this.forManager || row.status != Status.REQUESTED)
@@ -171,6 +163,7 @@ export class VacationRequestTableComponent implements AfterViewInit {
     })
   }
 
+  protected readonly Status = Status;
 }
 
 

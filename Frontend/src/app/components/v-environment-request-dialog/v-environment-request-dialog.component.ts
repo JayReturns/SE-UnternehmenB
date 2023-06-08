@@ -1,9 +1,16 @@
 import {Component, Inject} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {VEnvironmentRequest} from "../../models/v-environment-request.model";
 import {MessageService} from "../../services/message.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {VEnvironmentConfirmationPopupComponent} from "../v-environment-confirmation-popup/v-environment-confirmation-popup.component";
+import {
+  VEnvironmentConfirmationPopupComponent
+} from "../v-environment-confirmation-popup/v-environment-confirmation-popup.component";
+import {Status, VERequest} from "../../models/virtual-environment.model";
+import {
+  ConfirmationDialogComponent,
+  ConfirmDialogModel
+} from "../shared/confirmation-dialog/confirmation-dialog.component";
+import {VirtualEnvironmentService} from "../../services/virtual-environment.service";
 
 
 @Component({
@@ -16,16 +23,19 @@ export class VEnvironmentRequestComponent {
   maxCommentLength = 100;
 
   vEnvironmentRequestForm: FormGroup = new FormGroup<any>({});
-  vEnvironmentRequest: VEnvironmentRequest | null;
+  vEnvironmentRequest: VERequest | null;
   title: string;
+  editMode!: boolean;
 
   constructor(private formBuilder: FormBuilder,
+              private veService: VirtualEnvironmentService,
               private messageService: MessageService,
               private dialogRef: MatDialogRef<VEnvironmentRequestComponent>,
               private dialog: MatDialog,
               @Inject(MAT_DIALOG_DATA) public data: any) {
     this.vEnvironmentRequest = data?.vEnvironmentRequest;
     this.title = `${data ? "bearbeiten" : "beantragen"}`;
+    this.editMode = !!data && !!data.vEnvironmentRequest;
     this.initializeForm();
   }
 
@@ -43,9 +53,10 @@ export class VEnvironmentRequestComponent {
       return;
     }
 
-    const vEnvironmentRequest: VEnvironmentRequest = {
+    const vEnvironmentRequest: VERequest = {
       environmentType: this.vEnvironmentRequestForm.controls['environmentType'].value,
-      comment: this.vEnvironmentRequestForm.controls['comment'].value || ""
+      comment: this.vEnvironmentRequestForm.controls['comment'].value || "",
+      status: Status.REQUESTED
     }
 
     this.dialog.open(VEnvironmentConfirmationPopupComponent, {data: vEnvironmentRequest}).afterClosed().subscribe(confirmed => {
@@ -55,9 +66,27 @@ export class VEnvironmentRequestComponent {
 
   }
 
+  delete() {
+    const message = "Soll diese Bedarfsmeldung wirklich gelöscht werden?"
+
+    const dialogDate = new ConfirmDialogModel("Bedarfsmeldung löschen", message);
+
+    this.dialog.open(ConfirmationDialogComponent, {
+      data: dialogDate
+    }).afterClosed().subscribe(result => {
+        if (result) {
+          this.veService.deleteVERequest(this.vEnvironmentRequest?.virtualEnvironmentRequestId!).subscribe(() => {
+            this.dialogRef.close({refresh: true});
+          })
+        }
+      }
+    )
+  }
+
   close(): void {
     this.dialogRef.close();
   }
 
 
+  protected readonly Status = Status;
 }
