@@ -36,6 +36,10 @@ tr.row:hover {
 .additional_feature_box {
   width: 100%;
   height: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   background-color: darkgray;
 }
 .left_days_progress_bar {
@@ -43,7 +47,5 @@ tr.row:hover {
 }
 
 .left_days_text {
-  text-align: right;
-  right: 20px;
-  position: fixed;
+  margin: 0;
 }
