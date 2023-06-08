@@ -1,6 +1,7 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {VEnvironmentRequest} from "../../models/v-environment-request.model";
+import {VERequest} from "../../models/virtual-environment.model";
+
 
 
 @Component({
@@ -10,7 +11,7 @@ import {VEnvironmentRequest} from "../../models/v-environment-request.model";
 })
 export class VEnvironmentConfirmationPopupComponent {
 
-  vEnvironmentRequest: VEnvironmentRequest;
+  vEnvironmentRequest: VERequest;
 
   constructor(private dialogRef: MatDialogRef<VEnvironmentConfirmationPopupComponent>,
               @Inject(MAT_DIALOG_DATA) data: any) {
