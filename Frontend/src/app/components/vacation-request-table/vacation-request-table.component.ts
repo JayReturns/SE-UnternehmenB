@@ -8,16 +8,21 @@ import {map} from "rxjs/operators";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
-import {HttpErrorResponse} from "@angular/common/http";
+import {HttpErrorResponse, HttpParams} from "@angular/common/http";
 import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
 import {VEnvironmentRequestService} from "../../services/v-environment-request.service";
 import {Observable, throwError } from 'rxjs';
 import {environment} from "../../../environments/environment";
+import {Injectable} from '@angular/core';
 
 @Component({
   selector: 'vacation-request-table',
   templateUrl: './vacation-request-table.component.html',
-  styleUrls: ['./vacation-request-table.component.scss']
+  styleUrls: ['./vacation-request-table.component.scss'],
+  template: '<mat-progress-bar [value] = "progress"></mat-progress-bar>'
+})
+@Injectable({
+  providedIn: 'root'
 })
 export class VacationRequestTableComponent implements AfterViewInit {
   @Input() forManager!: boolean;
@@ -31,10 +36,15 @@ export class VacationRequestTableComponent implements AfterViewInit {
   snackbar: any;
   left_day: any;
   year: any = new Date().getFullYear()
+  progress: any;
 
   // TODO Move vEnvironmentRequestService to request table for virtual environments
-  constructor(private vacationService: VacationService, private vEnvironmentRequestService: VEnvironmentRequestService, public dialog: MatDialog, private messageService: MessageService ) {
+  constructor(private vacationService: VacationService, private vEnvironmentRequestService: VEnvironmentRequestService, public dialog: MatDialog, private messageService: MessageService) {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
+    this.left_day = this.setDaysLeft()
+    setInterval(() => {
+      this.progress = this.setDaysLeft()
+    }, 10000);
   }
 
 
@@ -69,12 +79,32 @@ export class VacationRequestTableComponent implements AfterViewInit {
     }
   }
 
-  setDaysLeft(): number{
-    this.left_day = this.vacationService.http.get(environment.baseApiUrl+'/api/v1/vacation/days?year='+this.year);
-    console.log(this.left_day);
-    return (this.left_day/30)*100;
+  setDaysLeft(): string{
+    this.vacationService.http.get<MyData>(environment.baseApiUrl+'/api/v1/vacation/days?year='+this.year, {params: {leftDays: 'value'}}).subscribe(data => {
+      this.left_day = (data.leftDays / 30) * 100
+    });
+    return String(this.left_day)
 
   }
+
+  getDaysLeft(year: number): Observable<any>{
+    let params = new HttpParams().set('year',year);
+    return this.vacationService.http.get<any>(environment.baseApiUrl + '/api/v1/vacation/days' , {params: params})
+
+  }
+
+  test(){
+    this.vacationService.http.get<MyData>(environment.baseApiUrl+'/api/v1/vacation/days?year='+this.year, {params: {leftDays: 'value'}}).subscribe(data =>{
+      this.left_day = data.leftDays
+      console.log("test method2: "+this.left_day)
+    })
+    console.log("test method: "+this.left_day)
+  }
+
+  test2(){
+    console.log(this.left_day)
+  }
+
 
 
   sortData(item: Vacation, property: string): string | number {
@@ -169,6 +199,11 @@ export class VacationRequestTableComponent implements AfterViewInit {
     })
   }
 
+}
+
+interface MyData {
+  maxDays: number;
+  leftDays: number;
 }
 
 
