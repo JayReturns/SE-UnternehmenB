@@ -8,10 +8,6 @@ import {map} from "rxjs/operators";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
-import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
-import {Observable, throwError } from 'rxjs';
-import {environment} from "../../../environments/environment";
-import {Injectable} from '@angular/core';
 import {HttpErrorResponse} from "@angular/common/http";
 import {RejectionDialogComponent} from "../rejection-dialog/rejection-dialog.component";
 import {UserService} from "../../services/user.service";
@@ -42,11 +38,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
               public dialog: MatDialog, private messageService: MessageService,
               private userService: UserService) {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
-    this.progress = vacationService.getDaysLeft()
-    setInterval(() => {
-      this.left_day = parseInt(vacationService.getDaysLeft()) * 30 / 100
-      this.progress = vacationService.getDaysLeft()
-    }, 10000);
     this.userService.getUser().subscribe(user => {
       this.forManager = user?.role == 'MANAGER';
       if (this.forManager) {
@@ -66,6 +57,10 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   refresh() {
+    this.vacationService.getDaysLeft().subscribe(d => {
+      this.left_day = d.leftDays
+      this.progress = d.leftDays/30 * 100;
+    })
     this.getData().subscribe(vacations => {
       this.dataSource.data = vacations
     })

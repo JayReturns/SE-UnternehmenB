@@ -13,7 +13,6 @@ export class VacationService {
 
   private url = `${environment.baseApiUrl}/api/v1/vacation_request`;
   private readonly getAllSuffix = "/all"
-  private returner: any;
 
   constructor(public http: HttpClient) {
   }
@@ -26,11 +25,8 @@ export class VacationService {
     return this.http.get<GroupedVacation[]>(this.url + this.getAllSuffix).pipe(map(data => this.insertDatesForGroupedVacation(data)))
   }
 
-  getDaysLeft() : string {
-    this.http.get<Vacation_left_max_daysModel>(environment.baseApiUrl+'/api/v1/vacation/days?year='+this.getCurrentYear(), {params: {leftDays: 'value'}}).subscribe(data => {
-      this.returner = (data.leftDays / 30) * 100
-    });
-    return String(this.returner);
+  getDaysLeft() {
+    return this.http.get<Vacation_left_max_daysModel>(environment.baseApiUrl+'/api/v1/vacation/days?year='+this.getCurrentYear())
   }
 
   getCurrentYear(): number {
