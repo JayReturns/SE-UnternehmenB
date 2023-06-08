@@ -30,7 +30,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns;
   snackbar: any;
-
   left_day: any;
   year: any = new Date().getFullYear()
   progress: any;
@@ -39,10 +38,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
               public dialog: MatDialog, private messageService: MessageService,
               private userService: UserService) {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
-    this.progress = vacationService.getDaysLeft()
-    setInterval(() => {
-      this.progress = vacationService.getDaysLeft()
-    }, 10000);
     this.userService.getUser().subscribe(user => {
       this.forManager = user?.role == 'MANAGER';
       if (this.forManager) {
@@ -62,6 +57,10 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   refresh() {
+    this.vacationService.getDaysLeft().subscribe(d => {
+      this.left_day = d.leftDays
+      this.progress = d.leftDays/30 * 100;
+    })
     this.getData().subscribe(vacations => {
       this.dataSource.data = vacations
     })
