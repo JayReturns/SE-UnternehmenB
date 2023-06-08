@@ -199,6 +199,6 @@ public interface ServerApi {
             @ApiResponse(responseCode = "500", description = "Failed to delete virtual environment request", content = @Content),
     })
     @Tag(name = "VirtualEnvironmentRequests")
-    ResponseEntity<String> deleteVirtualEnvironmentRequest(@RequestParam String vacationRequestId) throws Exception;
+    ResponseEntity<String> deleteVirtualEnvironmentRequest(@RequestParam String id) throws Exception;
 
 }

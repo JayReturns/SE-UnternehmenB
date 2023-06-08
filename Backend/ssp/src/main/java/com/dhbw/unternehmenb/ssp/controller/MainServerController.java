@@ -339,12 +339,12 @@ public class MainServerController implements ServerApi {
     }
 
     @Override
-    public ResponseEntity<String> deleteVirtualEnvironmentRequest(String vacationRequestId) {
+    public ResponseEntity<String> deleteVirtualEnvironmentRequest(String id) {
         User currentUser = getCurrentUser();
         if (currentUser == null){
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
-        UUID requestId = UUID.fromString(vacationRequestId);
+        UUID requestId = UUID.fromString(id);
         Optional<VirtualEnvironmentRequest> optionalVirtualEnvironmentRequest = virtualEnvironmentRequestRepository.findById(requestId);
         if (optionalVirtualEnvironmentRequest.isEmpty()) {
             return new ResponseEntity<>("Virtual Environment Request not found!", HttpStatus.NOT_FOUND);
