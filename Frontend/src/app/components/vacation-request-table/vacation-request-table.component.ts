@@ -12,12 +12,10 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {RejectionDialogComponent} from "../rejection-dialog/rejection-dialog.component";
 import {UserService} from "../../services/user.service";
 
-
 @Component({
   selector: 'vacation-request-table',
   templateUrl: './vacation-request-table.component.html',
   styleUrls: ['./vacation-request-table.component.scss'],
-  template: '<mat-progress-bar [value] = "progress"></mat-progress-bar>'
 })
 @Injectable({
   providedIn: 'root'
@@ -37,7 +35,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
   year: any = new Date().getFullYear()
   progress: any;
 
-  // TODO Move vEnvironmentRequestService to request table for virtual environments
   constructor(private vacationService: VacationService,
               public dialog: MatDialog, private messageService: MessageService,
               private userService: UserService) {
