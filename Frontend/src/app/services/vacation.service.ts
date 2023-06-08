@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {GroupedVacation, Vacation} from "../models/vacation.model";
+import {Vacation_left_max_daysModel} from "../models/vacation_left_max_days.model"
 import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
 
@@ -12,8 +13,9 @@ export class VacationService {
 
   private url = `${environment.baseApiUrl}/api/v1/vacation_request`;
   private readonly getAllSuffix = "/all"
+  private returner: any;
 
-  constructor(private http: HttpClient) {
+  constructor(public http: HttpClient) {
   }
 
   getVacationRequests() {
@@ -24,7 +26,17 @@ export class VacationService {
     return this.http.get<GroupedVacation[]>(this.url + this.getAllSuffix).pipe(map(data => this.insertDatesForGroupedVacation(data)))
   }
 
+  getDaysLeft() : string {
+    this.http.get<Vacation_left_max_daysModel>(environment.baseApiUrl+'/api/v1/vacation/days?year='+this.getCurrentYear(), {params: {leftDays: 'value'}}).subscribe(data => {
+      this.returner = (data.leftDays / 30) * 100
+    });
+    return String(this.returner);
+  }
 
+  getCurrentYear(): number {
+    let date = new Date().getFullYear();
+    return date;
+  }
   makeVacationRequest(vacation: Vacation) {
     let params = new HttpParams()
       .set('startDate', this.formatDateToIsoDate(vacation.vacationStart))

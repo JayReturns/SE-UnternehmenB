@@ -8,8 +8,13 @@ import {map} from "rxjs/operators";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
-import {HttpErrorResponse} from "@angular/common/http";
 
+import {HttpErrorResponse, HttpParams} from "@angular/common/http";
+import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
+import {VEnvironmentRequestService} from "../../services/v-environment-request.service";
+import {Observable, throwError } from 'rxjs';
+import {environment} from "../../../environments/environment";
+import {Injectable} from '@angular/core';
 import {RejectionDialogComponent} from "../rejection-dialog/rejection-dialog.component";
 import {UserService} from "../../services/user.service";
 
@@ -17,7 +22,11 @@ import {UserService} from "../../services/user.service";
 @Component({
   selector: 'vacation-request-table',
   templateUrl: './vacation-request-table.component.html',
-  styleUrls: ['./vacation-request-table.component.scss']
+  styleUrls: ['./vacation-request-table.component.scss'],
+  template: '<mat-progress-bar [value] = "progress"></mat-progress-bar>'
+})
+@Injectable({
+  providedIn: 'root'
 })
 export class VacationRequestTableComponent implements AfterViewInit {
   forManager: boolean | undefined;
@@ -25,15 +34,24 @@ export class VacationRequestTableComponent implements AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Vacation>;
   dataSource = new MatTableDataSource();
-
+  accessToken : any
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns;
   snackbar: any;
 
+  left_day: any;
+  year: any = new Date().getFullYear()
+  progress: any;
+
+  // TODO Move vEnvironmentRequestService to request table for virtual environments
   constructor(private vacationService: VacationService,
               public dialog: MatDialog, private messageService: MessageService,
               private userService: UserService) {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
+    this.progress = vacationService.getDaysLeft()
+    setInterval(() => {
+      this.progress = vacationService.getDaysLeft()
+    }, 10000);
     this.userService.getUser().subscribe(user => {
       this.forManager = user?.role == 'MANAGER';
       if (this.forManager) {
@@ -42,6 +60,8 @@ export class VacationRequestTableComponent implements AfterViewInit {
       this.refresh()
     })
   }
+
+
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
@@ -63,7 +83,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
       return this.vacationService.getVacationRequests();
     }
   }
-
 
   sortData(item: Vacation, property: string): string | number {
     switch (property) {
