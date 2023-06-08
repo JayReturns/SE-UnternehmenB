@@ -39,5 +39,16 @@ tr.row:hover {
   background-color: darkgray;
 }
 .left_days_progress_bar {
-  background: deeppink;
+  background: #ff4081;
+}
+
+.left_days_text {
+  text-align: right;
+  color: black;
+  right: 20px;
+  top: auto;
+  bottom: auto;
+  left: auto;
+  position: fixed;
+  font-size: medium;
 }

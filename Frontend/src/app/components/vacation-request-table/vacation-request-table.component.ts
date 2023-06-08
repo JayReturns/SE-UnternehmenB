@@ -11,7 +11,6 @@ import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.compon
 
 import {HttpErrorResponse, HttpParams} from "@angular/common/http";
 import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
-import {VEnvironmentRequestService} from "../../services/v-environment-request.service";
 import {Observable, throwError } from 'rxjs';
 import {environment} from "../../../environments/environment";
 import {Injectable} from '@angular/core';
@@ -23,7 +22,6 @@ import {UserService} from "../../services/user.service";
   selector: 'vacation-request-table',
   templateUrl: './vacation-request-table.component.html',
   styleUrls: ['./vacation-request-table.component.scss'],
-  template: '<mat-progress-bar [value] = "progress"></mat-progress-bar>'
 })
 @Injectable({
   providedIn: 'root'
@@ -38,7 +36,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns;
   snackbar: any;
-
   left_day: any;
   year: any = new Date().getFullYear()
   progress: any;
@@ -50,6 +47,7 @@ export class VacationRequestTableComponent implements AfterViewInit {
     this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
     this.progress = vacationService.getDaysLeft()
     setInterval(() => {
+      this.left_day = parseInt(vacationService.getDaysLeft()) * 30 / 100
       this.progress = vacationService.getDaysLeft()
     }, 10000);
     this.userService.getUser().subscribe(user => {
