@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, SimpleChanges, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Injectable, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
@@ -8,13 +8,7 @@ import {map} from "rxjs/operators";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
-
-import {HttpErrorResponse, HttpParams} from "@angular/common/http";
-import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
-import {VEnvironmentRequestService} from "../../services/v-environment-request.service";
-import {Observable, throwError } from 'rxjs';
-import {environment} from "../../../environments/environment";
-import {Injectable} from '@angular/core';
+import {HttpErrorResponse} from "@angular/common/http";
 import {RejectionDialogComponent} from "../rejection-dialog/rejection-dialog.component";
 import {UserService} from "../../services/user.service";
 
