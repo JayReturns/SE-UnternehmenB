@@ -125,7 +125,7 @@ export class VeRequestTableComponent {
     })
   }
 
-  editVacationRequest(row: VERequest) {
+  editVERequest(row: VERequest) {
     if (this.forManager || row.status != Status.REQUESTED)
       return;
 
