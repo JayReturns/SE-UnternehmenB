@@ -67,7 +67,7 @@ export class VirtualEnvironmentService {
 
   deleteVERequest(veRequestId: string) {
     let params = new HttpParams()
-      .set('vacationRequestId', veRequestId);
+      .set('id', veRequestId);
 
     return this.http.delete(this.urlRequests, {params: params, responseType: "text"});
   }
