@@ -54,6 +54,7 @@ export class VEnvironmentRequestComponent {
     }
 
     const vEnvironmentRequest: VERequest = {
+      virtualEnvironmentRequestId: this.vEnvironmentRequestForm.controls['vEnvironmentRequestId'].value || undefined,
       environmentType: this.vEnvironmentRequestForm.controls['environmentType'].value,
       comment: this.vEnvironmentRequestForm.controls['comment'].value || "",
       status: Status.REQUESTED
