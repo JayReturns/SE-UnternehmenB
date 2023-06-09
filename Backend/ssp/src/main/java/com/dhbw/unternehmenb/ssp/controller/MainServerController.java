@@ -100,7 +100,7 @@ public class MainServerController implements ServerApi {
         if (duration < 1)
             return new ResponseEntity<>("Duration must be at least 1 day!", HttpStatus.BAD_REQUEST);
 
-        if (getDaysLeftAndMaxDays(user, startDate.getYear()).getLeftDaysWithoutRequestedDays() < duration)
+        if (getDaysLeftAndMaxDays(user, startDate.getYear()).getLeftDaysOnlyApproved() < duration)
             return new ResponseEntity<>("Duration exceeds left vacation days!", HttpStatus.BAD_REQUEST);
 
         if (vacationRequestRepository.isOverlappingWithAnotherVacationRequest(user.getUserId(), startDate, endDate)) {

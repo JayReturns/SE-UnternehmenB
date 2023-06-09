@@ -8,6 +8,6 @@ import lombok.Data;
 public class LeftAndMaxVacationDays {
     private int maxDays;
     private int leftDays;
-    private int leftDaysWithoutRequestedDays;
+    private int leftDaysOnlyApproved;
 
 }
