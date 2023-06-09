@@ -32,20 +32,3 @@ th.mat-column-action{
 tr.row:hover {
   background: whitesmoke;
 }
-
-.additional_feature_box {
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  background-color: darkgray;
-}
-.left_days_progress_bar {
-  background: #ff4081;
-}
-
-.left_days_text {
-  margin: 0;
-}

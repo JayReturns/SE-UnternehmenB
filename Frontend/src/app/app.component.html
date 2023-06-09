@@ -1,1 +1,50 @@
-<router-outlet class="main"></router-outlet>
+<!-- new code -->
+<!-- Top Bar -->
+<ng-template [ngIf]="showLayout()">
+
+  <mat-toolbar color="accent" style="height: 7%">
+    <span>UnternehmenB</span>
+    <span class="spacer"></span>
+    <button (click)="authService.SignOut()" mat-icon-button matTooltip="Abmelden">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <!-- Body -->
+
+  <mat-drawer-container class="ContentContainer" style="height: 93%">
+
+    <!-- Side Bar -->
+
+    <mat-drawer class="SideBar" mode="side" opened>
+      <mat-nav-list>
+        <a mat-list-item href="/#/dashboard" routerLinkActive="active">
+          <mat-list-item>
+            <mat-icon matListItemIcon>beach_access</mat-icon>
+
+            Urlaubsanträge
+          </mat-list-item>
+        </a>
+
+        <mat-divider></mat-divider>
+        <a mat-list-item href="/#/venv" routerLinkActive="active">
+          <mat-list-item>
+            <mat-icon matListItemIcon>dns</mat-icon>
+            Virtuelle Umgebungen
+          </mat-list-item>
+        </a>
+      </mat-nav-list>
+    </mat-drawer>
+
+    <!-- Main Content Space -->
+
+    <mat-drawer-content class="MainContent">
+      <router-outlet class="main"></router-outlet>
+    </mat-drawer-content>
+  </mat-drawer-container>
+
+</ng-template>
+
+<ng-template [ngIf]="!showLayout()">
+  <router-outlet class="main"></router-outlet>
+</ng-template>

@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Urlaub beantragen</h2>
+<h2 mat-dialog-title>Urlaub {{title}}</h2>
 <mat-dialog-content [formGroup]="vacationForm">
   <mat-form-field appearance="fill">
     <mat-label>Zeitraum</mat-label>
@@ -22,8 +22,9 @@
   </mat-form-field>
 
   <mat-dialog-actions align="end">
-    <button (click)="close()" mat-raised-button>Abbrechen</button>
-    <button (click)="onSubmit()" color="primary" mat-raised-button [disabled]="!vacationForm.valid">Beantragen</button>
+      <button (click)="close()" mat-raised-button>Abbrechen</button>
+      <button (click)="delete()" mat-stroked-button color="warn" *ngIf="editMode && vacation?.status == Status.REQUESTED">Löschen</button>
+      <button (click)="onSubmit()" color="primary" mat-raised-button [disabled]="!vacationForm.valid">{{title | titlecase}}</button>
   </mat-dialog-actions>
 
 </mat-dialog-content>

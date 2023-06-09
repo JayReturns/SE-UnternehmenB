@@ -1,53 +1,37 @@
-import {AfterViewInit, Component, Injectable, ViewChild} from '@angular/core';
+import {Component, Input, SimpleChanges, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
-import {GroupedVacation, Status, Vacation} from "../../models/vacation.model";
-import {VacationService} from "../../services/vacation.service";
+import {Vacation} from "../../models/vacation.model";
 import {map} from "rxjs/operators";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {VacationDialogComponent} from "../vacation-dialog/vacation-dialog.component";
 import {HttpErrorResponse} from "@angular/common/http";
+import {GroupedVERequest, Status, VERequest} from "../../models/virtual-environment.model";
+import {VirtualEnvironmentService} from "../../services/virtual-environment.service";
+import {VEnvironmentRequestComponent} from "../v-environment-request-dialog/v-environment-request-dialog.component";
 import {RejectionDialogComponent} from "../rejection-dialog/rejection-dialog.component";
-import {UserService} from "../../services/user.service";
 
 @Component({
-  selector: 'vacation-request-table',
-  templateUrl: './vacation-request-table.component.html',
-  styleUrls: ['./vacation-request-table.component.scss'],
+  selector: 've-request-table',
+  templateUrl: './ve-request-table.component.html',
+  styleUrls: ['./ve-request-table.component.scss']
 })
-@Injectable({
-  providedIn: 'root'
-})
-export class VacationRequestTableComponent implements AfterViewInit {
-  forManager: boolean | undefined;
+export class VeRequestTableComponent {
+  @Input() forManager!: boolean;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatTable) table!: MatTable<Vacation>;
+  @ViewChild(MatTable) table!: MatTable<VERequest>;
   dataSource = new MatTableDataSource();
-  accessToken : any
+
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns;
   snackbar: any;
-  left_day: any;
-  year: any = new Date().getFullYear()
-  progress: any;
 
-  constructor(private vacationService: VacationService,
-              public dialog: MatDialog, private messageService: MessageService,
-              private userService: UserService) {
-    this.displayedColumns = ['vacationStart', 'vacationEnd', 'duration', 'comment', 'status'];
-    this.userService.getUser().subscribe(user => {
-      this.forManager = user?.role == 'MANAGER';
-      if (this.forManager) {
-        this.displayedColumns = ['name', ...this.displayedColumns, 'action']
-      }
-      this.refresh()
-    })
+  constructor(private veService: VirtualEnvironmentService, public dialog: MatDialog, private messageService: MessageService) {
+    this.displayedColumns = ['environmentType', 'comment', 'status'];
   }
-
-
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
@@ -56,23 +40,30 @@ export class VacationRequestTableComponent implements AfterViewInit {
     this.dataSource.sortingDataAccessor = (item, property) => this.sortData(item as Vacation, property)
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+
+    if (this.forManager) {
+      console.log("SHOW ME MANAGER")
+      this.displayedColumns = ['name', ...this.displayedColumns, 'action']
+    }
+    this.refresh()
+  }
+
   refresh() {
-    this.vacationService.getDaysLeft().subscribe(d => {
-      this.left_day = d.leftDays
-      this.progress = d.leftDays/30 * 100;
-    })
-    this.getData().subscribe(vacations => {
-      this.dataSource.data = vacations
+    this.getData().subscribe(veRequests => {
+      console.log("Got data:", veRequests)
+      this.dataSource.data = veRequests
     })
   }
 
   getData() {
     if (this.forManager) {
-      return this.vacationService.getAllVacationRequests().pipe(map(v => this.castToVacation(v)))
+      return this.veService.getAllVERequests().pipe(map(v => this.castToVERequest(v)))
     } else {
-      return this.vacationService.getVacationRequests();
+      return this.veService.getVERequests();
     }
   }
+
 
   sortData(item: Vacation, property: string): string | number {
     switch (property) {
@@ -87,7 +78,7 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
 
-  castToVacation(data: GroupedVacation[]): Vacation[] {
+  castToVERequest(data: GroupedVERequest[]): VERequest[] {
     return data.map(d =>
       d.requests.map(r => {
         r.user = d.user
@@ -97,8 +88,9 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   accept(id: string) {
-    this.vacationService.acceptVacationRequest(id).subscribe(() => this.refresh());
+    this.veService.acceptVERequest(id).subscribe(() => this.refresh());
   }
+
 
   reject(id: string) {
     const dialogRef = this.dialog.open(RejectionDialogComponent);
@@ -107,20 +99,20 @@ export class VacationRequestTableComponent implements AfterViewInit {
       if (!rejectReason)
         return;
 
-      this.vacationService.rejectVacationRequest(id,rejectReason).subscribe(() => this.refresh());
+      this.veService.rejectVERequest(id,rejectReason).subscribe(() => this.refresh());
     })
 
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(VacationDialogComponent);
+  openVEnvironmentDialog() {
+    const dialogRef = this.dialog.open(VEnvironmentRequestComponent);
 
     dialogRef.afterClosed().subscribe(result => {
       if (!result)
         return;
 
-      this.vacationService.makeVacationRequest(result).subscribe(() => {
-      }, err => {
+      this.veService.makeVERequest(result).subscribe(() => {
+      }, (err: { error: string; }) => {
         if (err) {
           if (err instanceof HttpErrorResponse) {
             this.messageService.notifyUser(err.error);
@@ -133,20 +125,20 @@ export class VacationRequestTableComponent implements AfterViewInit {
     })
   }
 
-  editVacationRequest(row: Vacation) {
+  editVERequest(row: VERequest) {
     if (this.forManager || row.status != Status.REQUESTED)
       return;
 
-    this.dialog.open(VacationDialogComponent, {
+    this.dialog.open(VEnvironmentRequestComponent, {
       data: {
-        vacation: row
+        vEnvironmentRequest: row
       }
     }).afterClosed().subscribe(result => {
       if (result)
         if ('refresh' in result) {
           this.refresh()
         } else
-          this.vacationService.updateVacationRequest(result).subscribe(res => {
+          this.veService.updateVERequest(result).subscribe(res => {
             console.log(res);
             this.refresh();
           });
@@ -155,5 +147,3 @@ export class VacationRequestTableComponent implements AfterViewInit {
 
   protected readonly Status = Status;
 }
-
-
