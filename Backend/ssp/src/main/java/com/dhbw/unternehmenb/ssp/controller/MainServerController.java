@@ -236,7 +236,10 @@ public class MainServerController implements ServerApi {
         int maxDays = user.getVacationDays();
         LocalDate lastDayOfYearBefore = LocalDate.of(year - 1, Month.DECEMBER, 31);
         LocalDate firstDayOfNextYear = LocalDate.of(year + 1, Month.JANUARY, 1);
-        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserAndVacationStartAfterAndVacationEndBeforeAndAndStatusNot(user, lastDayOfYearBefore, firstDayOfNextYear,Status.REJECTED);
+        List<Status> disallowedStatuses = new ArrayList<>();
+        disallowedStatuses.add(Status.REJECTED);
+        disallowedStatuses.add(Status.REQUESTED);
+        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserAndVacationStartAfterAndVacationEndBeforeAndStatusNotIn(user, lastDayOfYearBefore, firstDayOfNextYear,disallowedStatuses);
         int leftDays = maxDays;
         int vacationDays = vacationRequests.stream()
                 .mapToInt(VacationRequest::getDuration)
@@ -296,7 +299,7 @@ public class MainServerController implements ServerApi {
     }
 
     @Override
-    public ResponseEntity<VirtualEnvironment> setEnvironmentStatus(String id, Status status, String rejectReason) throws Exception {
+    public ResponseEntity<VirtualEnvironment> setEnvironmentStatus(String id, Status status, String rejectReason) {
         User currentUser = getCurrentUser();
         if (currentUser == null || currentUser.getRole() != Role.MANAGER){
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
