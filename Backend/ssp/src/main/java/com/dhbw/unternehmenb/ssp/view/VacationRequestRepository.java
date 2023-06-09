@@ -24,7 +24,7 @@ public interface VacationRequestRepository extends MongoRepository<VacationReque
 
     List<VacationRequest> findByUserOrderByVacationStartDesc(User user);
 
-    List<VacationRequest> findByUserAndVacationStartAfterAndVacationEndBeforeAndStatusNotIn(User user, LocalDate lastDayOfYearBefore, LocalDate firstOfNextYear, List<Status> status);
+    List<VacationRequest> findByUserAndVacationStartAfterAndVacationEndBeforeAndStatusNot(User user, LocalDate lastDayOfYearBefore, LocalDate firstOfNextYear, Status status);
 
     List<VacationRequest> findAllByUser(User user);
   
