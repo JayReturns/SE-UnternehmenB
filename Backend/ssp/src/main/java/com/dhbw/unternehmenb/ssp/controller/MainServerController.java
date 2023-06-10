@@ -190,26 +190,19 @@ public class MainServerController implements ServerApi {
             if (end == null) end = vRequest.getVacationEnd();
             if (end.isBefore(begin))
                 return new ResponseEntity<>("End date is before start date!", HttpStatus.BAD_REQUEST);
-
-            List<VacationRequest> allVacations = vacationRequestRepository.findAllByUser(vRequest.getUser());
-            LocalDate finalBegin = begin;
-            LocalDate finalEnd = end;
-            Optional<VacationRequest> filteredVacations = allVacations.stream()
-                    .filter(vacationRequest1 ->
-                            !vacationRequest1.getVacationRequestId().equals(id) &&
-                                    ((!vacationRequest1.getVacationStart().isBefore(finalBegin) &&
-                                            !vacationRequest1.getVacationStart().isAfter(finalEnd)) ||
-                                            (!vacationRequest1.getVacationEnd().isBefore(finalBegin) &&
-                                                    !vacationRequest1.getVacationEnd().isAfter(finalEnd)))
-                    )
-                    .findFirst();
-            if (filteredVacations.isPresent()) {
+            if (vacationRequestRepository.isOverlappingWithAnotherNotCurrent(currentUser.getUserId(), begin, end, id)) {
                 return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
             }
             vRequest.setVacationStart(begin);
             vRequest.setVacationEnd(end);
         }
         if (days != null) {
+            if(begin == null){
+                begin = vRequest.getVacationStart();
+            }
+            if (getDaysLeftAndMaxDays(currentUser, begin.getYear()).getLeftDays() < days)
+                return new ResponseEntity<>("Duration exceeds left vacation days!", HttpStatus.BAD_REQUEST);
+
             vRequest.setDuration(days);
         }
         if (note != null) {
