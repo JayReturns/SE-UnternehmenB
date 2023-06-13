@@ -25,10 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -103,10 +100,10 @@ public class MainServerController implements ServerApi {
         if (duration < 1)
             return new ResponseEntity<>("Duration must be at least 1 day!", HttpStatus.BAD_REQUEST);
 
-        if (getDaysLeftAndMaxDays(user, startDate.getYear()).getMaxDays() < duration)
-            return new ResponseEntity<>("Duration exceeds maximum vacation days!", HttpStatus.BAD_REQUEST);
+        if (getDaysLeftAndMaxDays(user, startDate.getYear()).getLeftDaysOnlyApproved() < duration)
+            return new ResponseEntity<>("Duration exceeds left vacation days!", HttpStatus.BAD_REQUEST);
 
-        if (vacationRequestRepository.isOverlappingWithAnotherVacationRequest(user.getUserId(), startDate, endDate)){
+        if (vacationRequestRepository.isOverlappingWithAnotherVacationRequest(user.getUserId(), startDate, endDate)) {
             return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
         }
 
@@ -193,26 +190,19 @@ public class MainServerController implements ServerApi {
             if (end == null) end = vRequest.getVacationEnd();
             if (end.isBefore(begin))
                 return new ResponseEntity<>("End date is before start date!", HttpStatus.BAD_REQUEST);
-
-            List<VacationRequest> allVacations = vacationRequestRepository.findAllByUser(vRequest.getUser());
-            LocalDate finalBegin = begin;
-            LocalDate finalEnd = end;
-            Optional<VacationRequest> filteredVacations = allVacations.stream()
-                    .filter(vacationRequest1 ->
-                            !vacationRequest1.getVacationRequestId().equals(id) &&
-                                    ((!vacationRequest1.getVacationStart().isBefore(finalBegin) &&
-                                            !vacationRequest1.getVacationStart().isAfter(finalEnd)) ||
-                                            (!vacationRequest1.getVacationEnd().isBefore(finalBegin) &&
-                                                    !vacationRequest1.getVacationEnd().isAfter(finalEnd)))
-                    )
-                    .findFirst();
-            if (filteredVacations.isPresent()) {
+            if (vacationRequestRepository.isOverlappingWithAnotherNotCurrent(currentUser.getUserId(), begin, end, id)) {
                 return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
             }
             vRequest.setVacationStart(begin);
             vRequest.setVacationEnd(end);
         }
         if (days != null) {
+            if(begin == null){
+                begin = vRequest.getVacationStart();
+            }
+            if (getDaysLeftAndMaxDays(currentUser, begin.getYear()).getLeftDaysOnlyApproved() < days)
+                return new ResponseEntity<>("Duration exceeds left vacation days!", HttpStatus.BAD_REQUEST);
+
             vRequest.setDuration(days);
         }
         if (note != null) {
@@ -236,19 +226,24 @@ public class MainServerController implements ServerApi {
         int maxDays = user.getVacationDays();
         LocalDate lastDayOfYearBefore = LocalDate.of(year - 1, Month.DECEMBER, 31);
         LocalDate firstDayOfNextYear = LocalDate.of(year + 1, Month.JANUARY, 1);
-        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserAndVacationStartAfterAndVacationEndBeforeAndAndStatusNot(user, lastDayOfYearBefore, firstDayOfNextYear,Status.REJECTED);
-        int leftDays = maxDays;
-        int vacationDays = vacationRequests.stream()
+        List<VacationRequest> vacationRequests = vacationRequestRepository.findByUserAndVacationStartAfterAndVacationEndBeforeAndStatusNot(
+                user, lastDayOfYearBefore, firstDayOfNextYear, Status.REJECTED
+        );
+        int vacationDaysWithoutRequested = vacationRequests.stream()
+                .filter(request -> request.getStatus() != Status.REQUESTED)
                 .mapToInt(VacationRequest::getDuration)
                 .sum();
-        leftDays -= vacationDays;
-        return new LeftAndMaxVacationDays(maxDays, leftDays);
+
+        int vacationDaysWithRequested = vacationRequests.stream()
+                .mapToInt(VacationRequest::getDuration)
+                .sum();
+        return new LeftAndMaxVacationDays(maxDays, maxDays - vacationDaysWithRequested, maxDays - vacationDaysWithoutRequested);
     }
 
     @Override
     public ResponseEntity<String> deleteVacationRequest(String vacationRequestId) {
         User currentUser = getCurrentUser();
-        if (currentUser == null){
+        if (currentUser == null) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         UUID requestId = UUID.fromString(vacationRequestId);
@@ -284,8 +279,9 @@ public class MainServerController implements ServerApi {
         List<VirtualEnvironmentRequest> virtualEnvironmentRequests = virtualEnvironmentRequestRepository.findAllByUser(currentUser);
         return new ResponseEntity<>(virtualEnvironmentRequests, HttpStatus.OK);
     }
+
     @Override
-    public ResponseEntity<List<VirtualEnvironment>> getVirtualEnvironmentsFromUser()  {
+    public ResponseEntity<List<VirtualEnvironment>> getVirtualEnvironmentsFromUser() {
         User currentUser = getCurrentUser();
         if (currentUser == null) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -296,22 +292,22 @@ public class MainServerController implements ServerApi {
     }
 
     @Override
-    public ResponseEntity<VirtualEnvironment> setEnvironmentStatus(String id, Status status, String rejectReason) throws Exception {
+    public ResponseEntity<VirtualEnvironment> setEnvironmentStatus(String id, Status status, String rejectReason) {
         User currentUser = getCurrentUser();
-        if (currentUser == null || currentUser.getRole() != Role.MANAGER){
+        if (currentUser == null || currentUser.getRole() != Role.MANAGER) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         VirtualEnvironmentRequest vRequest = virtualEnvironmentRequestRepository.findById(UUID.fromString(id)).orElse(null);
-        if (vRequest == null){
+        if (vRequest == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-        if (vRequest.getStatus().ordinal() != 0 || status == Status.REQUESTED){
+        if (vRequest.getStatus().ordinal() != 0 || status == Status.REQUESTED) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
-        if (status == Status.APPROVED){
+        if (status == Status.APPROVED) {
             //send Request to api
             ProvisioningResponse response = provisioningRepository.getTechnicalProvisioning(UUID.fromString(id), vRequest.getEnvironmentType());
-            if (response.getVerificationSuccessful()){
+            if (response.getVerificationSuccessful()) {
                 vRequest.setStatus(Status.APPROVED);
                 virtualEnvironmentRequestRepository.save(vRequest);
                 VirtualEnvironment virtEnv = new VirtualEnvironment(UUID.randomUUID(),
@@ -328,8 +324,7 @@ public class MainServerController implements ServerApi {
                 virtualEnvironmentRequestRepository.save(vRequest);
                 return new ResponseEntity<>(null, HttpStatus.OK);
             }
-        }
-        else {
+        } else {
             vRequest.setStatus(status);
             if (status == Status.REJECTED)
                 vRequest.setRejectReason(rejectReason);
@@ -341,7 +336,7 @@ public class MainServerController implements ServerApi {
     @Override
     public ResponseEntity<String> deleteVirtualEnvironmentRequest(String id) {
         User currentUser = getCurrentUser();
-        if (currentUser == null){
+        if (currentUser == null) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         UUID requestId = UUID.fromString(id);
@@ -407,9 +402,9 @@ public class MainServerController implements ServerApi {
     public ResponseEntity<String> createVirtualEnvironmentRequest(
             String environmentType,
             String comment
-    ){
+    ) {
         User currentUser = getCurrentUser();
-        if (currentUser == null){
+        if (currentUser == null) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
 

@@ -22,12 +22,23 @@ public interface VacationRequestRepository extends MongoRepository<VacationReque
             LocalDate vacationEnd
     );
 
+    @ExistsQuery(value = "{ " +
+            "'user.$id' : ?0, " +
+            "$or:[ {'vacationStart' : { $gte: ?1, $lte: ?2 }}, {'vacationEnd' : { $gte: ?1, $lte: ?2 }} ], " +
+            "'status' : { $ne: 'REJECTED' }," +
+            "'_id' : { $ne: ?3}" +
+            "}")
+    boolean isOverlappingWithAnotherNotCurrent(
+            String userId,
+            LocalDate vacationStart,
+            LocalDate vacationEnd,
+            UUID vacationId
+    );
+
     List<VacationRequest> findByUserOrderByVacationStartDesc(User user);
 
-    List<VacationRequest> findByUserAndVacationStartAfterAndVacationEndBeforeAndAndStatusNot(User user, LocalDate lastDayOfYearBefore, LocalDate firstOfNextYear, Status status);
+    List<VacationRequest> findByUserAndVacationStartAfterAndVacationEndBeforeAndStatusNot(User user, LocalDate lastDayOfYearBefore, LocalDate firstOfNextYear, Status status);
 
-    List<VacationRequest> findAllByUser(User user);
-  
-    void deleteByVacationRequestId(UUID vacationRequestId);  
+    void deleteByVacationRequestId(UUID vacationRequestId);
 
 }
