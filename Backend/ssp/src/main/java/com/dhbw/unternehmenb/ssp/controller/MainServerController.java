@@ -200,7 +200,7 @@ public class MainServerController implements ServerApi {
             if(begin == null){
                 begin = vRequest.getVacationStart();
             }
-            if (getDaysLeftAndMaxDays(currentUser, begin.getYear()).getLeftDays() < days)
+            if (getDaysLeftAndMaxDays(currentUser, begin.getYear()).getLeftDaysOnlyApproved() < days)
                 return new ResponseEntity<>("Duration exceeds left vacation days!", HttpStatus.BAD_REQUEST);
 
             vRequest.setDuration(days);
