@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -160,7 +161,10 @@ public class MainServerController implements ServerApi {
         List<VacationRequest> allRequests = vacationRequestRepository.findAll(sort);
         allRequests.stream()
                 .collect(Collectors.groupingBy(VacationRequest::getUser))
-                .forEach((user, requests) -> responseBody.add(new AllUsersVRResponseBody(user, requests)));
+                .forEach((user, requests) -> {
+                    LeftAndMaxVacationDays vacDays = getDaysLeftAndMaxDays(user, Year.now().getValue());
+                    responseBody.add(new AllUsersVRResponseBody(user,  vacDays, requests));
+                });
 
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
