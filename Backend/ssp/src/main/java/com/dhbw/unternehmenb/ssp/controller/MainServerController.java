@@ -5,6 +5,7 @@ import com.dhbw.unternehmenb.ssp.interfaces.ServerApi;
 import com.dhbw.unternehmenb.ssp.model.*;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVEnvRequestResponseBody;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
+import com.dhbw.unternehmenb.ssp.model.response.UserWithLeftDaysDTO;
 import com.dhbw.unternehmenb.ssp.view.UserRepository;
 import com.dhbw.unternehmenb.ssp.view.VacationRequestRepository;
 import com.dhbw.unternehmenb.ssp.view.VirtualEnvironmentRepository;
@@ -163,7 +164,7 @@ public class MainServerController implements ServerApi {
                 .collect(Collectors.groupingBy(VacationRequest::getUser))
                 .forEach((user, requests) -> {
                     LeftAndMaxVacationDays vacDays = getDaysLeftAndMaxDays(user, Year.now().getValue());
-                    responseBody.add(new AllUsersVRResponseBody(user,  vacDays, requests));
+                    responseBody.add(new AllUsersVRResponseBody(new UserWithLeftDaysDTO(user, vacDays), requests));
                 });
 
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
