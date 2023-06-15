@@ -185,12 +185,13 @@ public class MainServerController implements ServerApi {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         VacationRequest vRequest = vacationRequest.get();
+        User vacationRequestOwner = vRequest.getUser();
         if (begin != null || end != null) {
             if (begin == null) begin = vRequest.getVacationStart();
             if (end == null) end = vRequest.getVacationEnd();
             if (end.isBefore(begin))
                 return new ResponseEntity<>("End date is before start date!", HttpStatus.BAD_REQUEST);
-            if (vacationRequestRepository.isOverlappingWithAnotherNotCurrent(currentUser.getUserId(), begin, end, id)) {
+            if (vacationRequestRepository.isOverlappingWithAnotherNotCurrent(vacationRequestOwner.getUserId(), begin, end, id)) {
                 return new ResponseEntity<>("Vacation request overlaps with another vacation!", HttpStatus.BAD_REQUEST);
             }
             vRequest.setVacationStart(begin);
@@ -200,7 +201,7 @@ public class MainServerController implements ServerApi {
             if(begin == null){
                 begin = vRequest.getVacationStart();
             }
-            if (getDaysLeftAndMaxDays(currentUser, begin.getYear()).getLeftDaysOnlyApproved() < days)
+            if (getDaysLeftAndMaxDays(vacationRequestOwner, begin.getYear()).getLeftDaysOnlyApproved() < days)
                 return new ResponseEntity<>("Duration exceeds left vacation days!", HttpStatus.BAD_REQUEST);
 
             vRequest.setDuration(days);
@@ -210,6 +211,8 @@ public class MainServerController implements ServerApi {
         }
         if (currentUser.getRole() == Role.MANAGER) {
             if (status != null) {
+                if (status == Status.APPROVED && getDaysLeftAndMaxDays(vacationRequestOwner, vRequest.getVacationStart().getYear()).getLeftDaysOnlyApproved() < vRequest.getDuration())
+                    return new ResponseEntity<>("Duration exceeds left vacation days!", HttpStatus.BAD_REQUEST);
                 vRequest.setStatus(status);
             }
             if (rejection_cause != null) {
@@ -219,7 +222,7 @@ public class MainServerController implements ServerApi {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         vacationRequestRepository.save(vRequest);
-        return new ResponseEntity<>("Erfolgreich geändert", HttpStatus.OK);
+        return new ResponseEntity<>("Vacation Request updated successfully", HttpStatus.OK);
     }
 
     private LeftAndMaxVacationDays getDaysLeftAndMaxDays(User user, int year) {
