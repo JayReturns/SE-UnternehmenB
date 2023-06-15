@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {GroupedVacation, Vacation} from "../models/vacation.model";
-import {Vacation_left_max_daysModel} from "../models/vacation_left_max_days.model"
+import {VacationDaysLeft} from "../models/vacation_days_left"
 import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
 
@@ -26,7 +26,7 @@ export class VacationService {
   }
 
   getDaysLeft() {
-    return this.http.get<Vacation_left_max_daysModel>(environment.baseApiUrl+'/api/v1/vacation/days?year='+this.getCurrentYear())
+    return this.http.get<VacationDaysLeft>(environment.baseApiUrl+'/api/v1/vacation/days?year='+this.getCurrentYear())
   }
 
   getCurrentYear(): number {
