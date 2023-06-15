@@ -35,7 +35,11 @@ export class SignUpComponent implements OnInit {
         lastName: this.form.get('lastname')!.value,
         name: this.form.get('name')!.value,
         role: this.form.get('role')!.value,
-        vacationDays: 30
+        vacationDays: {
+          maxDays:30,
+          leftDays:0,
+          leftDaysOnlyApproved:0
+        }
       }
 
       this.authService.SignUp(user.email, this.form.get('password')!.value).then(() => {

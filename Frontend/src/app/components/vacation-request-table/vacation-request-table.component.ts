@@ -30,9 +30,9 @@ export class VacationRequestTableComponent implements AfterViewInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns;
   snackbar: any;
-  left_day: any;
-  year: any = new Date().getFullYear()
-  progress: any;
+  daysRequested!: number;
+  daysLeft!: number;
+  progress = 100;
 
   constructor(private vacationService: VacationService,
               public dialog: MatDialog, private messageService: MessageService,
@@ -47,8 +47,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
     })
   }
 
-
-
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -57,12 +55,16 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   refresh() {
-    this.vacationService.getDaysLeft().subscribe(d => {
-      this.left_day = d.leftDays
-      this.progress = d.leftDays/30 * 100;
-    })
+    if(!this.forManager){
+      this.vacationService.getDaysLeft().subscribe(d => {
+        this.daysRequested = Math.abs(d.leftDays - d.leftDaysOnlyApproved)
+        this.daysLeft = d.leftDaysOnlyApproved
+        this.progress = d.leftDaysOnlyApproved/30 * 100;
+      })
+    }
     this.getData().subscribe(vacations => {
       this.dataSource.data = vacations
+      this.progress = (vacations.filter(v => v.status != Status.REQUESTED).length/vacations.length)*100
     })
   }
 
@@ -154,6 +156,10 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   protected readonly Status = Status;
+
+  round(number: number) {
+    return Math.round(number)
+  }
 }
 
 

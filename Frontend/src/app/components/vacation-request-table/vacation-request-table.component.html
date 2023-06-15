@@ -5,9 +5,14 @@
       <button mat-button matTooltip="Beispiel1"><mat-icon>accessibility_new</mat-icon></button>
       <button mat-button matTooltip="Beipsiel2"><mat-icon>update</mat-icon></button>
     </div>
-    <p class="left_days_text">{{left_day}} Tage übrig</p>
+    <ng-template [ngIf]="!forManager">
+      <p class="left_days_text">Urlaubstage beantragt:{{daysRequested}}</p>
+      <p class="left_days_text" matTooltip="Zählt ausschließlich angenommene Anträge">Urlaubstage übrig:{{daysLeft}}</p>
+    </ng-template>
   </div>
-  <mat-progress-bar mode="determinate" [value]="progress" class="left_days_progress_bar"></mat-progress-bar>
+  <mat-progress-bar mode="determinate" [value]="progress" class="left_days_progress_bar"
+                    matTooltip="{{forManager? round(progress) + '% aller Anträge abgearbeitet': round(progress) + '% aller Urlaubstage verbraucht'}}"
+  ></mat-progress-bar>
   <table mat-table class="full-width-table" matSort matSortActive="start" aria-label="Elements"
          [dataSource]="dataSource">
     <!-- Optional Name Column -->
@@ -33,7 +38,9 @@
     <!-- Duration Column -->
     <ng-container matColumnDef="duration">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Dauer in Tagen</th>
-      <td mat-cell *matCellDef="let row">{{row.duration}}</td>
+      <td mat-cell *matCellDef="let row"
+          matTooltip="Noch übrig: {{row.user?.vacationDays.leftDaysOnlyApproved}}" [matTooltipDisabled]="!forManager"
+      >{{row.duration}}</td>
     </ng-container>
 
     <!-- Comment Column -->

@@ -3,8 +3,14 @@ export interface User {
   email: string;
   name: string;
   lastName: string;
-  vacationDays: number;
+  vacationDays: VacationDays;
   role: Role;
+}
+
+interface VacationDays{
+  maxDays: number;
+  leftDays: number;
+  leftDaysOnlyApproved: number;
 }
 
 export enum Role {

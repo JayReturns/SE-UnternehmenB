@@ -5,6 +5,7 @@ import com.dhbw.unternehmenb.ssp.interfaces.ServerApi;
 import com.dhbw.unternehmenb.ssp.model.*;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVEnvRequestResponseBody;
 import com.dhbw.unternehmenb.ssp.model.response.AllUsersVRResponseBody;
+import com.dhbw.unternehmenb.ssp.model.response.UserWithLeftDaysDTO;
 import com.dhbw.unternehmenb.ssp.view.UserRepository;
 import com.dhbw.unternehmenb.ssp.view.VacationRequestRepository;
 import com.dhbw.unternehmenb.ssp.view.VirtualEnvironmentRepository;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -160,7 +162,10 @@ public class MainServerController implements ServerApi {
         List<VacationRequest> allRequests = vacationRequestRepository.findAll(sort);
         allRequests.stream()
                 .collect(Collectors.groupingBy(VacationRequest::getUser))
-                .forEach((user, requests) -> responseBody.add(new AllUsersVRResponseBody(user, requests)));
+                .forEach((user, requests) -> {
+                    LeftAndMaxVacationDays vacDays = getDaysLeftAndMaxDays(user, Year.now().getValue());
+                    responseBody.add(new AllUsersVRResponseBody(new UserWithLeftDaysDTO(user, vacDays), requests));
+                });
 
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
