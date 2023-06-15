@@ -32,7 +32,7 @@ export class VacationRequestTableComponent implements AfterViewInit {
   snackbar: any;
   daysRequested!: number;
   daysLeft!: number;
-  progress!: number;
+  progress = 100;
 
   constructor(private vacationService: VacationService,
               public dialog: MatDialog, private messageService: MessageService,
@@ -47,8 +47,6 @@ export class VacationRequestTableComponent implements AfterViewInit {
     })
   }
 
-
-
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -57,13 +55,16 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   refresh() {
-    this.vacationService.getDaysLeft().subscribe(d => {
-      this.daysRequested = Math.abs(d.leftDays - d.leftDaysOnlyApproved)
-      this.daysLeft = d.leftDaysOnlyApproved
-      this.progress = d.leftDaysOnlyApproved/30 * 100;
-    })
+    if(!this.forManager){
+      this.vacationService.getDaysLeft().subscribe(d => {
+        this.daysRequested = Math.abs(d.leftDays - d.leftDaysOnlyApproved)
+        this.daysLeft = d.leftDaysOnlyApproved
+        this.progress = d.leftDaysOnlyApproved/30 * 100;
+      })
+    }
     this.getData().subscribe(vacations => {
       this.dataSource.data = vacations
+      this.progress = (vacations.filter(v => v.status != Status.REQUESTED).length/vacations.length)*100
     })
   }
 
@@ -155,6 +156,10 @@ export class VacationRequestTableComponent implements AfterViewInit {
   }
 
   protected readonly Status = Status;
+
+  round(number: number) {
+    return Math.round(number)
+  }
 }
 
 
