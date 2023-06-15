@@ -12,9 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AllUsersVRResponseBody {
 
-    private User user;
-
-    private LeftAndMaxVacationDays vacationDays;
+    private UserWithLeftDaysDTO user;
 
     private List<VacationRequest> requests;
 
