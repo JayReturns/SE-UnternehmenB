@@ -2,8 +2,7 @@
 <div class="mat-elevation-z8">
   <div class="additional_feature_box" >
     <div>
-      <button mat-button matTooltip="Beispiel1"><mat-icon>accessibility_new</mat-icon></button>
-      <button mat-button matTooltip="Beipsiel2"><mat-icon>update</mat-icon></button>
+      <button mat-button matTooltip="Tabelle neuladen" (click)="refresh()"><mat-icon>update</mat-icon></button>
     </div>
     <ng-template [ngIf]="!forManager">
       <p class="left_days_text">Urlaubstage beantragt:{{daysRequested}}</p>

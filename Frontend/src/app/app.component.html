@@ -19,7 +19,7 @@
     <mat-drawer class="SideBar" mode="side" opened>
       <mat-nav-list>
         <a mat-list-item href="/#/dashboard" routerLinkActive="active">
-          <mat-list-item>
+          <mat-list-item [disableRipple]="true">
             <mat-icon matListItemIcon>beach_access</mat-icon>
 
             Urlaubsanträge
@@ -27,8 +27,9 @@
         </a>
 
         <mat-divider></mat-divider>
+
         <a mat-list-item href="/#/venv" routerLinkActive="active">
-          <mat-list-item>
+          <mat-list-item [disableRipple]="true">
             <mat-icon matListItemIcon>dns</mat-icon>
             Virtuelle Umgebungen
           </mat-list-item>

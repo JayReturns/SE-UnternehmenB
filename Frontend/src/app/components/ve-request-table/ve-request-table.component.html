@@ -1,4 +1,9 @@
 <div class="mat-elevation-z8">
+  <div class="additional_feature_box" >
+    <div>
+      <button mat-button matTooltip="Tabelle neuladen" (click)="refresh()"><mat-icon>update</mat-icon></button>
+    </div>
+  </div>
   <table mat-table class="full-width-table" matSort matSortActive="start" aria-label="Elements" [dataSource]="dataSource">
     <!-- Optional Name Column -->
     <ng-template [ngIf]="forManager">

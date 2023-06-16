@@ -51,7 +51,6 @@ export class VeRequestTableComponent {
 
   refresh() {
     this.getData().subscribe(veRequests => {
-      console.log("Got data:", veRequests)
       this.dataSource.data = veRequests
     })
   }

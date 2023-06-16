@@ -19,3 +19,7 @@
 .spacer {
   flex: 1 1 auto;
 }
+
+mat-list-item.mdc-list-item:hover::before{
+  background-color: transparent !important;
+}
